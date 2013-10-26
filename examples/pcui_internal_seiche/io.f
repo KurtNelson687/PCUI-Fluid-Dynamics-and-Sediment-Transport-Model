@@ -16,7 +16,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	dtime     = 0.01D0
 	case      = 0
 	newrun    = 1
-	periodic  = 0
+	periodic  = 1
 	iscalar   = 1
 	ieddy     = 1
 	mg_level  = 5

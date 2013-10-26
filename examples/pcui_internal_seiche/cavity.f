@@ -13,10 +13,10 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	bx = 1.D0
 	by = 1.D0
-	bz = 1.D0
+	bz = 0.5D0
 
-	stretchx = 0
-	stretchy = 0
+	stretchx = 1
+	stretchy = 1
 	stretchz = 0
 
 	dm = 0.D0    
