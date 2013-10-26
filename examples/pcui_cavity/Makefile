@@ -1,5 +1,5 @@
 COMP = mpif90
-FLAG = -c -w -O3
+FLAG = -c -w -O3 
 
 OBCA = ns.o mp.o io.o \
        init.o conv.o pred.o corr.o trid.o scal.o\
@@ -9,21 +9,24 @@ OBCAS =nsst.o mp.o io.o stat.o\
        init.o conv.o pred.o corr.o trid.o scal.o\
        pres.o smad.o resd.o fctr.o exch.o eddy.o
 
+OBJG = grid_init.o mp.o io.o cavity.o
+
 INCS = size.inc mpi.inc para.inc \
        ns.inc metric.inc stat.inc eddy.inc
 
-# 3-D cavity 
-cav : $(OBCA) $(INCS) cavity.inc cavity.o 
-	$(COMP) -o cav $(OBCA) cavity.o
+# 3-D cavity
+cav : $(OBCA) $(INCS) cavity.inc cavity.o 	
+	$(COMP) -o cavity $(OBCA) cavity.o	
 
-# 3-D cavity    ( with statistics )
-cavs : $(OBCAS) $(INCS) cavity.inc cavity.o 
-	$(COMP) -o cavs $(OBCAS) cavity.o
+# 3-D grid initialization
+grid : $(OBJG) $(INCS) cavity.inc
+	$(COMP) -o grid $(OBJG)
 
 # delete files
 clean :
 	/bin/rm -f *.o
-
+cleano:
+	/bin/rm -f output* continue_run* uvw* xyz* rho* fort* qoutput grid cav
 # main program ( with statistics )
 nsst.o : nsst.f $(INCS)
 	$(COMP) $(FLAG) nsst.f 
@@ -88,32 +91,14 @@ fctr.o : fctr.f $(INCS)
 exch.o : exch.f $(INCS)
 	$(COMP) $(FLAG) exch.f 
 
-# cavity		
+# isw		
 cavity.o : cavity.f $(INCS)
-	$(COMP) $(FLAG) cavity.f 
+	$(COMP) $(FLAG) cavity.f 	
+
+# grid_init		
+grid_init.o : grid_init.f $(INCS)
+	$(COMP) $(FLAG) grid_init.f 
 
 # scalar 
 scal.o : scal.f $(INCS)
 	$(COMP) $(FLAG) scal.f 
-
-# subset (subset per node with ghost points)
-nsub : nsub.f size.inc mpi.inc 
-	$(COMP) -o nsub nsub.f 
-
-# subset 
-sub : sub.f size.inc mpi.inc 
-	$(COMP) -o sub sub.f 
-
-# subset  ( with statistics ) 
-subst : subst.f size.inc mpi.inc stat.inc
-	$(COMP) -o subst subst.f
-
-# mid-plane cut (cavity u.v)
-cmid : cmid.f 
-	$(COMP) -o cmid cmid.f 
-
-# 3D to 2D (for cavity tracer)
-c2d : c2d.f
-	$(COMP) -o c2d c2d.f 
-
-
