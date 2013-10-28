@@ -12,8 +12,8 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	integer i, j, k
 
 	bx = 3.D0
-	by = 0.5D0
-	bz = 0.125D0
+	by = 0.56D0
+	bz = 0.5D0
 
 	stretchx = 0
 	stretchy = 0
@@ -92,6 +92,9 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
      
 	integer i, j, k
 	double precision faci, facj, fack
+      logical iostat
+      character*4 :: ID
+
 
 	ii0 = npx * ii
 	jj0 = npy * jj
@@ -131,23 +134,45 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	enddo
 	enddo
 
-	call coord(ii, jj, kk, x, y, z, xi, et, zt)
+c	call coord(ii, jj, kk, x, y, z, xi, et, zt)
+
+C..... Read in grid from file
+      write(ID, fmt='(I3)') 700+myid
+      inquire(file='xyz_init_from_matlab.'//ID, exist=iostat) 
+	    if (iostat.eqv..true..and.grid_only.ne.1) then
+	       open(700+myid, file = 'xyz_init_from_matlab.'//ID,
+     <                        form='unformatted',status='unknown')
+	       read(700+myid) xp
+	       close(700+myid)
+	    end if
+
+      if ( level .eq. 1 ) then
+	    do k = -1, kk+2
+	    do j = -1, jj+2
+	    do i = -1, ii+2
+	       x(i,j,k) = xp(i,j,k,1) 
+	       y(i,j,k) = xp(i,j,k,2)
+	       z(i,j,k) = xp(i,j,k,3)
+	    enddo
+	    enddo
+	    enddo
+	    endif
 
 	if ( level .eq. 1 .and. newrun .eq. 1 ) then
 	   write(200+myid) x, y, z
 	endif
 
-	if ( level .eq. 1 ) then
-	   do k = -1, kk+2
-	   do j = -1, jj+2
-	   do i = -1, ii+2
-	      xp(i,j,k,1) = x(i,j,k)
-	      xp(i,j,k,2) = y(i,j,k)
-	      xp(i,j,k,3) = z(i,j,k)
-	   enddo
-	   enddo
-	   enddo
-	endif
+c	if ( level .eq. 1 ) then
+c	   do k = -1, kk+2
+c	   do j = -1, jj+2
+c	   do i = -1, ii+2
+c	      xp(i,j,k,1) = x(i,j,k)
+c	      xp(i,j,k,2) = y(i,j,k)
+c	      xp(i,j,k,3) = z(i,j,k)
+c	   enddo
+c	   enddo
+c	   enddo
+c	endif
 
 C...... I-face
 	

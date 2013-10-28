@@ -20,7 +20,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	iscalar   = 1
 	ieddy     = 1
 	mg_level  = 5
-	nstep     = 1000
+	nstep     = 500
 	nsave     = 5
 	maxstep   = 10
 

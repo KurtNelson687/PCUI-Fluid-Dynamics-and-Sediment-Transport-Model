@@ -21,6 +21,7 @@ fname_uvw = 'input_UVW';
 fname_UVW_to_PCUI = 'uvw_init_from_matlab';
 fname_rho_init_to_PCUI = 'rho_init_from_matlab';
 fname_rho_full_to_PCUI = 'rho_full_from_matlab';
+fname_grid_to_PCUI = 'xyz_init_from_matlab';
 
 % -------------------------------------------------------------------------
 % Get problem parameters and variables from PCUI
@@ -48,27 +49,38 @@ params.px = variable_value_pcui('px',ftext);
 params.py = variable_value_pcui('py',ftext);
 params.pz = variable_value_pcui('pz',ftext);
 
-% read the files containing the grid definition and assemble into array
-% (includes ghost grid points of each submatrix)
-[x,y,z] = read_binary_file_pcui(working_folder, fname_xyz, 1, params,1,1);
-% read the files containing the grid definition and assemble into array
-% (does not include ghost grid points of each submatrix)
-[x_plot,y_plot,z_plot] = read_binary_file_pcui(working_folder, fname_xyz, 1, params,1,0);
-x_plot = squeeze(x_plot(:,:,floor(length(z_plot(1,1,:)/2))));
-y_plot = squeeze(y_plot(:,:,floor(length(z_plot(1,1,:)/2))));
+% -------------------------------------------------------------------------
+% Initialize PCUI grid
+% -------------------------------------------------------------------------
+load /home/barthur/zang/grids/pcui_test.mat
+x_pcui_global = x; x_pcui_global = permute(x_pcui_global,[1 3 2]);
+y_pcui_global = z; y_pcui_global = permute(y_pcui_global,[1 3 2]);
+z_pcui_global = y; z_pcui_global = permute(z_pcui_global,[1 3 2]);
+
+x_pcui = x_pcui_global;
+y_pcui = y_pcui_global;
+z_pcui = z_pcui_global;
+
+xyz_pcui = zeros(params.ni+4,params.nj+4,params.nk+4,3);
+xyz_pcui(:,:,:,1) = x_pcui;
+xyz_pcui(:,:,:,2) = y_pcui;
+xyz_pcui(:,:,:,3) = z_pcui;
+
+% Write PCUI binary files depending on the number of processors
+write_binary_file_pcui(working_folder, fname_grid_to_PCUI, params, xyz_pcui);
 
 % -------------------------------------------------------------------------
 % Initialize PCUI with a solitary wave
 % -------------------------------------------------------------------------
 % Prepare density field
-h1 = 0.3;
+h1 = -0.3;
 a = 0.1;
 Lw = 0.7;
 delta = 0.2;
 alpha = 0.99;
-rho_init_pcui = ones(size(x));
-zeta = -a*exp(-(x/Lw).^2); % + 0.001*randn(size(x));
-rho_pert_pcui = -0.5*0.03*tanh(2*(y - zeta - h1)/delta*atanh(alpha));
+rho_init_pcui = ones(size(x_pcui));
+zeta = -a*exp(-(x_pcui/Lw).^2); % + 0.001*randn(size(x));
+rho_pert_pcui = -0.5*0.03*tanh(2*(y_pcui - zeta - h1)/delta*atanh(alpha));
 rho_full_pcui = rho_init_pcui+rho_pert_pcui;
 u_pcui = zeros(size(rho_init_pcui));
 v_pcui = u_pcui; w_pcui = u_pcui;
@@ -85,6 +97,9 @@ write_binary_file_pcui(working_folder, fname_UVW_to_PCUI, params, uvw_pcui);
 % Verify initialized solitary wave
 % -------------------------------------------------------------------------
 % Plot density field
+x_plot = squeeze(x_pcui_global(3:end-2,3:end-2,1));
+y_plot = squeeze(y_pcui_global(3:end-2,3:end-2,1));
+
 fig1 = figure(1);
 clf
 set(fig1,'Renderer','zbuffer');
@@ -96,3 +111,34 @@ rho_full_plot = rho_init_plot+rho_pert_plot;
 pcolor(x_plot,y_plot,rho_full_plot);
 axis image;
 colorbar;
+
+% -------------------------------------------------------------------------
+% Verify initialized grid
+% -------------------------------------------------------------------------
+%Plot grid
+fig2 = figure(2);
+clf
+set(fig2,'Renderer','zbuffer');
+set(fig2,'Color','white');
+plot(squeeze(x_pcui(:,:,1)),squeeze(y_pcui(:,:,1)),'k.');
+xlabel('x [m]');
+ylabel('y [m]');
+axis equal;
+
+fig3 = figure(3);
+clf
+set(fig3,'Renderer','zbuffer');
+set(fig3,'Color','white');
+plot(squeeze(x_pcui(:,1,:)),squeeze(z_pcui(:,1,:)),'k.');
+xlabel('x [m]');
+ylabel('z [m]');
+axis equal;
+
+fig4 = figure(4);
+clf
+set(fig4,'Renderer','zbuffer');
+set(fig4,'Color','white');
+plot(squeeze(z_pcui(1,:,:)),squeeze(y_pcui(1,:,:)),'k.');
+xlabel('z [m]');
+ylabel('y [m]');
+axis equal;
