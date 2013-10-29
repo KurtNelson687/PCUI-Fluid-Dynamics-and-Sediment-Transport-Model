@@ -210,9 +210,9 @@ CBCBCBC	BCBCBCBCBCBCBCBCBCBC
 
 	do n = 1, maxstep
 
-	if ( mod(istep,nsave) .eq. 0 .and. MYID .eq. 0 ) then
-	   write(*,*) ' V-cycle # ', n
-	endif
+c	if ( mod(istep,nsave) .eq. 0 .and. MYID .eq. 0 ) then
+c	   write(*,*) ' V-cycle # ', n
+c	endif
 
 	if ( mg_level .ge. 2 ) then
 
@@ -329,12 +329,16 @@ C	2
 	call smooth( resid, bbsum, ermin, ermax, resbc, sumbc,
      <		L, nni, nnj, nnk, p, r, b, jac,
      <		g11, g12, g13, g21, g22, g23, g31, g32, g33, gcc )
+
+      if ( mod(istep,nsave) .eq. 0 .and. MYID .eq. 0 ) then
+	       write(*,*) resid/bbsum
+	    endif
 	
 	if ( resid .lt. tol(L) .and. resbc .lt. tol(L) .and.
      <	     max(dabs(ermin), dabs(ermax)) .lt. ter(L) .and. 
      <	     resid/bbsum .lt. factor ) then
 	   if ( MYID .EQ. 0 ) 
-     <	      write(*,*) ' Total V-cycle # ', n, resid
+     <	      write(*,*) ' Total V-cycle # ', n, resid/bbsum
 	   return
 	endif
 

@@ -13,16 +13,16 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	if ( MYID .eq. 0 ) then
 
-	dtime     = 0.1D0
+	dtime     = 0.01D0
 	case      = 0
 	newrun    = 1
 	periodic  = 1
 	iscalar   = 1
 	ieddy     = 1
 	mg_level  = 5
-	nstep     = 500
-	nsave     = 5
-	maxstep   = 10
+	nstep     = 10
+	nsave     = 1
+	maxstep   = 1000
 
 	do i = 1, 5
            iterchk(i)  = 2

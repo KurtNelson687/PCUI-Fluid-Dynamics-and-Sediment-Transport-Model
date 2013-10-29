@@ -52,16 +52,62 @@ params.pz = variable_value_pcui('pz',ftext);
 % -------------------------------------------------------------------------
 % Initialize PCUI grid
 % -------------------------------------------------------------------------
-load /home/barthur/zang/grids/pcui_test.mat
-x_pcui_global = x; x_pcui_global = permute(x_pcui_global,[1 3 2]);
-y_pcui_global = z; y_pcui_global = permute(y_pcui_global,[1 3 2]);
-z_pcui_global = y; z_pcui_global = permute(z_pcui_global,[1 3 2]);
+% Load global grid from grid generator file and rearrange y and z
+load '/home/barthur/zang/grids/grid_512x32x64_r101_w25.mat'
+x_global = x; x_global = permute(x_global,[1 3 2]);
+y_global = z; y_global = permute(y_global,[1 3 2]);
+z_global = y; z_global = permute(z_global,[1 3 2]);
 
-x_pcui = x_pcui_global;
-y_pcui = y_pcui_global;
-z_pcui = z_pcui_global;
+%Prepare for writing (account for multiple processors with 2 cell halos)
+ni_wh = params.ni+4*params.px; %includes halo for each proc
+nj_wh = params.nj+4*params.py;
+nk_wh = params.nk+4*params.pz;
+x_pcui = zeros(ni_wh,nj_wh,nk_wh);
+y_pcui = x_pcui; z_pcui = x_pcui;
 
-xyz_pcui = zeros(params.ni+4,params.nj+4,params.nk+4,3);
+nni = params.ni/params.px+4;
+nnj = params.nj/params.py+4;
+nnk = params.nk/params.pz+4;
+for idk = 0:params.pz-1
+    for idj = 0:params.py-1
+        for idi = 0:params.px-1 
+            indx_i_pcui_1     = idi*nni+1;
+            indx_i_pcui_end   = (idi+1)*nni;
+            indx_j_pcui_1     = idj*nnj+1;
+            indx_j_pcui_end   = (idj+1)*nnj;
+            indx_k_pcui_1     = idk*nnk+1;
+            indx_k_pcui_end   = (idk+1)*nnk;
+            
+            indx_i_global_1   = indx_i_pcui_1 - idi*4;
+            indx_i_global_end = indx_i_global_1 + nni - 1;
+            indx_j_global_1   = indx_j_pcui_1 - idj*4;
+            indx_j_global_end = indx_j_global_1 + nnj - 1;
+            indx_k_global_1   = indx_k_pcui_1 - idk*4;
+            indx_k_global_end = indx_k_global_1 + nnk - 1;
+ 
+            x_pcui(indx_i_pcui_1:indx_i_pcui_end, ...
+                   indx_j_pcui_1:indx_j_pcui_end, ...
+                   indx_k_pcui_1:indx_k_pcui_end) = ...
+            x_global(indx_i_global_1:indx_i_global_end, ...
+                   indx_j_global_1:indx_j_global_end, ...
+                   indx_k_global_1:indx_k_global_end);
+            y_pcui(indx_i_pcui_1:indx_i_pcui_end, ...
+                   indx_j_pcui_1:indx_j_pcui_end, ...
+                   indx_k_pcui_1:indx_k_pcui_end) = ...
+            y_global(indx_i_global_1:indx_i_global_end, ...
+                   indx_j_global_1:indx_j_global_end, ...
+                   indx_k_global_1:indx_k_global_end);
+            z_pcui(indx_i_pcui_1:indx_i_pcui_end, ...
+                   indx_j_pcui_1:indx_j_pcui_end, ...
+                   indx_k_pcui_1:indx_k_pcui_end) = ...
+            z_global(indx_i_global_1:indx_i_global_end, ...
+                   indx_j_global_1:indx_j_global_end, ...
+                   indx_k_global_1:indx_k_global_end);    
+        end
+    end
+end
+
+xyz_pcui = zeros(ni_wh,nj_wh,nk_wh,3);
 xyz_pcui(:,:,:,1) = x_pcui;
 xyz_pcui(:,:,:,2) = y_pcui;
 xyz_pcui(:,:,:,3) = z_pcui;
@@ -79,7 +125,7 @@ Lw = 0.7;
 delta = 0.2;
 alpha = 0.99;
 rho_init_pcui = ones(size(x_pcui));
-zeta = -a*exp(-(x_pcui/Lw).^2); % + 0.001*randn(size(x));
+zeta = -a*exp(-(x_pcui/Lw).^2) + 0.001*rand(size(x));
 rho_pert_pcui = -0.5*0.03*tanh(2*(y_pcui - zeta - h1)/delta*atanh(alpha));
 rho_full_pcui = rho_init_pcui+rho_pert_pcui;
 u_pcui = zeros(size(rho_init_pcui));
@@ -97,15 +143,15 @@ write_binary_file_pcui(working_folder, fname_UVW_to_PCUI, params, uvw_pcui);
 % Verify initialized solitary wave
 % -------------------------------------------------------------------------
 % Plot density field
-x_plot = squeeze(x_pcui_global(3:end-2,3:end-2,1));
-y_plot = squeeze(y_pcui_global(3:end-2,3:end-2,1));
+x_plot = squeeze(x_global(3:end-2,3:end-2,1));
+y_plot = squeeze(y_global(3:end-2,3:end-2,1));
 
 fig1 = figure(1);
 clf
 set(fig1,'Renderer','zbuffer');
 set(fig1,'Color','white');
 rho_init_plot = ones(size(x_plot));
-zeta_plot = -a*exp(-(x_plot/Lw).^2); % + 0.001*randn(size(x_plot));
+zeta_plot = -a*exp(-(x_plot/Lw).^2) + 0.001*rand(size(x_plot));
 rho_pert_plot = -0.5*0.03*tanh(2*(y_plot - zeta_plot - h1)/delta*atanh(alpha));
 rho_full_plot = rho_init_plot+rho_pert_plot;
 pcolor(x_plot,y_plot,rho_full_plot);
@@ -120,7 +166,7 @@ fig2 = figure(2);
 clf
 set(fig2,'Renderer','zbuffer');
 set(fig2,'Color','white');
-plot(squeeze(x_pcui(:,:,1)),squeeze(y_pcui(:,:,1)),'k.');
+plot(squeeze(x_global(:,:,1)),squeeze(y_global(:,:,1)),'k.');
 xlabel('x [m]');
 ylabel('y [m]');
 axis equal;
@@ -129,7 +175,7 @@ fig3 = figure(3);
 clf
 set(fig3,'Renderer','zbuffer');
 set(fig3,'Color','white');
-plot(squeeze(x_pcui(:,1,:)),squeeze(z_pcui(:,1,:)),'k.');
+plot(squeeze(x_global(:,1,:)),squeeze(z_global(:,1,:)),'k.');
 xlabel('x [m]');
 ylabel('z [m]');
 axis equal;
@@ -138,7 +184,7 @@ fig4 = figure(4);
 clf
 set(fig4,'Renderer','zbuffer');
 set(fig4,'Color','white');
-plot(squeeze(z_pcui(1,:,:)),squeeze(y_pcui(1,:,:)),'k.');
+plot(squeeze(z_global(1,:,:)),squeeze(y_global(1,:,:)),'k.');
 xlabel('z [m]');
 ylabel('y [m]');
 axis equal;
