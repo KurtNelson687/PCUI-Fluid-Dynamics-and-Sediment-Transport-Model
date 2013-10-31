@@ -4,9 +4,9 @@ C...... nk/pz must be dividable by 16
 
         implicit none
 
-	integer, parameter :: px = 1
-	integer, parameter :: py = 1
-	integer, parameter :: pz = 1 
+	integer, parameter :: px = 2
+	integer, parameter :: py = 2
+	integer, parameter :: pz = 2 
 
 	integer, parameter :: ni = 32
 	integer, parameter :: nj = 32 

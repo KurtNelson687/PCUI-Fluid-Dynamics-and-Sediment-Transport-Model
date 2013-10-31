@@ -1,9 +1,10 @@
 COMP = mpif90
-FLAG = -c -w -O3 
+FLAG = -c -w -O3 -g
 
 OBCA = ns.o mp.o io.o \
        init.o conv.o pred.o corr.o trid.o scal.o\
-       pres.o smad.o resd.o fctr.o exch.o eddy.o
+       pres.o smad.o resd.o fctr.o exch.o eddy.o\
+			 indexx.o energy.o
 
 OBCAS =nsst.o mp.o io.o stat.o\
        init.o conv.o pred.o corr.o trid.o scal.o\
@@ -27,6 +28,7 @@ clean :
 	/bin/rm -f *.o
 cleano:
 	/bin/rm -f output* continue_run* uvw* xyz* rho* fort* qoutput grid cavity
+
 # main program ( with statistics )
 nsst.o : nsst.f $(INCS)
 	$(COMP) $(FLAG) nsst.f 
@@ -102,3 +104,11 @@ grid_init.o : grid_init.f $(INCS)
 # scalar 
 scal.o : scal.f $(INCS)
 	$(COMP) $(FLAG) scal.f 
+
+# sort
+indexx.o : indexx.f $(INCS)
+	$(COMP) $(FLAG) indexx.f
+
+# energy
+energy.o : energy.f $(INCS)
+	$(COMP) $(FLAG) energy.f

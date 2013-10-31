@@ -578,6 +578,9 @@ C...... Change information at boundaries
 	call phi_bc
 	call phi_exchange
 
+C...... Calculate energy
+      call energy
+
 	return
 	end
 
