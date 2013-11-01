@@ -34,6 +34,8 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
       integer send_displacements(px*py*pz)
       integer recv_displacements(px*py*pz)
 
+      character*4 :: ID
+
 C.....Rearrange density and corresponding values into 1D array 
 C     on each proc and calculate Ep
       m = 0
@@ -44,44 +46,44 @@ C     on each proc and calculate Ep
          m = m + 1
          rho_local(m) = phi(i,j,k)
          volume_local(m) = 1/jac(i,j,k)
-         lp_local(m) = ( ak + 0.5D0*(akst(i,j,k) + akst(i+1,j,k)) ) *
+         lp_local(m) = 
      <		g11(i,  j,  k  ) * ( phi(i+1,j,  k  ) - phi(i,j,k) )  
-     <        + ( ak + 0.5D0*(akst(i,j,k) + akst(i-1,j,k)) ) *
+     <        + 
      <		g11(i-1,j,  k  ) * ( phi(i-1,j,  k  ) - phi(i,j,k) )   
-     <        + ( ak + 0.5D0*(akst(i,j,k) + akst(i,j+1,k)) ) *
+     <        + 
      <		g22(i,  j,  k  ) * ( phi(i,  j+1,k  ) - phi(i,j,k) )   
-     <        + ( ak + 0.5D0*(akst(i,j,k) + akst(i,j-1,k)) ) *
+     <        + 
      <		g22(i,  j-1,k  ) * ( phi(i,  j-1,k  ) - phi(i,j,k) )  
-     <        + ( ak + 0.5D0*(akst(i,j,k) + akst(i,j,k+1)) ) *
+     <        + 
      <		g33(i,  j,  k  ) * ( phi(i,  j,  k+1) - phi(i,j,k) )  
-     <        + ( ak + 0.5D0*(akst(i,j,k) + akst(i,j,k-1)) ) *
+     <        + 
      <		g33(i,  j,  k-1) * ( phi(i,  j,  k-1) - phi(i,j,k) ) 
-     <        + ( ak + 0.5D0*(akst(i,j,k) + akst(i+1,j,k)) ) *
+     <        + 
      <		( g12(i,  j,k) * ( phi(i,  j+1,k) - phi(i,  j-1,k) 
      <		                 + phi(i+1,j+1,k) - phi(i+1,j-1,k) )
      <		+ g13(i,  j,k) * ( phi(i,  j,k+1) - phi(i,  j,k-1)
      <		                 + phi(i+1,j,k+1) - phi(i+1,j,k-1) ) ) 
-     <        - ( ak + 0.5D0*(akst(i,j,k) + akst(i-1,j,k)) ) *
+     <        - 
      <		( g12(i-1,j,k) * ( phi(i,  j+1,k) - phi(i,  j-1,k)
      <		                 + phi(i-1,j+1,k) - phi(i-1,j-1,k) )
      <		+ g13(i-1,j,k) * ( phi(i,  j,k+1) - phi(i,  j,k-1)
      <		                 + phi(i-1,j,k+1) - phi(i-1,j,k-1) ) )
-     <        + ( ak + 0.5D0*(akst(i,j,k) + akst(i,j+1,k)) ) *
+     <        + 
      <		( g23(i,j,  k) * ( phi(i,j,  k+1) - phi(i,j,  k-1)
      <		                 + phi(i,j+1,k+1) - phi(i,j+1,k-1) )
      <		+ g21(i,j,  k) * ( phi(i+1,j,  k) - phi(i-1,j,  k)
      <		                 + phi(i+1,j+1,k) - phi(i-1,j+1,k) ) ) 
-     <        - ( ak + 0.5D0*(akst(i,j,k) + akst(i,j-1,k)) ) *
+     <        - 
      <		( g23(i,j-1,k) * ( phi(i,j,  k+1) - phi(i,j,  k-1)
      <		                 + phi(i,j-1,k+1) - phi(i,j-1,k-1) ) 
      <		+ g21(i,j-1,k) * ( phi(i+1,j,  k) - phi(i-1,j,  k)
      <		                 + phi(i+1,j-1,k) - phi(i-1,j-1,k) ) )
-     <        + ( ak + 0.5D0*(akst(i,j,k) + akst(i,j,k+1)) ) *
+     <        + 
      <		( g31(i,j,k  ) * ( phi(i+1,j,k  ) - phi(i-1,j,k  )
      <		                 + phi(i+1,j,k+1) - phi(i-1,j,k+1) )
      <		+ g32(i,j,k  ) * ( phi(i,j+1,k  ) - phi(i,j-1,k  )
      <		                 + phi(i,j+1,k+1) - phi(i,j-1,k+1) ) ) 
-     <        - ( ak + 0.5D0*(akst(i,j,k) + akst(i,j,k-1)) ) *
+     <        - 
      <		( g31(i,j,k-1) * ( phi(i+1,j,k  ) - phi(i-1,j,k  )
      <		                 + phi(i+1,j,k-1) - phi(i-1,j,k-1) )
      <		+ g32(i,j,k-1) * ( phi(i,j+1,k  ) - phi(i,j-1,k  )
@@ -239,11 +241,22 @@ C     local_sorted_array_size to 1 on each proc.
       
       Eb = g*Eb
       call global_sum(Eb)
-      phi_d = g*phi_d
+      phi_d = ak*g*phi_d
       call global_sum(phi_d)
       
+C.....Print to screen and write to binary file
       if (MYID .EQ. 0) then
-         write(*,*) 'Ep = ', Ep, ' Eb = ', Eb, ' phi_d = ', phi_d
+         write(*,*) 'Ep = ', Ep, ' Eb = ', Eb
+         write(ID, fmt='(I3)') 500+myid
+         if (istep.gt.1) then
+           open(10+myid, file='output_energy.'//ID, form='unformatted',
+     <          status='old',position='append')
+         else
+           open(10+myid, file='output_energy.'//ID, form='unformatted',
+     <          status='unknown')
+         endif
+         write(10+myid) Ep, Eb, phi_d
+         close(unit = 10+myid)
       endif
 
       return
