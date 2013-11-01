@@ -79,7 +79,7 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
-      subroutine sort2(n,ra,rb,wksp,iwksp)
+      subroutine sort3(n,ra,rb,rc,wksp,iwksp)
       
       integer n,iwksp(n)
       double precision ra(n),rb(n),rc(n),wksp(n)
@@ -99,6 +99,13 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
       enddo
       do j=1,n
          rb(j)=wksp(iwksp(j))
+      enddo
+
+      do j=1,n
+         wksp(j)=rc(j)
+      enddo
+      do j=1,n
+         rc(j)=wksp(iwksp(j))
       enddo
 
       return
