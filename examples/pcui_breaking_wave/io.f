@@ -13,15 +13,15 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	if ( MYID .eq. 0 ) then
 
-	dtime     = 0.01D0
+	dtime     = 0.1D0
 	case      = 0
 	newrun    = 1
 	periodic  = 1
 	iscalar   = 1
 	ieddy     = 0
 	mg_level  = 5
-	nstep     = 10000
-	nsave     = 50
+	nstep     = 10
+	nsave     = 10
 	maxstep   = 10
 
 	do i = 1, 5

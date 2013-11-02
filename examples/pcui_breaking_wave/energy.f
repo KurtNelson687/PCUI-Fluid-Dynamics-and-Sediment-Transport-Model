@@ -23,7 +23,7 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
       double precision, allocatable :: lp_sorted(:)
       double precision, allocatable :: wksp_sorted(:)
       double precision Ep, Eb, phi_d 
-      double precision cell_bottom, cell_height, z_star, area
+      double precision cell_bottom, cell_height, z_star, area, xl
 
       integer i, j, k, m, N_local, N_global, Np, indx
       integer local_sorted_array_size
@@ -88,7 +88,7 @@ C     on each proc and calculate Ep
      <		                 + phi(i+1,j,k-1) - phi(i-1,j,k-1) )
      <		+ g32(i,j,k-1) * ( phi(i,j+1,k  ) - phi(i,j-1,k  )
      <		                 + phi(i,j+1,k-1) - phi(i,j-1,k-1) ) )
-         Ep = Ep + phi(i,j,k)*xp(i,j,k,2)*(1/jac(i,j,k))
+         Ep = Ep + phi(i,j,k)*(xp(i,j,k,2)+by)*(1/jac(i,j,k))
       enddo
       enddo
       enddo
@@ -214,12 +214,13 @@ C     backwards through these arrays. i.e., myid Np-1 to myid 0 and
 C     local_sorted_array_size to 1 on each proc. 
       Eb = 0.D0
       phi_d = 0.D0
-      area = bx*bz
 
       call receive_initial_local_height(cell_bottom)
       do i = local_sorted_array_size, 1, -1
+         call calculate_xl(xl,cell_bottom)
+         area = bz*xl
          cell_height = volume_sorted(i)/area
-         z_star = cell_bottom + 0.5D0*cell_height
+         z_star = cell_bottom + cell_height/2
          Eb = Eb + rho_sorted(i)*volume_sorted(i)*z_star
          phi_d = phi_d + z_star*lp_sorted(i)*volume_sorted(i)
          cell_bottom = cell_bottom + cell_height
@@ -269,19 +270,19 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
      
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
-      subroutine receive_initial_local_height(height)
+      subroutine receive_initial_local_height(hh)
       
       include "size.inc"
       include "mpif.h"
       include "mpi.inc"
 
       integer status(MPI_STATUS_SIZE)
-      double precision height
+      double precision hh
 
       if (MYID .EQ. px*py*pz-1) then
-         height = 0
+         hh = 0.D0
       else
-         call MPI_RECV( height,1,MPI_DOUBLE_PRECISION,myid+1,0,
+         call MPI_RECV( hh,1,MPI_DOUBLE_PRECISION,myid+1,0,
      <                  MPI_COMM_WORLD,status,ierr )
       endif
 
@@ -290,18 +291,71 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
-      subroutine send_final_local_height(height)
+      subroutine send_final_local_height(hh)
       
       include "mpif.h"
       include "mpi.inc"
 
-      double precision height
+      double precision hh
 
       if (MYID .GT. 0) then
-         call MPI_SEND( height,1,MPI_DOUBLE_PRECISION,myid-1,0,
+         call MPI_SEND( hh,1,MPI_DOUBLE_PRECISION,myid-1,0,
      <                  MPI_COMM_WORLD,ierr )
       endif
 
       return
       end
 
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+
+      subroutine calculate_xl(xl,cell_bottom)
+      
+      include "cavity.inc"
+
+      double precision cell_height, z_star, cell_bottom, cell_volume
+      double precision slope, xcend, ycend, yend, xl, xln
+      double precision Lflat, radius
+
+      slope = 0.218D0
+      ycend = -0.491158D0 + by
+      yend = -0.123609D0 + by 
+      Lflat = 2.675D0
+      xcend = Lflat + 0.638992D0
+      radius = 3.D0
+      if (cell_bottom .gt. ycend .and. cell_bottom .lt. yend) then
+         xl = xcend + (cell_bottom - ycend)/slope 
+      elseif (cell_bottom .ge. yend) then
+         xl = bx
+      else
+         xl = Lflat + (radius**2-(cell_bottom-radius)**2)**0.5D0
+      endif
+
+      return
+      end
+
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+
+      subroutine calculate_cell_height(xl,cell_bottom)
+      
+      include "cavity.inc"
+
+      double precision cell_height, z_star, cell_bottom, cell_volume
+      double precision slope, xcend, ycend, yend, xl, xln
+      double precision Lflat, radius
+
+      slope = 0.218D0
+      ycend = -0.491158D0 + by
+      yend = -0.123609D0 + by 
+      Lflat = 2.675D0
+      xcend = Lflat + 0.638992D0
+      radius = 3.D0
+      if (cell_bottom .gt. ycend .and. cell_bottom .lt. yend) then
+         xl = xcend + (cell_bottom - ycend)/slope 
+      elseif (cell_bottom .ge. yend) then
+         xl = bx
+      else
+         xl = Lflat + (radius**2-(cell_bottom-radius)**2)**0.5D0
+      endif
+
+      return
+      end
