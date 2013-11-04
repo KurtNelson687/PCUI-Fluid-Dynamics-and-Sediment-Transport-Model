@@ -1,4 +1,4 @@
-function [ddd,Ep,Eb,dEbdt,phi_d] =  read_binary_energy_pcui(folder, filenameD, dt)
+function [Ep,Eb,Ea,dEbdt,dEadt,phi_d] =  read_binary_energy_pcui(folder, filenameD, dt)
 %
 % Filename    : read_binary_energy_pcui.m
 
@@ -21,11 +21,20 @@ if isempty(ddd)
     return
 end
 
+%extract energy values
 nout = 3;
 Ep = ddd(1:nout+1:end);
 Eb = ddd(2:nout+1:end);
-dEbdt = (Eb(3:end)-Eb(1:end-2))/2/dt;
 phi_d = ddd(3:nout+1:end);
+
+%subtract initial value and calculate Ea
+Ep = Ep-Ep(1);
+Eb = Eb-Eb(1);
+Ea = Ep-Eb;
+
+%calculate evolution values
+dEbdt = (Eb(3:end)-Eb(1:end-2))/2/dt;
+dEadt = (Ea(3:end)-Ea(1:end-2))/2/dt;
 
 end
 

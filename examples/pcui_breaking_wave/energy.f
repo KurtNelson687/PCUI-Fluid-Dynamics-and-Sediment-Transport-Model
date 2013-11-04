@@ -23,7 +23,9 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
       double precision, allocatable :: lp_sorted(:)
       double precision, allocatable :: wksp_sorted(:)
       double precision Ep, Eb, phi_d 
-      double precision cell_bottom, cell_height, z_star, area, xl
+      double precision cell_bottom, cell_height, z_star
+      double precision slope, yend, Lflat, xlb, xlt, cell_area
+c     double precision area, xl
 
       integer i, j, k, m, N_local, N_global, Np, indx
       integer local_sorted_array_size
@@ -46,8 +48,8 @@ C     on each proc and calculate Ep
          m = m + 1
          rho_local(m) = phi(i,j,k)
          volume_local(m) = 1/jac(i,j,k)
-         lp_local(m) = 
-     <		g11(i,  j,  k  ) * ( phi(i+1,j,  k  ) - phi(i,j,k) )  
+         lp_local(m) = jac(i,j,k) *
+     <	 (g11(i,  j,  k  ) * ( phi(i+1,j,  k  ) - phi(i,j,k) )  
      <        + 
      <		g11(i-1,j,  k  ) * ( phi(i-1,j,  k  ) - phi(i,j,k) )   
      <        + 
@@ -87,7 +89,8 @@ C     on each proc and calculate Ep
      <		( g31(i,j,k-1) * ( phi(i+1,j,k  ) - phi(i-1,j,k  )
      <		                 + phi(i+1,j,k-1) - phi(i-1,j,k-1) )
      <		+ g32(i,j,k-1) * ( phi(i,j+1,k  ) - phi(i,j-1,k  )
-     <		                 + phi(i,j+1,k-1) - phi(i,j-1,k-1) ) )
+     <		                 + phi(i,j+1,k-1) - phi(i,j-1,k-1) ) ) )
+
          Ep = Ep + phi(i,j,k)*(xp(i,j,k,2)+by)*(1/jac(i,j,k))
       enddo
       enddo
@@ -214,18 +217,38 @@ C     backwards through these arrays. i.e., myid Np-1 to myid 0 and
 C     local_sorted_array_size to 1 on each proc. 
       Eb = 0.D0
       phi_d = 0.D0
+      slope = 0.218D0
+      yend = -0.123609D0 + by 
+      Lflat = 3.D0
 
       call receive_initial_local_height(cell_bottom)
       do i = local_sorted_array_size, 1, -1
-         call calculate_xl(xl,cell_bottom)
-         area = bz*xl
-         cell_height = volume_sorted(i)/area
-         z_star = cell_bottom + cell_height/2
+c        call calculate_xl(xl,cell_bottom)
+c        area = bz*xl
+c        cell_height = volume_sorted(i)/area
+c        z_star = cell_bottom + cell_height/2
+c        call calculate_cell_height(cell_height,z_star,cell_bottom,
+c    <                              volume_sorted(i)/bz)
+         cell_area = volume_sorted(i)/bz
+         if (cell_bottom .lt. yend) then
+            xlb = Lflat + cell_bottom/slope
+            cell_height = slope*(-xlb + 
+     <                                sqrt(xlb**2 + 2*cell_area/slope))
+            xlt = xlb + cell_height/slope
+            z_star = cell_bottom + (cell_height/3)*(xlb+2*xlt)/(xlb+xlt)
+         else 
+            cell_height = cell_area/bx
+            z_star = cell_bottom + cell_height/2
+         endif
+
          Eb = Eb + rho_sorted(i)*volume_sorted(i)*z_star
          phi_d = phi_d + z_star*lp_sorted(i)*volume_sorted(i)
          cell_bottom = cell_bottom + cell_height
+c        write(*,*) volume_sorted(i)/bz
       enddo
       call send_final_local_height(cell_bottom)
+
+c     write(*,*) cell_bottom
       
       Eb = g*Eb
       call global_sum(Eb)
@@ -335,26 +358,26 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
-      subroutine calculate_cell_height(xl,cell_bottom)
+      subroutine calculate_cell_height(cell_height,z_star,cell_bottom
+     <                                 cell_area)
       
       include "cavity.inc"
 
-      double precision cell_height, z_star, cell_bottom, cell_volume
-      double precision slope, xcend, ycend, yend, xl, xln
-      double precision Lflat, radius
+      double precision cell_height, z_star, cell_bottom, cell_area
+      double precision slope, yend, Lflat, xlb, xlt 
 
       slope = 0.218D0
-      ycend = -0.491158D0 + by
       yend = -0.123609D0 + by 
-      Lflat = 2.675D0
-      xcend = Lflat + 0.638992D0
-      radius = 3.D0
-      if (cell_bottom .gt. ycend .and. cell_bottom .lt. yend) then
-         xl = xcend + (cell_bottom - ycend)/slope 
-      elseif (cell_bottom .ge. yend) then
-         xl = bx
-      else
-         xl = Lflat + (radius**2-(cell_bottom-radius)**2)**0.5D0
+      Lflat = 3.D0
+      if (cell_bottom .lt. yend) then
+         xlb = Lflat + cell_bottom/slope
+         cell_height = slope*(-xlb + sqrt(xlb**2 + 2*cell_area/slope))
+         write(*,*) cell_height
+         xlt = xlb + cell_height/slope
+         z_star = cell_bottom + (cell_height/3)*(xlb+2*xlt)/(xlb+xlt)
+      else 
+         cell_height = cell_area/bx
+         z_star = cell_bottom + cell_height/2
       endif
 
       return
