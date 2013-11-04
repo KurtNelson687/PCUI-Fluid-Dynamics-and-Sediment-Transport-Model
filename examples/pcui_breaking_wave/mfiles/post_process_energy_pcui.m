@@ -107,7 +107,7 @@ z = z(exi,exj,exk);
 metrics = calculate_binary_metrics(x,y,z);
 
 % read the energy file
-[Ep,Eb,Ea,dEbdt,dEadt,phi_d] = read_binary_energy_pcui(working_folder, fname_energy, params.dt);
+[Ep,Eb,Ea,dEpdt,dEbdt,dEadt,phi_d] = read_binary_energy_pcui(working_folder, fname_energy, params.dt);
 
 % -------------------------------------------------------------------------
 % Calculate dissipation
@@ -116,28 +116,37 @@ iskip = 1;
 istart =  1;
 iend = floor(params.nsteps/params.nsave);
 
-eps = zeros(1,iend); Ek = eps;
+eps = zeros(1,iend); Ek = eps; phi_z = eps;
 for istep = istart:iskip:iend
     display(istep);
     
-    % Read velocity field (includes 2 halo cells)
+    % Read velocity field (includes 1 halo cell)
     [u,v,w] = read_binary_file_pcui(working_folder, fname_uvw, istep, ...
                                       params, 1,1);     
     u = u(exi,exj,exk);
     v = v(exi,exj,exk);
     w = w(exi,exj,exk);
     
-%     % Read density field
-%     rho = read_binary_file_pcui(working_folder, fname_rho, istep, ...
-%                                  params, 0,0);     
-%     rho = squeeze(rho(:,:,floor(length(z(1,1,:)/2))));
+    % Read density field (includes 0 halo cells)
+    rho = read_binary_file_pcui(working_folder, fname_rho, istep, ...
+                                 params, 0,1);     
+    rho = rho(exi(2:end-1),exj(2:end-1),exk(2:end-1));
+    
+    %Calculate phi_z
+    phi_z(istep) = 9.81*sum(sum(sum(rho.*v(2:end-1,2:end-1,2:end-1).*metrics.J)));
 
     %Calculate dissipation
     eps(istep) = calculate_binary_dissipation(u,v,w,10^-6,metrics);
+    
+    %Calculate kinetic energy
     Ek(istep) = 0.5*sum(sum(sum((u(2:end-1,2:end-1,2:end-1).^2 ...
                                 +v(2:end-1,2:end-1,2:end-1).^2 ...
                                 +w(2:end-1,2:end-1,2:end-1).^2).*metrics.J)));
 end
+
+Et = Ek + Ep(1:params.nsave:params.nsteps)';
+dEtdt = (Et(3:end)-Et(1:end-2))/2/params.dt/params.nsave;
+dEkdt = (Ek(3:end)-Ek(1:end-2))/2/params.dt/params.nsave;
 
 %%
 % -------------------------------------------------------------------------
@@ -148,8 +157,11 @@ tdt = t(2:end-1);
 tn = params.dt*istart:params.dt*params.nsave:params.dt*params.nsteps;
 
 figure(1);
-plot(t,Ep,'k',t,Eb,'b',t,Ea,'r',tn,Ek,'k--');
+plot(tn,Et,'k',t,Ep,'k--',t,Eb,'b',t,Ea,'r',tn,Ek,'k:');
 
 figure(2);
+plot(tn(2:end-1),dEtdt,'k',tdt,dEpdt,'k--',tdt,dEbdt,'b',tdt,dEadt,'r',tn(2:end-1),dEkdt,'k:',tn,phi_z,'m')
+
+figure(3);
 plot(t,phi_d,'b',tn,eps,'k',tdt,dEbdt*10^-1,'b');
 
