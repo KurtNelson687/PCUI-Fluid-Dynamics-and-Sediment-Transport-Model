@@ -120,9 +120,9 @@ write_binary_file_pcui(working_folder, fname_grid_to_PCUI, params, xyz_pcui);
 % -------------------------------------------------------------------------
 % Prepare density field
 h1 = -0.3;
-a = 0.1;
+a = 0.15;
 Lw = 0.7;
-delta = 0.2;
+delta = 0.05;
 alpha = 0.99;
 rho_init_pcui = ones(size(x_pcui));
 zeta = -a*exp(-(x_pcui/Lw).^2) + 0.001*rand(size(x_pcui));

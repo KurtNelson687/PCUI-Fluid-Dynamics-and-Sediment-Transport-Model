@@ -8,4 +8,5 @@ continue_run.*
 *.7*
 *.5*
 qoutput
+pcui_harold/*
 

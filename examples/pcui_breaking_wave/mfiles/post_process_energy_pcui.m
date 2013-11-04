@@ -117,6 +117,7 @@ istart =  1;
 iend = floor(params.nsteps/params.nsave);
 
 eps = zeros(1,iend); Ek = eps; phi_z = eps;
+eps_top = eps; eps_int = eps; eps_low = eps; eps_bot = eps; eps_tot = eps;
 for istep = istart:iskip:iend
     display(istep);
     
@@ -129,14 +130,15 @@ for istep = istart:iskip:iend
     
     % Read density field (includes 0 halo cells)
     rho = read_binary_file_pcui(working_folder, fname_rho, istep, ...
-                                 params, 0,1);     
-    rho = rho(exi(2:end-1),exj(2:end-1),exk(2:end-1));
+                                 params, 0,0);     
     
     %Calculate phi_z
     phi_z(istep) = 9.81*sum(sum(sum(rho.*v(2:end-1,2:end-1,2:end-1).*metrics.J)));
 
     %Calculate dissipation
-    eps(istep) = calculate_binary_dissipation(u,v,w,10^-6,metrics);
+%     eps(istep) = calculate_binary_dissipation(u,v,w,10^-6,metrics);
+    [eps_top(istep),eps_int(istep),eps_low(istep),eps_bot(istep),eps_tot(istep)] = ...
+               calculate_binary_dissipation_breakdown(u,v,w,rho,10^-6,metrics);
     
     %Calculate kinetic energy
     Ek(istep) = 0.5*sum(sum(sum((u(2:end-1,2:end-1,2:end-1).^2 ...
@@ -163,5 +165,6 @@ figure(2);
 plot(tn(2:end-1),dEtdt,'k',tdt,dEpdt,'k--',tdt,dEbdt,'b',tdt,dEadt,'r',tn(2:end-1),dEkdt,'k:',tn,phi_z,'m')
 
 figure(3);
-plot(t,phi_d,'b',tn,eps,'k',tdt,dEbdt*10^-1,'b');
-
+% plot(t,phi_d,'b',tn,eps,'k',tdt,dEbdt*10^-1,'b');
+plot(tn,eps_top,'m',tn,eps_int,'b',tn,eps_low,'g',tn,eps_bot,'r',tn,eps_tot,'k')
+% bar(tn,[eps_bot' eps_int' eps_top' eps_low'],'stack')
