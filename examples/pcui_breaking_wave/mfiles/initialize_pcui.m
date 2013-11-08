@@ -120,8 +120,8 @@ write_binary_file_pcui(working_folder, fname_grid_to_PCUI, params, xyz_pcui);
 % -------------------------------------------------------------------------
 % Prepare density field
 h1 = -0.3;
-a = 0.15;
-Lw = 0.7;
+a = 0.10;
+Lw = 0.4;
 delta = 0.05;
 alpha = 0.99;
 rho_init_pcui = ones(size(x_pcui));
@@ -156,6 +156,7 @@ rho_pert_plot = -0.5*0.03*tanh(2*(y_plot - zeta_plot - h1)/delta*atanh(alpha));
 rho_full_plot = rho_init_plot+rho_pert_plot;
 pcolor(x_plot,y_plot,rho_full_plot);
 axis image;
+shading flat;
 colorbar;
 
 % -------------------------------------------------------------------------

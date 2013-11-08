@@ -9,4 +9,5 @@ continue_run.*
 *.5*
 qoutput
 /examples/pcui_harold/*
+*.mat
 

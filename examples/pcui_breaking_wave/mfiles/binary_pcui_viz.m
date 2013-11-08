@@ -1,19 +1,8 @@
-% Displays CNS simulation data from binary output files
+% Displays PCUI simulation data from binary output files
 clear all; clc; close all;
 
-smooth = 0; % Interpolate shading in plot
-isprint = 0; % Print plot to eps file
-plot_name = 'breaking_wave';
-working_folder = '../';
-save_folder =    '../figs';
-% These are the output files with the filenames stripped out of extensions 
-% (extensions are chosen automatically based on number of processors).
-fname_xyz = 'xyz';
-fname_rho = 'output_S';
-fname_uvw = 'output_UVW';
-
 % PLOTTING OPTIONS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-istep = 70; %timestep to plot
+timestep = 10000; %timestep to plot
 delta_ts = 0; %averaging
 FIGURE_ON = 1; %figure visible?
     print_ext = '-dpng'; %image file type
@@ -38,6 +27,14 @@ plot_yz = 0; %y-z plot
 plot_quiver = 0;
 show_grid_lines = 0; %false = shading flat
 
+working_folder = '../';
+save_folder =    '../figs';
+% These are the output files with the filenames stripped out of extensions 
+% (extensions are chosen automatically based on number of processors).
+fname_xyz = 'xyz';
+fname_rho = 'output_S';
+fname_uvw = 'output_UVW';
+
 % OTHER PARAMETERS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % read the file containing the parameter definition
 ftext = fileread(fullfile(working_folder, 'io.f'));
@@ -61,6 +58,10 @@ params.nk = variable_value_pcui('nk',ftext); Ny = params.nk;
 params.px = variable_value_pcui('px',ftext);
 params.py = variable_value_pcui('py',ftext);
 params.pz = variable_value_pcui('pz',ftext);
+
+%Find correct istep value
+n = [0, params.nsave:params.nsave:params.nsteps, params.nsteps+1];
+istep = find(n==timestep,1);
 
 % GRID %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % read the files containing the grid definition and assemble into array
@@ -162,7 +163,7 @@ if(display_grid)
         ylabel('z [m]');
         title('Computational grid, x-z slice');
         %print(grid_fig_xz,print_ext,print_res,'grid_xz');
-        saveas(grid_fig_xz,'grid_xz.fig');
+        %saveas(grid_fig_xz,'grid_xz.fig');
     end
     
     if(plot_yz)
@@ -178,7 +179,7 @@ if(display_grid)
         ylabel('z [m]');
         title('Computational grid, y-z slice');
         %print(grid_fig_yz,print_ext,print_res,'grid_yz');
-        saveas(grid_fig_yz,'grid_yz.fig');
+        %saveas(grid_fig_yz,'grid_yz.fig');
     end
 end
 
@@ -212,7 +213,7 @@ if(display_density)
            hold off;
        end
        %print(rho_fig_xz,print_ext,print_res,'density_xz');
-       saveas(rho_fig_xz,'density_xz.png');
+       %saveas(rho_fig_xz,'density_xz.png');
    end
 
    if(plot_yz)
@@ -233,7 +234,7 @@ if(display_density)
            shading flat;
        end
        %print(rho_fig_yz,print_ext,print_res,'density_yz');
-       saveas(rho_fig_yz,'density_yz.fig');
+       %saveas(rho_fig_yz,'density_yz.fig');
    end
 end
 
@@ -269,7 +270,7 @@ if(display_velocity)
             shading flat;
         end
         %print(velocity_fig_xz,print_ext,print_res,'velocity_xz');
-        saveas(velocity_fig_xz,'velocity_xz.fig');
+        %saveas(velocity_fig_xz,'velocity_xz.fig');
     end
     
     if(plot_yz)
@@ -295,7 +296,7 @@ if(display_velocity)
             shading flat;
         end
         %print(velocity_fig_yz,print_ext,print_res,'velocity_yz');
-        saveas(velocity_fig_yz,'velocity_yz.fig');
+        %saveas(velocity_fig_yz,'velocity_yz.fig');
     end  
 end
 
@@ -326,7 +327,7 @@ if(display_scalar)
            shading flat;
        end
        %print(phi_fig_xz,print_ext,print_res,'scalar_xz');
-       saveas(phi_fig_xz,'scalar_xz.fig');
+       %saveas(phi_fig_xz,'scalar_xz.fig');
    end
    
    if(plot_yz)
@@ -351,7 +352,7 @@ if(display_scalar)
            shading flat;
        end
        %print(phi_fig_yz,print_ext,print_res,'scalar_yz');
-       saveas(phi_fig_yz,'scalar_yz.fig');
+       %saveas(phi_fig_yz,'scalar_yz.fig');
    end
 end
 
@@ -377,7 +378,7 @@ if(display_pressure)
            shading flat;
        end
        %print(p_fig_xz,print_ext,print_res,'pressure_xz');
-       saveas(p_fig_xz,'pressure_xz.fig');
+       %saveas(p_fig_xz,'pressure_xz.fig');
    end
    
    if(plot_yz)
@@ -398,7 +399,7 @@ if(display_pressure)
            shading flat;
        end
        %print(p_fig_yz,print_ext,print_res,'pressure_yz');
-       saveas(p_fig_yz,'pressure_yz.fig');
+       %saveas(p_fig_yz,'pressure_yz.fig');
    end
 end
 
@@ -454,7 +455,7 @@ if(display_density_isosurface)
     zlabel('z [m]');
     title(['Isosurface of \Delta\rho/\rho_0=',num2str(rho_iso)]);
     %print(isoplot,print_ext,print_res,'isoplot_3D');
-    saveas(isoplot,'isoplot_3D.fig');
+    %saveas(isoplot,'isoplot_3D.fig');
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

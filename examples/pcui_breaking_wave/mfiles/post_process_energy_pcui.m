@@ -10,9 +10,6 @@
 
 clear all; close all; clc;
 
-smooth = 0; % Interpolate shading in plot
-isprint = 0; % Print plot to eps file
-plot_name = 'breaking_wave';
 working_folder = '../';
 save_folder =    '../figs';
 % These are the output files with the filenames stripped out of extensions 
@@ -29,7 +26,7 @@ fname_energy = 'output_energy';
 ftext = fileread(fullfile(working_folder, 'io.f'));
 params.dt = variable_value_pcui('dtime',ftext);
 params.molecular_viscosity = variable_value_pcui('vis',ftext);
-params.eddy_viscosity = variable_value_pcui('ak',ftext);
+params.molecular_diffusivity = variable_value_pcui('ak',ftext);
 params.nsteps = variable_value_pcui('nstep',ftext);
 params.nsave = variable_value_pcui('nsave',ftext);
 
@@ -110,15 +107,19 @@ metrics = calculate_binary_metrics(x,y,z);
 [Ep,Eb,Ea,dEpdt,dEbdt,dEadt,phi_d] = read_binary_energy_pcui(working_folder, fname_energy, params.dt);
 
 % -------------------------------------------------------------------------
-% Calculate dissipation
+% Calculate other energy quantities
 % -------------------------------------------------------------------------
-iskip = 1;
-istart =  1;
-iend = floor(params.nsteps/params.nsave);
+istart = 2; %after initial condition output
+iend = params.nsteps/params.nsave + 1;
 
-eps = zeros(1,iend); Ek = eps; phi_z = eps;
-eps_top = eps; eps_int = eps; eps_low = eps; eps_bot = eps; eps_tot = eps;
-for istep = istart:iskip:iend
+nu = params.molecular_viscosity; 
+kappa = params.molecular_diffusivity;
+g = 9.81;
+
+Ek = zeros(params.nsteps/params.nsave,1); 
+phi_z = Ek; phi_i = Ek;
+eps_top = Ek; eps_int = Ek; eps_low = Ek; eps_bot = Ek; eps_tot = Ek;
+for istep = istart:iend
     display(istep);
     
     % Read velocity field (includes 1 halo cell)
@@ -131,40 +132,54 @@ for istep = istart:iskip:iend
     % Read density field (includes 0 halo cells)
     rho = read_binary_file_pcui(working_folder, fname_rho, istep, ...
                                  params, 0,0);     
+                             
+    %Calculate phi_i
+    phi_i(istep-1) = -kappa*g*...
+            ( sum(sum(squeeze(rho(:,end,:)).*squeeze(metrics.ET_Y(:,end,:)))) ...
+             -sum(sum(squeeze(rho(:,1,  :)).*squeeze(metrics.ET_Y(:,1,  :)))) );
     
     %Calculate phi_z
-    phi_z(istep) = 9.81*sum(sum(sum(rho.*v(2:end-1,2:end-1,2:end-1).*metrics.J)));
+    phi_z(istep-1) = g*sum(sum(sum(rho.*v(2:end-1,2:end-1,2:end-1).*metrics.J)));
 
     %Calculate dissipation
-%     eps(istep) = calculate_binary_dissipation(u,v,w,10^-6,metrics);
-    [eps_top(istep),eps_int(istep),eps_low(istep),eps_bot(istep),eps_tot(istep)] = ...
-               calculate_binary_dissipation_breakdown(u,v,w,rho,10^-6,metrics);
+%     eps_tot(istep) = calculate_binary_dissipation(u,v,w,10^-6,metrics);
+    [eps_top(istep-1),eps_int(istep-1),eps_low(istep-1),eps_bot(istep-1),eps_tot(istep-1)] = ...
+               calculate_binary_dissipation_breakdown(u,v,w,rho,nu,metrics);
     
     %Calculate kinetic energy
-    Ek(istep) = 0.5*sum(sum(sum((u(2:end-1,2:end-1,2:end-1).^2 ...
+    Ek(istep-1) = 0.5*sum(sum(sum((u(2:end-1,2:end-1,2:end-1).^2 ...
                                 +v(2:end-1,2:end-1,2:end-1).^2 ...
                                 +w(2:end-1,2:end-1,2:end-1).^2).*metrics.J)));
 end
 
-Et = Ek + Ep(1:params.nsave:params.nsteps)';
+Et = Ek + Ep(params.nsave:params.nsave:params.nsteps);
 dEtdt = (Et(3:end)-Et(1:end-2))/2/params.dt/params.nsave;
 dEkdt = (Ek(3:end)-Ek(1:end-2))/2/params.dt/params.nsave;
+phi_d_eff = phi_d(params.nsave:params.nsave:params.nsteps) - phi_i;
 
 %%
 % -------------------------------------------------------------------------
 % Plot energy quantities
 % -------------------------------------------------------------------------
-t = params.dt:params.dt:params.dt*params.nsteps;
+t = params.dt*(1:params.nsteps);
 tdt = t(2:end-1);
-tn = params.dt*istart:params.dt*params.nsave:params.dt*params.nsteps;
+tn = params.dt*(params.nsave:params.nsave:params.nsteps);
 
 figure(1);
 plot(tn,Et,'k',t,Ep,'k--',t,Eb,'b',t,Ea,'r',tn,Ek,'k:');
 
 figure(2);
-plot(tn(2:end-1),dEtdt,'k',tdt,dEpdt,'k--',tdt,dEbdt,'b',tdt,dEadt,'r',tn(2:end-1),dEkdt,'k:',tn,phi_z,'m')
+plot(tn(2:end-1),dEtdt,'k',tdt,dEpdt,'k--',tdt,dEbdt,'b',tdt,dEadt,'r',tn(2:end-1),dEkdt,'k:',[0 tn(end)],[0 0],'k')
 
 figure(3);
-% plot(t,phi_d,'b',tn,eps,'k',tdt,dEbdt*10^-1,'b');
+plot(t,phi_d,'b',tn,eps_tot,'k',tn,phi_i,'b:',tn,phi_d_eff,'r');
+
+figure(4);
+eta = phi_d_eff./(phi_d_eff+eps_tot);
+eta_cum = cumtrapz(tn,phi_d_eff)./(cumtrapz(tn,phi_d_eff)+cumtrapz(tn,eps_tot));
+plot(tn,eta,'b',tn,eta_cum,'k');
+
+figure(5);
 plot(tn,eps_top,'m',tn,eps_int,'b',tn,eps_low,'g',tn,eps_bot,'r',tn,eps_tot,'k')
 % bar(tn,[eps_bot' eps_int' eps_top' eps_low'],'stack')
+
