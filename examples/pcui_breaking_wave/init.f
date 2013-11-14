@@ -112,6 +112,16 @@ C...... lid velocities u_lid and w_lid
 		 close(700+myid)
 	      end if
              call phi_bc
+             
+        inquire(file='phi_init_from_matlab.'//ID, exist=iostat) 
+	      if (iostat.eqv..true..and.grid_only.ne.1) then
+		  open(700+myid, file = 'phi_init_from_matlab.'//ID,
+     <                          form='unformatted',status='unknown')
+		  read(700+myid) phi2
+		  close(700+myid)
+	      end if
+            call phi2_bc
+
 	   end if
 
 C...... lid velocities u_lid and w_lid

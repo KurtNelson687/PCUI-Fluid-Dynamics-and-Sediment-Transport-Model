@@ -19,6 +19,7 @@ save_folder =    '../figs';
 % (extensions are chosen automatically based on number of processors).
 fname_xyz = 'xyz';
 fname_rho = 'output_S';
+fname_phi = 'output_phi';
 fname_uvw = 'output_UVW';
 
 % -------------------------------------------------------------------------
@@ -65,7 +66,7 @@ set(fig1,'Renderer','zbuffer');
 set(fig1,'Color','black');
 set(fig1,'Position',[200 200 1000 1000]);
 
-iskip = 5;
+iskip = 1;
 istart =  1;
 iend = floor(params.nsteps/params.nsave);
 for istep = istart:iskip:iend
@@ -82,25 +83,30 @@ for istep = istart:iskip:iend
                                  params, 0,0);     
     rho = squeeze(rho(:,:,floor(length(z(1,1,:)/2))));
     
-    % Plot
-    subplot(2,2,1)    
-    cla    
-    h1=pcolor(x,y,u);     
-    %set(h1, 'EdgeColor', 'none');    
-    xlabel('x (m)','color','w')
-    ylabel('y (m)','color','w')
-    title('u','color','w')
-    axis([0 params.bx 0 params.by])
-    if smooth
-        shading interp
-    end
-    axis image;
-    shading flat;
-    colorbar;
+    % Read scalar field
+    phi = read_binary_file_pcui(working_folder, fname_phi, istep, ...
+                                 params, 0,0);     
+    phi = squeeze(phi(:,:,floor(length(z(1,1,:)/2))));
     
-    subplot(2,2,2)    
+%     % Plot
+%     subplot(2,2,1)    
+%     cla    
+%     h1=pcolor(x,y,u);     
+%     %set(h1, 'EdgeColor', 'none');    
+%     xlabel('x (m)','color','w')
+%     ylabel('y (m)','color','w')
+%     title('u','color','w')
+%     axis([0 params.bx 0 params.by])
+%     if smooth
+%         shading interp
+%     end
+%     axis image;
+%     shading flat;
+%     colorbar;
+%     
+    subplot(2,1,1)    
     cla    
-    h2=pcolor(x,y,v);     
+    h2=pcolor(x,y,rho);     
     %set(h2, 'EdgeColor', 'none');
     xlabel('x (m)','color','w')
     ylabel('y (m)','color','w')
@@ -113,9 +119,9 @@ for istep = istart:iskip:iend
     shading flat;
     colorbar;
     
-    subplot(2,2,3)    
+    subplot(2,1,2)    
     cla
-    h3=pcolor(x,y,rho);     
+    h3=pcolor(x,y,phi);     
     %set(h3, 'EdgeColor', 'none');   
     xlabel('x (m)','color','w')
     ylabel('y (m)','color','w')
@@ -128,22 +134,23 @@ for istep = istart:iskip:iend
     shading flat;
     colorbar;
     
-    subplot(2,2,4)    
-    cla    
-    skipx = 4; intx = 1:skipx:params.ni;
-    skipy = 4; inty = 1:skipy:params.nj;    
-    h4=quiver(x(intx,inty),y(intx,inty),u(intx,inty),v(intx,inty));    
-    xlabel('x (m)','color','w')
-    ylabel('y (m)','color','w')
-    title('u,v quiver plot','color','w')
-    axis([0 params.bx 0 params.by])
-    axis image;
-    tim = (istep-1)*params.dt*params.nsave;
-    str = [num2str(tim) '/' num2str(params.dt*params.nsteps) ' s'];
-    uicontrol('Style', 'text', 'String', str, 'Units','normalized', ...
-              'Position', [0.4 0.48 0.23 0.04]);
+%     subplot(2,2,4)    
+%     cla    
+%     skipx = 4; intx = 1:skipx:params.ni;
+%     skipy = 4; inty = 1:skipy:params.nj;    
+%     h4=quiver(x(intx,inty),y(intx,inty),u(intx,inty),v(intx,inty));    
+%     xlabel('x (m)','color','w')
+%     ylabel('y (m)','color','w')
+%     title('u,v quiver plot','color','w')
+%     axis([0 params.bx 0 params.by])
+%     axis image;
+%     tim = (istep-1)*params.dt*params.nsave;
+%     str = [num2str(tim) '/' num2str(params.dt*params.nsteps) ' s'];
+%     uicontrol('Style', 'text', 'String', str, 'Units','normalized', ...
+%               'Position', [0.4 0.48 0.23 0.04]);
           
     drawnow;
+    pause;
 end
 
 if isprint

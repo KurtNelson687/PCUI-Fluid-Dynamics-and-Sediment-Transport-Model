@@ -4,7 +4,7 @@ FLAG = -c -w -O3
 OBCA = ns.o mp.o io.o \
        init.o conv.o pred.o corr.o trid.o scal.o\
        pres.o smad.o resd.o fctr.o exch.o eddy.o\
-			 indexx.o energy.o
+			 indexx.o energy.o scal2.o
 
 OBCAS =nsst.o mp.o io.o stat.o\
        init.o conv.o pred.o corr.o trid.o scal.o\
@@ -104,6 +104,10 @@ grid_init.o : grid_init.f $(INCS)
 # scalar 
 scal.o : scal.f $(INCS)
 	$(COMP) $(FLAG) scal.f 
+
+# scalar 2
+scal2.o : scal2.f $(INCS)
+	$(COMP) $(FLAG) scal2.f
 
 # sort
 indexx.o : indexx.f $(INCS)

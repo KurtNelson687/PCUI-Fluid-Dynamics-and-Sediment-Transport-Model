@@ -21,6 +21,7 @@ fname_uvw = 'input_UVW';
 fname_UVW_to_PCUI = 'uvw_init_from_matlab';
 fname_rho_init_to_PCUI = 'rho_init_from_matlab';
 fname_rho_full_to_PCUI = 'rho_full_from_matlab';
+fname_phi_to_PCUI = 'phi_init_from_matlab';
 fname_grid_to_PCUI = 'xyz_init_from_matlab';
 
 % -------------------------------------------------------------------------
@@ -53,7 +54,7 @@ params.pz = variable_value_pcui('pz',ftext);
 % Initialize PCUI grid
 % -------------------------------------------------------------------------
 % Load global grid from grid generator file and rearrange y and z
-load '/home/barthur/zang/grids/stretch_test_2.mat'
+load '/home/barthur/zang/grids/stretch_test.mat'
 x_global = x; x_global = permute(x_global,[1 3 2]);
 y_global = z; y_global = permute(y_global,[1 3 2]);
 z_global = y; z_global = permute(z_global,[1 3 2]);
@@ -122,7 +123,7 @@ write_binary_file_pcui(working_folder, fname_grid_to_PCUI, params, xyz_pcui);
 h1 = -0.3;
 a = 0.10;
 Lw = 0.4;
-delta = 0.05;
+delta = 0.2;
 alpha = 0.99;
 rho_init_pcui = ones(size(x_pcui));
 zeta = -a*exp(-(x_pcui/Lw).^2) + 0.001*rand(size(x_pcui));
@@ -138,6 +139,13 @@ uvw_pcui(:,:,:,3) = w_pcui;
 write_binary_file_pcui(working_folder, fname_rho_full_to_PCUI, params, rho_full_pcui);
 write_binary_file_pcui(working_folder, fname_rho_init_to_PCUI, params, rho_init_pcui);
 write_binary_file_pcui(working_folder, fname_UVW_to_PCUI, params, uvw_pcui); 
+
+% -------------------------------------------------------------------------
+% Initialize PCUI with a passive scalar
+% -------------------------------------------------------------------------
+phi_pcui = zeros(size(x_pcui));
+phi_pcui(x_pcui>3.52 & x_pcui<4) = 1;
+write_binary_file_pcui(working_folder, fname_phi_to_PCUI, params, phi_pcui);
 
 % -------------------------------------------------------------------------
 % Verify initialized solitary wave
@@ -160,32 +168,47 @@ shading flat;
 colorbar;
 
 % -------------------------------------------------------------------------
-% Verify initialized grid
+% Verify initialized solitary wave
 % -------------------------------------------------------------------------
-%Plot grid
+phi_plot = zeros(size(x_plot));
+phi_plot(x_plot>3.52 & x_plot<4) = 1;
+
 fig2 = figure(2);
 clf
 set(fig2,'Renderer','zbuffer');
 set(fig2,'Color','white');
-plot(squeeze(x_global(:,:,1)),squeeze(y_global(:,:,1)),'k.');
-xlabel('x [m]');
-ylabel('y [m]');
-axis equal;
+pcolor(x_plot,y_plot,phi_plot);
+axis image;
+shading flat;
+colorbar;
 
-fig3 = figure(3);
-clf
-set(fig3,'Renderer','zbuffer');
-set(fig3,'Color','white');
-plot(squeeze(x_global(:,1,:)),squeeze(z_global(:,1,:)),'k.');
-xlabel('x [m]');
-ylabel('z [m]');
-axis equal;
-
-fig4 = figure(4);
-clf
-set(fig4,'Renderer','zbuffer');
-set(fig4,'Color','white');
-plot(squeeze(z_global(1,:,:)),squeeze(y_global(1,:,:)),'k.');
-xlabel('z [m]');
-ylabel('y [m]');
-axis equal;
+% % -------------------------------------------------------------------------
+% % Verify initialized grid
+% % -------------------------------------------------------------------------
+% %Plot grid
+% fig3 = figure(3);
+% clf
+% set(fig2,'Renderer','zbuffer');
+% set(fig2,'Color','white');
+% plot(squeeze(x_global(:,:,1)),squeeze(y_global(:,:,1)),'k.');
+% xlabel('x [m]');
+% ylabel('y [m]');
+% axis equal;
+% 
+% fig4 = figure(4);
+% clf
+% set(fig3,'Renderer','zbuffer');
+% set(fig3,'Color','white');
+% plot(squeeze(x_global(:,1,:)),squeeze(z_global(:,1,:)),'k.');
+% xlabel('x [m]');
+% ylabel('z [m]');
+% axis equal;
+% 
+% fig5 = figure(5);
+% clf
+% set(fig4,'Renderer','zbuffer');
+% set(fig4,'Color','white');
+% plot(squeeze(z_global(1,:,:)),squeeze(y_global(1,:,:)),'k.');
+% xlabel('z [m]');
+% ylabel('y [m]');
+% axis equal;

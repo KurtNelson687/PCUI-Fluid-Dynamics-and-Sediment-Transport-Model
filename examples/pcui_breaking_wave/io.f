@@ -13,14 +13,14 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	if ( MYID .eq. 0 ) then
 
-	dtime     = 0.01D0
+	dtime     = 0.1D0
 	case      = 0
 	newrun    = 1
 	periodic  = 1
 	iscalar   = 1
 	ieddy     = 0
 	mg_level  = 5
-	nstep     = 10000
+	nstep     = 1000
 	nsave     = 50
 	maxstep   = 10
 
@@ -41,7 +41,6 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         omg_lid     = 0
         factor      = 1.0e-4
         phi1        = 0
-        phi2        = 0
         yphi        = 0
         aphi        = 1.
 
@@ -86,8 +85,6 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
      <                              MPI_COMM_WORLD,ierr)
 
 	call MPI_BCAST(phi1,        1,MPI_DOUBLE_PRECISION,0,
-     <                              MPI_COMM_WORLD,ierr)
-	call MPI_BCAST(phi2,        1,MPI_DOUBLE_PRECISION,0,
      <                              MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(yphi,        1,MPI_DOUBLE_PRECISION,0,
      <                              MPI_COMM_WORLD,ierr)
@@ -139,10 +136,14 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	if (kount.gt.1) then
 	   open(50+myid, file='output_S.'//ID, form='unformatted',
      >          status='old',position='append')
+      open(100+myid, file='output_phi.'//ID, form='unformatted',
+     >          status='old',position='append')
 	   open(200+myid, file='output_UVW.'//ID, form='unformatted',
      >          status='old',position='append')
 	else
 	   open(50+myid, file='output_S.'//ID, form='unformatted',
+     >          status='unknown')	   
+      open(100+myid, file='output_phi.'//ID, form='unformatted',
      >          status='unknown')	   
 	   open(200+myid, file='output_UVW.'//ID, form='unformatted',
      >          status='unknown')	   
@@ -150,8 +151,10 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	write(200+myid) u
 	write(50+myid) phi
+      write(100+myid) phi2
 	close(unit = 50+myid)
 	close(unit = 200+myid)
+      close(unit = 100+myid)
 
 	return
 	end
@@ -183,7 +186,10 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	read(10+myid) uej
 	read(10+myid) uzk
 	read(10+myid) p
-	if ( iscalar .eq. 1 ) read(10+myid) phi
+	if ( iscalar .eq. 1 ) then
+      read(10+myid) phi
+      read(10+myid) phi2
+      endif
 
 	if ( ieddy .gt. 0 ) then
 	   read(10+myid) vst
@@ -225,7 +231,10 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	write(10+myid) uzk
 	write(10+myid) p
 
-	if ( iscalar .eq. 1 ) write(50+myid) phi
+	if ( iscalar .eq. 1 ) then
+      write(50+myid) phi
+      write(50+myid) phi2
+      endif
 
 	if ( ieddy .gt. 0 ) then
 	   write(10+myid) vst

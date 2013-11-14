@@ -14,6 +14,6 @@
      <		omg_cyl, omg_lid, omg2,                     
      <		factor, tol, ter, slowiter
 
-	double precision phi1, phi2, yphi, aphi
+	double precision phi1, yphi, aphi
 	common/sci/
-     <		phi1, phi2, yphi, aphi
+     <		phi1, yphi, aphi

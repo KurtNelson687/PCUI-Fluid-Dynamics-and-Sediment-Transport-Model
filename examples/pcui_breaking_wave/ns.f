@@ -51,7 +51,10 @@ C          if ( mod(istep, nsave) .eq. 0 .and. MYID .EQ. 0 )
 	   
 	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	   tt = MPI_Wtime()
-	   if ( iscalar .eq. 1 ) call scalar_rhs
+	   if ( iscalar .eq. 1 ) then
+        call scalar_rhs
+        call scalar2_rhs
+      endif
 	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	   t5 = t5 + MPI_Wtime() - tt
 	   
@@ -75,7 +78,10 @@ C          if ( mod(istep, nsave) .eq. 0 .and. MYID .EQ. 0 )
 	   
 	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	   tt = MPI_Wtime()
-	   if ( iscalar .eq. 1 ) call scalar_solve
+	   if ( iscalar .eq. 1 ) then
+        call scalar_solve
+        call scalar2_solve
+      endif
 	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	   t4 = t4 + MPI_Wtime() - tt
 	   
