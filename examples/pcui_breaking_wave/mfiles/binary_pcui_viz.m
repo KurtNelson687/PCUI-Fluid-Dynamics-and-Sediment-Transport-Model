@@ -2,7 +2,7 @@
 clear all; clc; close all;
 
 % PLOTTING OPTIONS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-timestep = 10000; %timestep to plot
+timestep = 50; %timestep to plot
 delta_ts = 0; %averaging
 FIGURE_ON = 1; %figure visible?
     print_ext = '-dpng'; %image file type
@@ -10,8 +10,8 @@ FIGURE_ON = 1; %figure visible?
 
 display_grid = 0;
 display_density = 1;
-display_velocity = 0;
-display_scalar = 0;
+display_velocity = 1;
+display_scalar = 1;
 display_pressure = 0;
 display_density_isosurface = 0;
     rho_iso = 1;
@@ -33,6 +33,7 @@ save_folder =    '../figs';
 % (extensions are chosen automatically based on number of processors).
 fname_xyz = 'xyz';
 fname_rho = 'output_S';
+fname_phi = 'output_phi';
 fname_uvw = 'output_UVW';
 
 % OTHER PARAMETERS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -302,8 +303,9 @@ end
 
 % SCALAR %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if(display_scalar)
-   [phi] = load_binary_scalar(directory,timestep,...
-       delta_ts/save_timestep_period,npx,npy,npz,l_ni_h2,l_nj_h2,l_nk_h2);
+    phi = read_binary_file_pcui(working_folder, fname_phi, istep, ...
+                                 params, 0,0);     
+    phi = permute(phi,[1 3 2]);
 
    if(plot_xz)
        phi_xz = squeeze(phi(:,y_slice,:));
@@ -314,7 +316,7 @@ if(display_scalar)
        end
        pcolor(x_xz,z_xz,phi_xz);
        colorbar;
-       caxis([0 1]);
+%        caxis([0 1]);
        if(plot_quiver)
            quiver(x_xz,z_xz,u_xz,w_xz);
        end
@@ -339,7 +341,7 @@ if(display_scalar)
        end
        pcolor(y_yz,z_yz,phi_yz);
        colorbar;
-       caxis([0 1]);
+%        caxis([0 1]);
        if(plot_quiver)
            quiver(y_yz,z_yz,v_yz,w_yz);
        end

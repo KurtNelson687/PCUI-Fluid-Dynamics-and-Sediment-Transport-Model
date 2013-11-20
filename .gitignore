@@ -5,9 +5,10 @@ grid
 fort.*
 output.*
 continue_run.*
-*.7*
+*.1*
+*.2*
 *.5*
+*.7*
 qoutput
-/examples/pcui_harold/*
 *.mat
 
