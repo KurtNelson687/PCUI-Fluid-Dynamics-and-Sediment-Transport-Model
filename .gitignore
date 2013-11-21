@@ -11,4 +11,6 @@ continue_run.*
 *.7*
 qoutput
 *.mat
+*.fig
+rho_full*
 

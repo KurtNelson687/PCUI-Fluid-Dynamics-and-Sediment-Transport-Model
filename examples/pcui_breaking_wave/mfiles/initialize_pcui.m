@@ -54,7 +54,8 @@ params.pz = variable_value_pcui('pz',ftext);
 % Initialize PCUI grid
 % -------------------------------------------------------------------------
 % Load global grid from grid generator file and rearrange y and z
-load '/home/barthur/zang/grids/stretch_test.mat'
+% load '/home/barthur/zang/grids/grid_6mglevels_test_323.mat'
+load '/home/barthur/zang/grids/grid_local_2D_test.mat';
 x_global = x; x_global = permute(x_global,[1 3 2]);
 y_global = z; y_global = permute(y_global,[1 3 2]);
 z_global = y; z_global = permute(z_global,[1 3 2]);
@@ -123,7 +124,7 @@ write_binary_file_pcui(working_folder, fname_grid_to_PCUI, params, xyz_pcui);
 h1 = -0.3;
 a = 0.15;
 Lw = 0.5;
-delta = 0.2;
+delta = 0.02;
 alpha = 0.99;
 rho_init_pcui = ones(size(x_pcui));
 % zeta = -a*exp(-(x_pcui/Lw).^2) + 0.001*rand(size(x_pcui));

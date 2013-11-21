@@ -54,7 +54,8 @@ params.pz = variable_value_pcui('pz',ftext);
 % Initialize PCUI grid
 % -------------------------------------------------------------------------
 % Load global grid from grid generator file and rearrange y and z
-load '/home/barthur/zang/grids/grid_1024x128x128_r102_w125_zstretch.mat'
+% load '/home/barthur/zang/grids/grid_1024x128x128_r102_w125_zstretch.mat'
+% load '/home/barthur/zang/grids/grid_2D_test.mat'
 x_global = x; x_global = permute(x_global,[1 3 2]);
 y_global = z; y_global = permute(y_global,[1 3 2]);
 z_global = y; z_global = permute(z_global,[1 3 2]);
@@ -121,12 +122,12 @@ write_binary_file_pcui(working_folder, fname_grid_to_PCUI, params, xyz_pcui);
 % -------------------------------------------------------------------------
 % Prepare density field
 h1 = -0.3;
-a = 0.10;
-Lw = 0.7;
+a = 0.15;
+Lw = 0.4;
 delta = 0.02;
 alpha = 0.99;
 rho_init_pcui = ones(size(x_pcui));
-zeta = -a*exp(-(x_pcui/Lw).^2) + 0.001*rand(size(x_pcui));
+zeta = -a*exp(-(x_pcui/Lw).^2); % + 0.001*rand(size(x_pcui));
 % zeta = -a*sech(x_pcui/Lw).^2 + 0.001*rand(size(x_pcui));
 rho_pert_pcui = -0.5*0.03*tanh(2*(y_pcui - zeta - h1)/delta*atanh(alpha));
 rho_full_pcui = rho_init_pcui+rho_pert_pcui;
@@ -138,8 +139,8 @@ uvw_pcui(:,:,:,3) = w_pcui;
 
 % Write PCUI binary files depending on the number of processors
 write_binary_file_pcui(working_folder, fname_rho_full_to_PCUI, params, rho_full_pcui);
-% write_binary_file_pcui(working_folder, fname_rho_init_to_PCUI, params, rho_init_pcui);
-% write_binary_file_pcui(working_folder, fname_UVW_to_PCUI, params, uvw_pcui); 
+write_binary_file_pcui(working_folder, fname_rho_init_to_PCUI, params, rho_init_pcui);
+write_binary_file_pcui(working_folder, fname_UVW_to_PCUI, params, uvw_pcui); 
 
 % -------------------------------------------------------------------------
 % Initialize PCUI with a passive scalar

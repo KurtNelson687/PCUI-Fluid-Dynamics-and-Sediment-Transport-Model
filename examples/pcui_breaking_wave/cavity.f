@@ -63,6 +63,10 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
      <          p11, p12, p13, p21, p22, p23, p31, p32, p33, pcc,
      <          r11, r12, r13, r21, r22, r23, r31, r32, r33, rcc)
 
+      call qf2c(nni4, nnj4, nnk4, nni5, nnj5, nnk5, jar, jay,
+     <          r11, r12, r13, r21, r22, r23, r31, r32, r33, rcc,
+     <          y11, y12, y13, y21, y22, y23, y31, y32, y33, ycc)
+
 	return
 	end
 

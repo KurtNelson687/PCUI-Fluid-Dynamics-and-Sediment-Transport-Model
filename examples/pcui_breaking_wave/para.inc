@@ -1,6 +1,6 @@
 	integer case, newrun, periodic, iscalar, ieddy, mg_level
 	integer nstep, nsave, istep, kount, nunit, grid_only
-	integer maxstep, iterchk(5), maxiter(5)
+	integer maxstep, iterchk(6), maxiter(6)
 	common/ctl/
      <		case, newrun, periodic, iscalar, ieddy, mg_level,
      <		istep, nstep, nsave, kount, nunit,
@@ -8,7 +8,7 @@
 
 	double precision time, dtime, vis, ak, g
 	double precision omg_cyl, omg_lid, omg2
-	double precision factor, tol(5), ter(5), slowiter(5)
+	double precision factor, tol(6), ter(6), slowiter(6)
 	common/par/
      <		time, dtime, vis, ak, g,
      <		omg_cyl, omg_lid, omg2,                     

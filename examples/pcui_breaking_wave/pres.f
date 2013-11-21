@@ -19,6 +19,8 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
      <		p3, r3, b3
 	double precision, dimension(0:nni4+1,0:nnj4+1,0:nnk4+1) :: 
      <		p4, r4, b4
+      double precision, dimension(0:nni5+1,0:nnj5+1,0:nnk5+1) :: 
+     <		p5, r5, b5
 
 	integer i, j, k, L, n
 
@@ -76,6 +78,16 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	enddo
 	enddo
 	enddo
+
+	     do k = 0, nnk5+1
+	     do j = 0, nnj5+1
+	     do i = 0, nni5+1
+	        p5(i,j,k) = 0.D0
+	        r5(i,j,k) = 0.D0
+	        b5(i,j,k) = 0.D0
+	     enddo
+	     enddo
+	     enddo
 
 	call quick
 
@@ -268,34 +280,63 @@ c	endif
      <		L, nni3, nnj3, nnk3, p3, r3, b3, jap,
      <		p11, p12, p13, p21, p22, p23, p31, p32, p33, pcc )
 
-	if ( mg_level .ge. 5 ) then
+       if ( mg_level .ge. 5 ) then
 
-	call thrd_f2c( nni3, nnj3, nnk3, nni4, nnj4, nnk4, r3, b4 )
+       call thrd_f2c( nni3, nnj3, nnk3, nni4, nnj4, nnk4, r3, b4 )
 
-	L = 5
+       L = 5
 
-	do k = 0, nnk4+1
-	do j = 0, nnj4+1
-	do i = 0, nni4+1
-	   p4(i,j,k) = 0.D0
-	enddo
-	enddo
-	enddo
+       do k = 0, nnk4+1
+	     do j = 0, nnj4+1
+	     do i = 0, nni4+1
+	        p4(i,j,k) = 0.D0
+	     enddo
+	     enddo
+	     enddo
 
-	call smooth( resid, bbsum, ermin, ermax, resbc, sumbc,
+       call smooth( resid, bbsum, ermin, ermax, resbc, sumbc,
      <		L, nni4, nnj4, nnk4, p4, r4, b4, jar,
      <		r11, r12, r13, r21, r22, r23, r31, r32, r33, rcc )
 
-	call thrd_c2f( nni4, nnj4, nnk4, nni3, nnj3, nnk3, p4, p3 )
+	     if ( mg_level .ge. 6 ) then
 
-	L = 4
+	     call thrd_f2c( nni4, nnj4, nnk4, nni5, nnj5, nnk5, r4, b5 )
 
-	call smooth( resid, bbsum, ermin, ermax, resbc, sumbc,
+	     L = 6
+
+	     do k = 0, nnk5+1
+	     do j = 0, nnj5+1
+	     do i = 0, nni5+1
+	        p5(i,j,k) = 0.D0
+	     enddo
+	     enddo
+	     enddo
+
+	     call smooth( resid, bbsum, ermin, ermax, resbc, sumbc,
+     <		L, nni5, nnj5, nnk5, p5, r5, b5, jay,
+     <		y11, y12, y13, y21, y22, y23, y31, y32, y33, ycc )
+
+	     call thrd_c2f( nni5, nnj5, nnk5, nni4, nnj4, nnk4, p5, p4 )
+
+	     L = 5
+
+	     call smooth( resid, bbsum, ermin, ermax, resbc, sumbc,
+     <		L, nni4, nnj4, nnk4, p4, r4, b4, jar,
+     <		r11, r12, r13, r21, r22, r23, r31, r32, r33, rcc )
+
+C	6
+	     endif
+
+       call thrd_c2f( nni4, nnj4, nnk4, nni3, nnj3, nnk3, p4, p3 )
+
+	     L = 4
+
+	     call smooth( resid, bbsum, ermin, ermax, resbc, sumbc,
      <		L, nni3, nnj3, nnk3, p3, r3, b3, jap,
      <		p11, p12, p13, p21, p22, p23, p31, p32, p33, pcc )
 
-C	5
-	endif
+C 5
+       endif
 
 	call thrd_c2f( nni3, nnj3, nnk3, nni2, nnj2, nnk2, p3, p2 )
 

@@ -4,12 +4,12 @@ C...... nk/pz must be dividable by 16
 
         implicit none
 
-	integer, parameter :: px = 2
-	integer, parameter :: py = 1
+	integer, parameter :: px = 4
+	integer, parameter :: py = 2
 	integer, parameter :: pz = 1 
 
-	integer, parameter :: ni = 32
-	integer, parameter :: nj = 16 
+	integer, parameter :: ni = 128
+	integer, parameter :: nj = 32
 	integer, parameter :: nk = 16
 
 	integer, parameter :: ni1 = ni / 2
@@ -24,6 +24,9 @@ C...... nk/pz must be dividable by 16
 	integer, parameter :: ni4 = ni / 16
 	integer, parameter :: nj4 = nj / 16
 	integer, parameter :: nk4 = nk / 16
+        integer, parameter :: ni5 = ni / 32
+        integer, parameter :: nj5 = nj / 32
+        integer, parameter :: nk5 = nk / 32
 
 	integer, parameter :: nni = ni / px
 	integer, parameter :: nnj = nj / py
@@ -40,3 +43,6 @@ C...... nk/pz must be dividable by 16
 	integer, parameter :: nni4 = ni4 / px
 	integer, parameter :: nnj4 = nj4 / py
 	integer, parameter :: nnk4 = nk4 / pz
+       integer, parameter :: nni5 = ni5 / px
+       integer, parameter :: nnj5 = nj5 / py
+       integer, parameter :: nnk5 = nk5 / pz

@@ -30,6 +30,11 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	common/rrr/
      <		jar, r11, r12, r13, r21, r22, r23, r31, r32, r33, rcc
 
+	double precision, dimension(-1:nni5+2, -1:nnj5+2, -1:nnk5+2) ::
+     <		jay, y11, y12, y13, y21, y22, y23, y31, y32, y33, ycc
+	common/yyy/
+     <		jay, y11, y12, y13, y21, y22, y23, y31, y32, y33, ycc
+
 	double precision, dimension(-1:nni+2, -1:nnj+2, -1:nnk+2, 3) ::
      <		xp
 	double precision, dimension(-1:nni+2, -1:nnj+2, -1:nnk+2) ::

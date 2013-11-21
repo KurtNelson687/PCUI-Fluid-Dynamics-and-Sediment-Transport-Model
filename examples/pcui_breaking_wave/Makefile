@@ -27,7 +27,7 @@ grid : $(OBJG) $(INCS) cavity.inc
 clean :
 	/bin/rm -f *.o
 cleano:
-	/bin/rm -f output* continue_run* uvw* xyz* rho* fort* qoutput grid cavity
+	/bin/rm -f output* continue_run* uvw* xyz* rho* phi* fort* qoutput grid cavity
 
 # main program ( with statistics )
 nsst.o : nsst.f $(INCS)

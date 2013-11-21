@@ -6,11 +6,11 @@ C...... nk/pz must be dividable by 16
 
 	integer, parameter :: px = 2
 	integer, parameter :: py = 2
-	integer, parameter :: pz = 1 
+	integer, parameter :: pz = 2 
 
-	integer, parameter :: ni = 64
-	integer, parameter :: nj = 64 
-	integer, parameter :: nk = 16
+	integer, parameter :: ni = 32
+	integer, parameter :: nj = 32 
+	integer, parameter :: nk = 32
 
 	integer, parameter :: ni1 = ni / 2
 	integer, parameter :: nj1 = nj / 2
