@@ -217,9 +217,9 @@ C     backwards through these arrays. i.e., myid Np-1 to myid 0 and
 C     local_sorted_array_size to 1 on each proc. 
       Eb = 0.D0
       phi_d = 0.D0
-      slope = 0.218D0
-      yend = -0.123609D0 + by 
-      Lflat = 3.D0
+      slope = 0.1D0
+      yend = -0.0325 + by 
+      Lflat = 2.675D0
 
       call receive_initial_local_height(cell_bottom)
       do i = local_sorted_array_size, 1, -1

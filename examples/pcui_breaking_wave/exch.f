@@ -618,13 +618,15 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	double precision, dimension(0:ii+1,0:jj+1) ::
      <		sBmsg, rBmsg, sFmsg, rFmsg
 
-	integer status(MPI_STATUS_SIZE,4), req(4), nreq, len
+	integer status(MPI_STATUS_SIZE,4), req(4), nreq, len 
 
 	integer i, j, k
 
 	nreq = 0
 
 	len = ( jj + 2 ) * ( kk + 2 )
+
+c     if (myid .eq. 1) write(*,*) len,ii,jj,kk
 
 	if ( n_west .ne. MPI_PROC_NULL ) then
 	   nreq = nreq + 1
@@ -653,6 +655,8 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	   call MPI_ISEND( sEmsg(0,0), len, MPI_DOUBLE_PRECISION,  
      <	                   n_east, 0, comm3d, req(nreq), ierr )
 	endif
+
+c       if (myid .eq. 1) write(*,*) req
 
 	call MPI_WAITALL( nreq, req, status, ierr )
 

@@ -46,8 +46,8 @@ C     on each proc and calculate Ep
          m = m + 1
          rho_local(m) = phi(i,j,k)
          volume_local(m) = 1/jac(i,j,k)
-         lp_local(m) = 
-     <		g11(i,  j,  k  ) * ( phi(i+1,j,  k  ) - phi(i,j,k) )  
+         lp_local(m) = jac(i,j,k) *
+     <	 (g11(i,  j,  k  ) * ( phi(i+1,j,  k  ) - phi(i,j,k) )  
      <        + 
      <		g11(i-1,j,  k  ) * ( phi(i-1,j,  k  ) - phi(i,j,k) )   
      <        + 
@@ -87,7 +87,7 @@ C     on each proc and calculate Ep
      <		( g31(i,j,k-1) * ( phi(i+1,j,k  ) - phi(i-1,j,k  )
      <		                 + phi(i+1,j,k-1) - phi(i-1,j,k-1) )
      <		+ g32(i,j,k-1) * ( phi(i,j+1,k  ) - phi(i,j-1,k  )
-     <		                 + phi(i,j+1,k-1) - phi(i,j-1,k-1) ) )
+     <		                 + phi(i,j+1,k-1) - phi(i,j-1,k-1) ) ) )
          Ep = Ep + phi(i,j,k)*xp(i,j,k,2)*(1/jac(i,j,k))
       enddo
       enddo

@@ -2,7 +2,7 @@
 clear all; clc; close all;
 
 % PLOTTING OPTIONS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-timestep = 2000; %timestep to plot
+timestep = 600; %timestep to plot
 delta_ts = 0; %averaging
 FIGURE_ON = 1; %figure visible?
     print_ext = '-dpng'; %image file type
@@ -159,7 +159,7 @@ if(display_grid)
         end
         plot(x_xz(:,:), z_xz(:,:), 'k.'); 
         axis equal;
-        axis([0 x_length -z_length 0]);
+        axis([0 x_length z_length 0]);
         xlabel('x [m]');
         ylabel('z [m]');
         title('Computational grid, x-z slice');
@@ -175,7 +175,7 @@ if(display_grid)
         end
         plot(y_yz(:,:), z_yz(:,:), 'k.');         
         axis equal;
-        axis([0 y_length -z_length 0]);
+        axis([0 y_length z_length 0]);
         xlabel('y [m]');
         ylabel('z [m]');
         title('Computational grid, y-z slice');
@@ -201,7 +201,7 @@ if(display_density)
        colorbar;
 %        contour(x_xz,z_xz,rho_xz,[1, 1],'k');
        axis equal;
-       axis([0 x_length -z_length 0]);
+       axis([0 x_length z_length 0]);
        xlabel('x [m]');
        ylabel('z [m]');
        title('Density \Delta\rho/\rho_0, x-z slice');
@@ -227,7 +227,7 @@ if(display_density)
        pcolor(y_yz,z_yz,rho_yz);
        colorbar;
        axis image;
-%        axis([0 y_length -z_length 0]);
+%        axis([0 y_length z_length 0]);
        xlabel('y [m]');
        ylabel('z [m]');
        title('Density \Delta\rho/\rho_0, y-z slice');
@@ -263,7 +263,7 @@ if(display_velocity)
             quiver(x_xz,z_xz,u_xz,w_xz,'k');
         end
         axis equal;
-        axis([0 x_length -z_length 0]);
+        axis([0 x_length z_length 0]);
         xlabel('x [m]');
         ylabel('z [m]');
         title('Velocity u, x-z slice');
@@ -289,7 +289,7 @@ if(display_velocity)
             quiver(y_yz,z_yz,v_yz,w_yz);
         end
         axis equal;
-        axis([0 y_length -z_length 0]);
+        axis([0 y_length z_length 0]);
         xlabel('y [m]');
         ylabel('z [m]');
         title('Velocity u, y-z slice');
@@ -321,7 +321,7 @@ if(display_scalar)
            quiver(x_xz,z_xz,u_xz,w_xz);
        end
        axis equal;
-       axis([0 x_length -z_length 0]);
+       axis([0 x_length z_length 0]);
        xlabel('x [m]');
        ylabel('z [m]');
        title('Scalar \phi, x-z slice');
@@ -346,7 +346,7 @@ if(display_scalar)
            quiver(y_yz,z_yz,v_yz,w_yz);
        end
        axis equal;
-       axis([0 y_length -z_length 0]);
+       axis([0 y_length z_length 0]);
        xlabel('y [m]');
        ylabel('z [m]');
        title('Scalar \phi, y-z slice');
@@ -372,7 +372,7 @@ if(display_pressure)
        pcolor(x_xz,z_xz,p_xz);
        colorbar;
        axis equal;
-       axis([0 x_length -z_length 0]);
+       axis([0 x_length z_length 0]);
        xlabel('x [m]');
        ylabel('z [m]');
        title('Pressure, x-z slice');
@@ -393,7 +393,7 @@ if(display_pressure)
        pcolor(y_yz,z_yz,p_yz);
        colorbar;
        axis equal;
-       axis([0 y_length -z_length 0]);
+       axis([0 y_length z_length 0]);
        xlabel('y [m]');
        ylabel('z [m]');
        title('Pressure, y-z slice');

@@ -13,7 +13,7 @@ precision = 'float64';
 for indxz  = 1: pz
     for indxy = 1: py
         for indxx = 1: px  
-            ff  = [fn '.' num2str(700+(indxx-1)*pz*py + (indxy-1)*pz + indxz-1)];
+            ff  = [fn '.' num2str(1000+(indxx-1)*pz*py + (indxy-1)*pz + indxz-1)];
             fid = fopen(ff, 'w');
             putdata(fid,A((indxx-1)*nni+1:indxx*nni, ...
                           (indxy-1)*nnj+1:indxy*nnj, ...

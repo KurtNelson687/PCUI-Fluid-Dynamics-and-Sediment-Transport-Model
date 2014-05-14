@@ -1,10 +1,10 @@
 COMP = mpif90
-FLAG = -c -w -O3 
+FLAG = -c -w -O3 -g -traceback 
 
 OBCA = ns.o mp.o io.o \
        init.o conv.o pred.o corr.o trid.o scal.o\
        pres.o smad.o resd.o fctr.o exch.o eddy.o\
-			 indexx.o energy.o scal2.o
+       indexx.o energy.o scal2.o scal3.o scal4.o
 
 OBCAS =nsst.o mp.o io.o stat.o\
        init.o conv.o pred.o corr.o trid.o scal.o\
@@ -108,6 +108,14 @@ scal.o : scal.f $(INCS)
 # scalar 2
 scal2.o : scal2.f $(INCS)
 	$(COMP) $(FLAG) scal2.f
+
+# scalar 3
+scal3.o : scal3.f $(INCS)
+	$(COMP) $(FLAG) scal3.f
+
+# scalar 4
+scal4.o : scal4.f $(INCS)
+	$(COMP) $(FLAG) scal4.f
 
 # sort
 indexx.o : indexx.f $(INCS)

@@ -53,10 +53,20 @@ params.pz = variable_value_pcui('pz',ftext);
 % -------------------------------------------------------------------------
 % Initialize PCUI grid
 % -------------------------------------------------------------------------
+
 % Load global grid from grid generator file and rearrange y and z
+% L = 1; H = 1; W = 1;
+% N = 512; 
+% dx = L/N; dy = H/N; dz = W/16;
+% x = (-1.5*dx:dx:L+1.5*dx)'; x = repmat(x,[1 N+4]); x_global = repmat(x,[1 1 20]);
+% y = -H-1.5*dy:dy:1.5*dy;    y = repmat(y,[N+4 1]); y_global = repmat(y,[1 1 20]);
+% z = -1.5*dz:dz:W+1.5*dz;    z = reshape(z,[1 1 20]); z_global = repmat(z,[N+4 N+4 1]);
+% load '/home/barthur/zang/grids/grid_energy_test.mat'
+load '/home/barthur/zang/grids/grid_1152x128x64_r102_w1_zstretch_s218_f128.mat';
 % load '/home/barthur/zang/grids/grid_1024x128x128_r102_w125_zstretch.mat'
 % load '/home/barthur/zang/grids/grid_2D_test.mat'
-x_global = x; x_global = permute(x_global,[1 3 2]);
+% load '/home/barthur/zang/grids/grid_local_2D_test.mat';
+x_global = x; x_global = permute(x_global,[1 3 2]);  %DONT FORGET THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 y_global = z; y_global = permute(y_global,[1 3 2]);
 z_global = y; z_global = permute(z_global,[1 3 2]);
 
@@ -121,71 +131,71 @@ write_binary_file_pcui(working_folder, fname_grid_to_PCUI, params, xyz_pcui);
 % Initialize PCUI with a solitary wave
 % -------------------------------------------------------------------------
 % Prepare density field
-h1 = -0.3;
-a = 0.15;
-Lw = 0.4;
-delta = 0.02;
-alpha = 0.99;
-rho_init_pcui = ones(size(x_pcui));
-zeta = -a*exp(-(x_pcui/Lw).^2); % + 0.001*rand(size(x_pcui));
-% zeta = -a*sech(x_pcui/Lw).^2 + 0.001*rand(size(x_pcui));
-rho_pert_pcui = -0.5*0.03*tanh(2*(y_pcui - zeta - h1)/delta*atanh(alpha));
-rho_full_pcui = rho_init_pcui+rho_pert_pcui;
-u_pcui = zeros(size(rho_init_pcui));
-v_pcui = u_pcui; w_pcui = u_pcui;
-uvw_pcui(:,:,:,1) = u_pcui;
-uvw_pcui(:,:,:,2) = v_pcui;
-uvw_pcui(:,:,:,3) = w_pcui;
+% h1 = -0.3;
+% a = 0.05;
+% Lw = 0.9;
+% delta = 0.02;
+% alpha = 0.99;
+% rho_init_pcui = ones(size(x_pcui));
+% zeta = -a*exp(-(x_pcui/Lw).^2); % + 0.001*rand(size(x_pcui));
+% % zeta = -a*sech(x_pcui/Lw).^2 + 0.001*rand(size(x_pcui));
+% rho_pert_pcui = -0.5*0.03*tanh(2*(y_pcui - zeta - h1)/delta*atanh(alpha));
+% rho_full_pcui = rho_init_pcui+rho_pert_pcui;
+% u_pcui = zeros(size(rho_init_pcui));
+% v_pcui = u_pcui; w_pcui = u_pcui;
+% uvw_pcui(:,:,:,1) = u_pcui;
+% uvw_pcui(:,:,:,2) = v_pcui;
+% uvw_pcui(:,:,:,3) = w_pcui;
 
 % Write PCUI binary files depending on the number of processors
-write_binary_file_pcui(working_folder, fname_rho_full_to_PCUI, params, rho_full_pcui);
-write_binary_file_pcui(working_folder, fname_rho_init_to_PCUI, params, rho_init_pcui);
-write_binary_file_pcui(working_folder, fname_UVW_to_PCUI, params, uvw_pcui); 
+% write_binary_file_pcui(working_folder, fname_rho_full_to_PCUI, params, rho_full_pcui);
+% write_binary_file_pcui(working_folder, fname_rho_init_to_PCUI, params, rho_init_pcui);
+% write_binary_file_pcui(working_folder, fname_UVW_to_PCUI, params, uvw_pcui); 
 
 % -------------------------------------------------------------------------
 % Initialize PCUI with a passive scalar
 % -------------------------------------------------------------------------
 % phi_pcui = zeros(size(x_pcui));
 % phi_pcui(x_pcui>3.52 & x_pcui<4) = 1;
-phi_pcui = x_pcui;
-write_binary_file_pcui(working_folder, fname_phi_to_PCUI, params, phi_pcui);
+% phi_pcui = x_pcui;
+% write_binary_file_pcui(working_folder, fname_phi_to_PCUI, params, phi_pcui);
 
 % -------------------------------------------------------------------------
 % Verify initialized solitary wave
 % -------------------------------------------------------------------------
 % Plot density field
-x_plot = squeeze(x_global(3:end-2,3:end-2,1));
-y_plot = squeeze(y_global(3:end-2,3:end-2,1));
-
-fig1 = figure(1);
-clf
-set(fig1,'Renderer','zbuffer');
-set(fig1,'Color','white');
-rho_init_plot = ones(size(x_plot));
-zeta_plot = -a*exp(-(x_plot/Lw).^2) + 0.001*rand(size(x_plot));
-% zeta_plot = -a*sech(x_plot/Lw).^2 + 0.001*rand(size(x_plot));
-rho_pert_plot = -0.5*0.03*tanh(2*(y_plot - zeta_plot - h1)/delta*atanh(alpha));
-rho_full_plot = rho_init_plot+rho_pert_plot;
-pcolor(x_plot,y_plot,rho_full_plot);
-axis image;
-shading flat;
-colorbar;
+% x_plot = squeeze(x_global(3:end-2,3:end-2,1));
+% y_plot = squeeze(y_global(3:end-2,3:end-2,1));
+% 
+% fig1 = figure(1);
+% clf
+% set(fig1,'Renderer','zbuffer');
+% set(fig1,'Color','white');
+% rho_init_plot = ones(size(x_plot));
+% zeta_plot = -a*exp(-(x_plot/Lw).^2) + 0.001*rand(size(x_plot));
+% % zeta_plot = -a*sech(x_plot/Lw).^2 + 0.001*rand(size(x_plot));
+% rho_pert_plot = -0.5*0.03*tanh(2*(y_plot - zeta_plot - h1)/delta*atanh(alpha));
+% rho_full_plot = rho_init_plot+rho_pert_plot;
+% pcolor(x_plot,y_plot,rho_full_plot);
+% axis image;
+% shading flat;
+% colorbar;
 
 % -------------------------------------------------------------------------
 % Verify initialized passive scalar 
 % -------------------------------------------------------------------------
 % phi_plot = zeros(size(x_plot));
 % phi_plot(x_plot>3.52 & x_plot<4) = 1;
-phi_plot = x_plot;
-
-fig2 = figure(2);
-clf
-set(fig2,'Renderer','zbuffer');
-set(fig2,'Color','white');
-pcolor(x_plot,y_plot,phi_plot);
-axis image;
-shading flat;
-colorbar;
+% phi_plot = x_plot;
+% 
+% fig2 = figure(2);
+% clf
+% set(fig2,'Renderer','zbuffer');
+% set(fig2,'Color','white');
+% pcolor(x_plot,y_plot,phi_plot);
+% axis image;
+% shading flat;
+% colorbar;
 
 % -------------------------------------------------------------------------
 % Verify initialized grid

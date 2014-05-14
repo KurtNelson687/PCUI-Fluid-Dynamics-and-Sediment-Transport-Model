@@ -10,7 +10,8 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	include "metric.inc"
 	include "eddy.inc"
 
-	integer :: i, j, k, m
+	integer :: i, j, k, m, idum
+        double precision :: zeta, ran0
 	logical :: iostat
 	character*4 :: ID
 
@@ -122,23 +123,62 @@ c	   end if
 	   uzk = 0.D0
 	
 	   if ( iscalar .eq. 1 ) then
-	      inquire(file='rho_full_from_matlab.'//ID, exist=iostat) 
-	      if (iostat.eqv..true..and.grid_only.ne.1) then
-		 open(1000+myid, file = 'rho_full_from_matlab.'//ID,
-     <                          form='unformatted',status='unknown')
-		 read(1000+myid) phi
-		 close(1000+myid)
-	      end if
+c	      inquire(file='rho_full_from_matlab.'//ID, exist=iostat) 
+c	      if (iostat.eqv..true..and.grid_only.ne.1) then
+c		 open(1000+myid, file = 'rho_full_from_matlab.'//ID,
+c     <                          form='unformatted',status='unknown')
+c		 read(1000+myid) phi
+c		 close(1000+myid)
+c	      end if
+
+              idum = 8654
+              do k = -1, nnk+2
+              do j = -1, nnj+2
+              do i = -1, nni+2
+                 zeta = -0.1D0*exp(-(xp(i,j,k,1)/0.7D0)**2) 
+     <                  + 0.001D0*ran0(idum)
+                 phi(i,j,k) = 1.D0-0.5D0*0.03D0
+     <            *tanh(2D0*(xp(i,j,k,2)-zeta+0.3D0)/0.02D0*2.64665D0)
+              enddo
+              enddo
+              enddo
               call phi_bc
 
-              inquire(file='phi_init_from_matlab.'//ID, exist=iostat) 
-	      if (iostat.eqv..true..and.grid_only.ne.1) then
-		 open(1000+myid, file = 'phi_init_from_matlab.'//ID,
-     <                          form='unformatted',status='unknown')
-		 read(1000+myid) phi2
-		 close(1000+myid)
-	      end if
+c             inquire(file='phi_init_from_matlab.'//ID, exist=iostat) 
+c	      if (iostat.eqv..true..and.grid_only.ne.1) then
+c		 open(1000+myid, file = 'phi_init_from_matlab.'//ID,
+c     <                          form='unformatted',status='unknown')
+c		 read(1000+myid) phi2
+c		 close(1000+myid)
+c	      end if
+
+              do k = -1, nnk+2
+              do j = -1, nnj+2
+              do i = -1, nni+2
+                 phi2(i,j,k) = xp(i,j,k,1) 
+              enddo
+              enddo
+              enddo
               call phi2_bc
+
+              do k = -1, nnk+2
+              do j = -1, nnj+2
+              do i = -1, nni+2
+                 phi3(i,j,k) = xp(i,j,k,2) 
+              enddo
+              enddo
+              enddo
+              call phi3_bc
+
+              do k = -1, nnk+2
+              do j = -1, nnj+2
+              do i = -1, nni+2
+                 phi4(i,j,k) = xp(i,j,k,3) 
+              enddo
+              enddo
+              enddo
+              call phi4_bc
+
 	   end if
 
 C...... lid velocities u_lid and w_lid
@@ -151,3 +191,22 @@ C...... lid velocities u_lid and w_lid
 
 	return
 	end
+
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+
+        function ran0(idum)
+
+        integer idum,IA,IM,IQ,IR,MASK
+        double precision ran0,AM
+        parameter(IA=16807,IM=2147483647,AM=1./IM,
+     <       IQ=127773,IR=2836,MASK=123459876)
+        integer k
+
+        idum=ieor(idum,MASK)
+        k=idum/IQ
+        idum=IA*(idum-k*IQ)-IR*k
+        if (idum.lt.0) idum=idum+IM
+        ran0=AM*idum
+        idum=ieor(idum,MASK)
+        return
+        end

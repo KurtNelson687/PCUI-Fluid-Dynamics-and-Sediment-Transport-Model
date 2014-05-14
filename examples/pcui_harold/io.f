@@ -20,10 +20,10 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	iscalar   = 1
 	ieddy     = 0
 	mg_level  = 5
-	nstep     = 500
-	nsave     = 100
-        ncont     = 250
-	maxstep   = 20
+	nstep     = 1
+	nsave     = 1
+        ncont     = 1
+	maxstep   = 100000
 
 	do i = 1, 5
            iterchk(i)  = 2
@@ -40,7 +40,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         g           = 9.81D0
         omg_cyl     = 0
         omg_lid     = 0
-        factor      = 1.0e-4
+        factor      = 1.0e-3
         phi1        = 0
         yphi        = 0
         aphi        = 1.
@@ -138,14 +138,23 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	if (kount.gt.1) then
 	   open(50+myid, file='output_S.'//ID, form='unformatted',
      >          status='old',position='append')
-           open(100+myid, file='output_phi.'//ID, form='unformatted',
+           open(100+myid, file='output_phi2.'//ID, form='unformatted',
      >          status='old',position='append')
+           open(150+myid, file='output_phi3.'//ID, form='unformatted',
+     >          status='old',position='append')
+           open(175+myid, file='output_phi4.'//ID, form='unformatted',
+     >          status='old',position='append')
+
 	   open(200+myid, file='output_UVW.'//ID, form='unformatted',
      >          status='old',position='append')
 	else
 	   open(50+myid, file='output_S.'//ID, form='unformatted',
      >          status='unknown')	   
-           open(100+myid, file='output_phi.'//ID, form='unformatted',
+           open(100+myid, file='output_phi2.'//ID, form='unformatted',
+     >          status='unknown')	   
+           open(150+myid, file='output_phi3.'//ID, form='unformatted',
+     >          status='unknown')	   
+           open(175+myid, file='output_phi4.'//ID, form='unformatted',
      >          status='unknown')	   
 	   open(200+myid, file='output_UVW.'//ID, form='unformatted',
      >          status='unknown')	   
@@ -154,9 +163,13 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	write(200+myid) u
 	write(50+myid) phi
         write(100+myid) phi2
+        write(150+myid) phi3
+        write(175+myid) phi4
 	close(unit = 50+myid)
 	close(unit = 200+myid)
         close(unit = 100+myid)
+        close(unit = 150+myid)
+        close(unit = 175+myid)
 
 	return
 	end
@@ -191,6 +204,8 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	if ( iscalar .eq. 1 ) then
             read(10+myid) phi
             read(10+myid) phi2
+            read(10+myid) phi3
+            read(10+myid) phi4
         endif
 
 	if ( ieddy .gt. 0 ) then
@@ -236,6 +251,8 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	if ( iscalar .eq. 1 ) then
            write(10+myid) phi
            write(10+myid) phi2
+           write(10+myid) phi3
+           write(10+myid) phi4
         endif
 
 	if ( ieddy .gt. 0 ) then

@@ -252,7 +252,7 @@ c     write(*,*) cell_bottom
       
       Eb = g*Eb
       call global_sum(Eb)
-      phi_d = ak*g*phi_d
+      phi_d = g*phi_d
       call global_sum(phi_d)
       
 C.....Print to screen and write to binary file

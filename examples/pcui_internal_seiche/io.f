@@ -13,14 +13,14 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	if ( MYID .eq. 0 ) then
 
-	dtime     = 0.1D0
+	dtime     = 0.01D0
 	case      = 0
 	newrun    = 1
 	periodic  = 1
 	iscalar   = 1
-	ieddy     = 1
+	ieddy     = 0
 	mg_level  = 5
-	nstep     = 10
+	nstep     = 1200
 	nsave     = 10
 	maxstep   = 10
 
@@ -34,8 +34,8 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
         slowiter(1) = 0.7D0
 	maxiter(5)  = 30
-        vis         = 10e-6
-        ak          = 10e-6
+        vis         = 0.D0
+        ak          = 0.D0
         g           = 9.81D0
         omg_cyl     = 0
         omg_lid     = 0

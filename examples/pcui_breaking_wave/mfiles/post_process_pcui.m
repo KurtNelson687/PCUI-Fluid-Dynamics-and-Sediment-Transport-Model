@@ -148,9 +148,9 @@ for istep = istart:iskip:iend
 %     str = [num2str(tim) '/' num2str(params.dt*params.nsteps) ' s'];
 %     uicontrol('Style', 'text', 'String', str, 'Units','normalized', ...
 %               'Position', [0.4 0.48 0.23 0.04]);
-          
+    display(istep*params.dt*params.nsave);    
     drawnow;
-    pause;
+%     pause;
 end
 
 if isprint

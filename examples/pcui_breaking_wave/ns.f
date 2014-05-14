@@ -90,9 +90,9 @@ C          if ( mod(istep, nsave) .eq. 0 .and. MYID .EQ. 0 )
 
 	   call cfl_check
 
-c	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
-c	   call output_continue_run
-c	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
+ 	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
+ 	   call output_continue_run
+ 	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
 
 	enddo
 

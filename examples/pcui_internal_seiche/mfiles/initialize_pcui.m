@@ -21,6 +21,7 @@ fname_uvw = 'input_UVW';
 fname_UVW_to_PCUI = 'uvw_init_from_matlab';
 fname_rho_init_to_PCUI = 'rho_init_from_matlab';
 fname_rho_full_to_PCUI = 'rho_full_from_matlab';
+fname_grid_to_PCUI = 'xyz_init_from_matlab';
 
 % -------------------------------------------------------------------------
 % Get problem parameters and variables from PCUI
@@ -63,7 +64,7 @@ y_plot = squeeze(y_plot(:,:,floor(length(z_plot(1,1,:)/2))));
 % Prepare density field
 D = params.by;
 rho_init_pcui = ones(size(x));
-rho_pert_pcui = -0.5*0.06*tanh(2*(y - 0.1*cos(pi*x) - D/2)/0.2*atanh(0.99));
+rho_pert_pcui = -0.5*0.03*tanh(2*(y - 0.1*cos(pi*x) - D/2)/0.2*atanh(0.99));
 rho_full_pcui = rho_init_pcui+rho_pert_pcui;
 u_pcui = zeros(size(rho_init_pcui));
 v_pcui = u_pcui; w_pcui = u_pcui;
@@ -81,10 +82,8 @@ write_binary_file_pcui(working_folder, fname_UVW_to_PCUI, params, uvw_pcui);
 % -------------------------------------------------------------------------
 % Plot density field
 fig1 = figure(1);
-clf
-set(fig1,'Renderer','zbuffer');
-set(fig1,'Color','black');
 rho_init_plot = 1;
-rho_pert_plot = - 0.5*0.06*tanh(2*(y_plot - 0.1*cos(pi*x_plot) - D/2)/0.2*atanh(0.99));
-rho_full_plot = rho_init_plot+rho_pert_plot;
-contour(x_plot,y_plot,rho_full_plot);
+rho_pert_plot = - 0.5*0.03*tanh(2*(y_plot - 0.1*cos(pi*x_plot) - D/2)/0.2*atanh(0.99));
+rho_full_plot = rho_init_plot + rho_pert_plot;
+pcolor(x_plot,y_plot,rho_full_plot);
+colorbar;

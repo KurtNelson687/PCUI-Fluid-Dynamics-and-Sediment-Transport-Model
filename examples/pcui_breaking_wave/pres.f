@@ -371,15 +371,15 @@ C	2
      <		L, nni, nnj, nnk, p, r, b, jac,
      <		g11, g12, g13, g21, g22, g23, g31, g32, g33, gcc )
 
-      if ( mod(istep,nsave) .eq. 0 .and. MYID .eq. 0 ) then
-	       write(*,*) resid/bbsum
-	    endif
+c     if ( mod(istep,nsave) .eq. 0 .and. MYID .eq. 0 ) then
+c       write(*,*) resid/bbsum
+c    endif
 	
 	if ( resid .lt. tol(L) .and. resbc .lt. tol(L) .and.
      <	     max(dabs(ermin), dabs(ermax)) .lt. ter(L) .and. 
      <	     resid/bbsum .lt. factor ) then
-	   if ( MYID .EQ. 0 ) 
-     <	      write(*,*) ' Total V-cycle # ', n, resid/bbsum
+c   if ( MYID .EQ. 0 ) 
+c    <	      write(*,*) ' Total V-cycle # ', n, resid/bbsum
 	   return
 	endif
 

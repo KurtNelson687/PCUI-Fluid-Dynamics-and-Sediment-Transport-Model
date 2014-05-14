@@ -20,8 +20,8 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	iscalar   = 1
 	ieddy     = 0
 	mg_level  = 5
-	nstep     = 3000
-	nsave     = 100
+	nstep     = 7000
+	nsave     = 50
 	maxstep   = 10
 
 	do i = 1, 6
@@ -34,12 +34,12 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
         slowiter(1) = 0.7D0
 	maxiter(6)  = 30
-        vis         = 1.0e-6
-        ak          = 1.0e-6
+        vis         = 1.00e-6
+        ak          = 1.00e-6
         g           = 9.81D0
         omg_cyl     = 0
         omg_lid     = 0
-        factor      = 1.0e-4
+        factor      = 1.0e-3
         phi1        = 0
         yphi        = 0
         aphi        = 1.
@@ -232,8 +232,8 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	write(10+myid) p
 
 	if ( iscalar .eq. 1 ) then
-      write(50+myid) phi
-      write(50+myid) phi2
+      write(10+myid) phi
+      write(10+myid) phi2
       endif
 
 	if ( ieddy .gt. 0 ) then
