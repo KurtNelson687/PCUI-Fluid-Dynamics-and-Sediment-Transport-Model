@@ -13,4 +13,5 @@ qoutput
 *.mat
 *.fig
 rho_full*
+*.fig
 
