@@ -62,20 +62,6 @@ s_33 = 1/metrics.J.* ...
      + metrics.ET_Z.*( w(2:end-1,3:end,2:end-1) - w(2:end-1,1:end-2,2:end-1) )/2 ...
      + metrics.ZT_Z.*( w(2:end-1,2:end-1,3:end) - w(2:end-1,2:end-1,1:end-2) )/2 );
 
-%Calculate dissipation
-% epsilon = zeros(Nx-2,Ny-2,Nz-2);
-% for i=1:Nx-2
-%     for j=1:Ny-2
-%         for k=1:Nz-2
-%             s = [s_11(i,j,k), s_12(i,j,k), s_13(i,j,k); ...
-%                  s_21(i,j,k), s_22(i,j,k), s_23(i,j,k); ...
-%                  s_31(i,j,k), s_32(i,j,k), s_33(i,j,k)];
-%             epsilon(i,j,k) = nu*sum(sum(s.^2));
-%         end
-%     end
-% end
-% epsilon_total = sum(sum(sum(epsilon./J)));
-
 epsilon_total = nu*sum(sum(sum((s_11.^2 + s_12.^2 + s_13.^2 ...
                               + s_21.^2 + s_22.^2 + s_23.^2 ...
                               + s_31.^2 + s_32.^2 + s_33.^2).*metrics.J)));

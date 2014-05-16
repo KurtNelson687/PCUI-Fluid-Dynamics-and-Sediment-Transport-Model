@@ -36,5 +36,8 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
      <		phi_init
 	double precision, dimension(-1:nni+2, -1:nnk+2) ::
      <		w_lid, u_lid
+            double precision, dimension(-1:nnj+2,-1:nnk+2) ::
+     <    u_west
+
 	common/xyz/
-     <		xp, phi_init, w_lid, u_lid
+     <		xp, phi_init, w_lid, u_lid, u_west

@@ -13,16 +13,16 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	if ( MYID .eq. 0 ) then
 
-	dtime     = 0.01D0
+	dtime     = 0.001D0
 	case      = 0
 	newrun    = 1
 	periodic  = 1
-	iscalar   = 1
-	ieddy     = 1
+	iscalar   = 0
+	ieddy     = 0
 	mg_level  = 5
-	nstep     = 1000
-	nsave     = 5
-	maxstep   = 10
+	nstep     = 10000
+	nsave     = 1
+	maxstep   = 100
 
 	do i = 1, 5
            iterchk(i)  = 2
@@ -34,8 +34,8 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
         slowiter(1) = 0.7D0
 	maxiter(5)  = 30
-        vis         = 10e-6
-        ak          = 10e-6
+        vis         = 1.0e-6
+        ak          = 1.0e-6
         g           = 9.81D0
         omg_cyl     = 0
         omg_lid     = 0
@@ -141,17 +141,25 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
      >          status='old',position='append')
 	   open(200+myid, file='output_UVW.'//ID, form='unformatted',
      >          status='old',position='append')
+       open(250+myid, file='output_UXI.'//ID, form='unformatted',
+     >          status='old',position='append')
+
 	else
 	   open(50+myid, file='output_S.'//ID, form='unformatted',
      >          status='unknown')	   
 	   open(200+myid, file='output_UVW.'//ID, form='unformatted',
      >          status='unknown')	   
+        open(250+myid, file='output_UXI.'//ID, form='unformatted',
+     >          status='unknown')	   
+
 	end if
 
 	write(200+myid) u
 	write(50+myid) phi
+         write(250+myid) uxi
 	close(unit = 50+myid)
 	close(unit = 200+myid)
+         close(unit = 250+myid)
 
 	return
 	end

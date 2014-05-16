@@ -131,14 +131,14 @@ c	   do L = 1, 3
 	   do k = -1, nnk+2
 	   do i = -1, nni+2
 c             Free-slip
-	      u(i,0,k,1) =   u(i,1,k,1)
-        u(i,0,k,2) = - u(i,1,k,2)
-	      u(i,0,k,3) =   u(i,1,k,3)
+c       u(i,0,k,1) =   u(i,1,k,1)
+c       u(i,0,k,2) = - u(i,1,k,2)
+c       u(i,0,k,3) =   u(i,1,k,3)
 
 c             No-slip
-c	      u(i, 0,k,1) = - u(i,1,k,1) 
-c       u(i, 0,k,2) = - u(i,1,k,2)
-c       u(i, 0,k,3) = - u(i,1,k,3)
+	      u(i, 0,k,1) = - u(i,1,k,1) 
+        u(i, 0,k,2) = - u(i,1,k,2)
+        u(i, 0,k,3) = - u(i,1,k,3)
 	   enddo
 	   enddo
 c	   enddo
@@ -156,7 +156,7 @@ c	   do L = 1, 3
 	   do k = -1, nnk+2
 	   do j = -1, nnj+2
 c             Free-slip
-	      u(0,j,k,1) = - u(1,j,k,1)
+	      u(0,j,k,1) =   2.D0 * u_west(j,k) - u(1,j,k,1)
 	      u(0,j,k,2) =   u(1,j,k,2)
 	      u(0,j,k,3) =   u(1,j,k,3)
 
@@ -179,7 +179,9 @@ c	   do L = 1, 3
 	   do k = -1, nnk+2
 	   do j = -1, nnj+2
 c             Free-slip
-	      u(nni+1,j,k,1) = - u(nni,j,k,1)
+        u(nni+1,j,k,1) =   u(nni,j,k,1)
+c       u(nni+1,j,k,1) =   2.D0 * 0.0025D0/16/16/xix(nni,j,k) 
+c    <                          - u(nni,j,k,1)
 	      u(nni+1,j,k,2) =   u(nni,j,k,2)
 	      u(nni+1,j,k,3) =   u(nni,j,k,3)
 
@@ -199,19 +201,19 @@ c	   enddo
 	endif
 
 	if ( n_back .eq. MPI_PROC_NULL ) then
-c	   do L = 1, 3
+c    do L = 1, 3
 	   do j = -1, nnj+2
 	   do i = -1, nni+2
 c             Free-slip
-	      u(i,j,0,1) =   u(i,j,1,1)
-	      u(i,j,0,2) =   u(i,j,1,2)
-	      u(i,j,0,3) = - u(i,j,1,3)
+        u(i,j,0,1) =   u(i,j,1,1)
+        u(i,j,0,2) =   u(i,j,1,2)
+        u(i,j,0,3) = - u(i,j,1,3)
 
 c             No-slip
-c	      u(i,j, 0,L) = - u(i,j,1,L)
+c       u(i,j, 0,L) = - u(i,j,1,L)
 	   enddo
 	   enddo
-c	   enddo
+c    enddo
 	   do L = 1, 3
 	   do j = -1, nnj+2
 	   do i = -1, nni+2
@@ -222,19 +224,19 @@ c	   enddo
 	endif
 
 	if ( n_frnt .eq. MPI_PROC_NULL ) then
-c	   do L = 1, 3
+c    do L = 1, 3
 	   do j = -1, nnj+2
 	   do i = -1, nni+2
 c             Free-slip
-	      u(i,j,nnk+1,1) =   u(i,j,nnk,1)
-	      u(i,j,nnk+1,2) =   u(i,j,nnk,2)
-	      u(i,j,nnk+1,3) = - u(i,j,nnk,3)
+        u(i,j,nnk+1,1) =   u(i,j,nnk,1)
+        u(i,j,nnk+1,2) =   u(i,j,nnk,2)
+        u(i,j,nnk+1,3) = - u(i,j,nnk,3)
 
 c             No-slip
-c	      u(i,j,nnk+1,L) = - u(i,j,nnk,L)
+c       u(i,j,nnk+1,L) = - u(i,j,nnk,L)
 	   enddo
 	   enddo
-c	   enddo
+c    enddo
 	   do L = 1, 3
 	   do j = -1, nnj+2
 	   do i = -1, nni+2

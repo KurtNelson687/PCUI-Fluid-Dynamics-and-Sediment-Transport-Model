@@ -11,9 +11,9 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	integer i, j, k
 
-	bx = 4.D0
-	by = 0.5D0
-	bz = 0.25D0
+	bx = 2.4D0
+	by = 0.3D0
+	bz = 0.3D0
 
 	stretchx = 0
 	stretchy = 0

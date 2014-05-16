@@ -23,7 +23,7 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	integer i, j, k, L, n
 
 	double precision resid, bbsum, ermin, ermax, resbc, sumbc
-	double precision temp
+	double precision temp, Qw, Qe, Qenew
 
 	resid = 0.D0
 
@@ -82,6 +82,9 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 CBCBCBC	BCBCBCBCBCBCBCBCBCBC
 
 	temp = 0.125D0 / dtime
+       Qw = 0.D0
+       Qe = 0.D0
+       Qenew = 0.D0
 
 	if ( n_west .eq. MPI_PROC_NULL ) then
 	do k = 1, nnk
@@ -96,7 +99,8 @@ CBCBCBC	BCBCBCBCBCBCBCBCBCBC
      <	      + xiz(0,j,k) * ( 15.D0 * u(1,j,k,3) 
      <	                     - 10.D0 * u(2,j,k,3) 
      <                       +  3.D0 * u(3,j,k,3) ) )
-	   uxi(0,j,k) = 0.D0
+	     uxi(0,j,k) = u_west(j,k) * xix(0,j,k) 
+       Qw = Qw + uxi(0,j,k)
 	enddo
 	enddo
 	endif
@@ -113,10 +117,27 @@ CBCBCBC	BCBCBCBCBCBCBCBCBCBC
      <	      + xiz(nni,j,k) * ( 15.D0 * u(nni,  j,k,3) 
      <	                       - 10.D0 * u(nni-1,j,k,3) 
      <                         +  3.D0 * u(nni-2,j,k,3) ) )
-	   uxi(nni,j,k) = 0.D0
+        uxi(nni,j,k) = uxi(nni-1,j,k)
+c       uxi(nni,j,k) = (u(nni+1,j,k,1)+u(nni,j,k,1))/2.D0 * xix(nni,j,k)
+c       uxi(nni,j,k) =  xix(nni,j,k) * 
+c    <	        ( 0.75 D0 * u(nni,j,k,1) + 0.375D0 * u(nni+1,j,k,1) 
+c    <          - 0.125D0 * u(nni-1,j,k,1) )
+        Qe = Qe + uxi(nni,j,k)
 	enddo
 	enddo
+
+       do k = 1, nnk
+       do j = 1, nnj
+          uxi(nni,j,k) = uxi(nni,j,k) + (0.00225D0 - Qe)/16/16
+          Qenew = Qenew + uxi(nni,j,k)
+       enddo
+       enddo
+
 	endif
+
+       write(*,*) MYID, 'Qw = ', Qw
+       write(*,*) MYID, 'Qe = ', Qe 
+       write(*,*) MYID, 'Qenew = ', Qenew
 
 	if ( n_suth .eq. MPI_PROC_NULL ) then
 	do k = 1, nnk
@@ -329,7 +350,10 @@ C	2
 	call smooth( resid, bbsum, ermin, ermax, resbc, sumbc,
      <		L, nni, nnj, nnk, p, r, b, jac,
      <		g11, g12, g13, g21, g22, g23, g31, g32, g33, gcc )
-	
+
+c         if ( MYID .EQ. 0 ) 
+c    <	      write(*,*)  n, resid/bbsum
+
 	if ( resid .lt. tol(L) .and. resbc .lt. tol(L) .and.
      <	     max(dabs(ermin), dabs(ermax)) .lt. ter(L) .and. 
      <	     resid/bbsum .lt. factor ) then

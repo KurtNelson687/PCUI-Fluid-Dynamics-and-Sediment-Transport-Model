@@ -64,8 +64,9 @@ y_plot = squeeze(y_plot(:,:,floor(length(z_plot(1,1,:)/2))));
 D = params.by;
 rho_init_pcui = ones(size(x));
 rho_full_pcui = rho_init_pcui;
-u_pcui = zeros(size(rho_init_pcui));
-v_pcui = u_pcui; w_pcui = u_pcui;
+u_pcui = 0.05/0.3*y;
+v_pcui = zeros(size(rho_init_pcui)); 
+w_pcui = zeros(size(rho_init_pcui));
 uvw_pcui(:,:,:,1) = u_pcui;
 uvw_pcui(:,:,:,2) = v_pcui;
 uvw_pcui(:,:,:,3) = w_pcui;
@@ -76,7 +77,7 @@ write_binary_file_pcui(working_folder, fname_rho_init_to_PCUI, params, rho_init_
 write_binary_file_pcui(working_folder, fname_UVW_to_PCUI, params, uvw_pcui); 
 
 % -------------------------------------------------------------------------
-% Verify initialized lock exchange
+% Verify initialized density
 % -------------------------------------------------------------------------
 % Plot density field
 fig1 = figure(1);
@@ -84,9 +85,7 @@ clf
 set(fig1,'Renderer','zbuffer');
 set(fig1,'Color','white');
 rho_init_plot = ones(size(x_plot));
-rho_pert_plot = 0.015*rho_init_plot;
-rho_pert_plot(x_plot>2) = -0.015;
-rho_full_plot = rho_init_plot+rho_pert_plot;
+rho_full_plot = rho_init_plot;
 pcolor(x_plot,y_plot,rho_full_plot);
 colorbar;
 axis equal;
