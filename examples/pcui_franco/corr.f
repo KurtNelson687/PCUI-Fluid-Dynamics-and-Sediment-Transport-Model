@@ -136,7 +136,7 @@ c       u(i,0,k,2) = - u(i,1,k,2)
 c       u(i,0,k,3) =   u(i,1,k,3)
 
 c             No-slip
-	      u(i, 0,k,1) = - u(i,1,k,1) 
+        u(i, 0,k,1) = - u(i,1,k,1) 
         u(i, 0,k,2) = - u(i,1,k,2)
         u(i, 0,k,3) = - u(i,1,k,3)
 	   enddo
@@ -156,7 +156,9 @@ c	   do L = 1, 3
 	   do k = -1, nnk+2
 	   do j = -1, nnj+2
 c             Free-slip
-	      u(0,j,k,1) =   2.D0 * u_west(j,k) - u(1,j,k,1)
+c       u(0,j,k,1) =   2.D0 * u_west(j,k) - u(1,j,k,1)
+        u(0,j,k,1) =   u_west(j,k) 
+        u(1,j,k,1) =   u_west(j,k) 
 	      u(0,j,k,2) =   u(1,j,k,2)
 	      u(0,j,k,3) =   u(1,j,k,3)
 
@@ -165,7 +167,14 @@ c	      u( 0,j,k,L) = - u(1,j,k,L)
 	   enddo
 	   enddo
 c	   enddo
-	   do L = 1, 3
+          do k = -1, nnk+2
+	        do j = -1, nnj+2
+c            u(-1,j,k,1) = 2.D0*u(0,j,k,1) - u(1,j,k,1)
+             u(-1,j,k,1) = u_west(j,k)
+          enddo
+	        enddo
+
+	   do L = 2, 3
 	   do k = -1, nnk+2
 	   do j = -1, nnj+2
 	      u(-1,j,k,L) = 3.D0*( u(0,j,k,L)-u(1,j,k,L) ) + u(2,j,k,L)
@@ -190,7 +199,13 @@ c	      u(nni+1,j,k,L) = - u(nni,j,k,L)
 	   enddo
 	   enddo
 c	   enddo
-	   do L = 1, 3
+           do k = -1, nnk+2
+	         do j = -1, nnj+2
+              u(nni+2,j,k,1) = u(nni,j,k,1)
+	         enddo
+	         enddo
+
+	   do L = 2, 3
 	   do k = -1, nnk+2
 	   do j = -1, nnj+2
 	      u(nni+2,j,k,L) = 3.D0*( u(nni+1,j,k,L)-u(nni,j,k,L) ) 

@@ -78,3 +78,13 @@ plot(squeeze(uh(end-3,:,1)),squeeze(yh(end-3,:,1)),'co-');
 plot(squeeze(uh(end-4,:,1)),squeeze(yh(end-4,:,1)),'r--');
 u_west = 1/6*squeeze(yh(1,:,1));
 plot(u_west,squeeze(yh(1,:,1)),'g--');
+
+figure;
+plot(squeeze(uh(1,:,1)),squeeze(yh(1,:,1)),'ko-'); 
+hold on; 
+plot(squeeze(uh(32,:,1)),squeeze(yh(32,:,1)),'bo-'); 
+plot(squeeze(uh(64,:,1)),squeeze(yh(64,:,1)),'mo'); 
+plot(squeeze(uh(96,:,1)),squeeze(yh(96,:,1)),'co-');
+plot(squeeze(uh(128,:,1)),squeeze(yh(128,:,1)),'r--');
+u_west = 1/6*squeeze(yh(1,:,1));
+plot(u_west,squeeze(yh(1,:,1)),'g--');

@@ -118,6 +118,7 @@ CBCBCBC	BCBCBCBCBCBCBCBCBCBC
      <	                       - 10.D0 * u(nni-1,j,k,3) 
      <                         +  3.D0 * u(nni-2,j,k,3) ) )
         uxi(nni,j,k) = uxi(nni-1,j,k)
+c       uxi(nni,j,k) = u_west(j,k) * xix(nni,j,k)
 c       uxi(nni,j,k) = (u(nni+1,j,k,1)+u(nni,j,k,1))/2.D0 * xix(nni,j,k)
 c       uxi(nni,j,k) =  xix(nni,j,k) * 
 c    <	        ( 0.75 D0 * u(nni,j,k,1) + 0.375D0 * u(nni+1,j,k,1) 
