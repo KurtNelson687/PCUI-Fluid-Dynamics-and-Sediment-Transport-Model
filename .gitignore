@@ -10,7 +10,6 @@ continue_run.*
 *.5*
 *.7*
 qoutput
-*.mat
 *.fig
 rho_full*
 *.fig
