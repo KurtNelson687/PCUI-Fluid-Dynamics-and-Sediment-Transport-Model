@@ -1,5 +1,6 @@
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
+
 	subroutine parameter
 
 	include "size.inc"
@@ -13,7 +14,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	if ( MYID .eq. 0 ) then
 
-	dtime     = 1.00e-1
+	dtime     = 1.00e-2
 	case      = 0
 	newrun    = 1
 	periodic  = 1
@@ -21,7 +22,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	ieddy     = 0
 	mg_level  = 5
 	nstep     = 10000
-	nsave     = 1
+	nsave     = 1000
 	maxstep   = 100
 
 	do i = 1, 5
@@ -34,7 +35,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
         slowiter(1) = 0.7D0
 	maxiter(5)  = 30
-        vis         = 1.0e-4
+        vis         = 1.0e-3
         ak          = 1.0e-4
         g           = 9.81D0
         omg_cyl     = 0

@@ -11,7 +11,7 @@
 
 clear all; close all; clc;
 
-working_folder = '/home/barthur/pcui-3d/examples/pcui_franco';
+working_folder = '/Users/fjzarama/Desktop/Research/DownstreamDevelopment/pcui-3d/examples/pcui_franco';
 
 % These are the output files with the filenames stripped out of extensions 
 % (extensions are chosen automatically based on number of processors).
@@ -64,7 +64,11 @@ y_plot = squeeze(y_plot(:,:,floor(length(z_plot(1,1,:)/2))));
 D = params.by;
 rho_init_pcui = ones(size(x));
 rho_full_pcui = rho_init_pcui;
-u_pcui = 0.05/0.3*y;
+% u_pcui = 0.05/0.3*y; %pure shear flow
+load fastfit %load fast data
+u_pcui = [ftanh(y(1,y(1,:,1)<jhoverlap,1)); flog(y(1,y(1,:,1)>=jhoverlap,1))];
+u_pcui = repmat(u_pcui,[1 144 20]);
+u_pcui = permute(u_pcui,[2,1,3]);
 v_pcui = zeros(size(rho_init_pcui)); 
 w_pcui = zeros(size(rho_init_pcui));
 uvw_pcui(:,:,:,1) = u_pcui;

@@ -129,7 +129,8 @@ c    <          - 0.125D0 * u(nni-1,j,k,1) )
 
        do k = 1, nnk
        do j = 1, nnj
-          uxi(nni,j,k) = uxi(nni,j,k) + (0.00225D0 - Qe)/16/16
+          uxi(nni,j,k) = uxi(nni,j,k) + (0.017357487730381496D0
+     <                   - Qe)/16/16
           Qenew = Qenew + uxi(nni,j,k)
        enddo
        enddo

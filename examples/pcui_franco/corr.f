@@ -188,6 +188,7 @@ c	   do L = 1, 3
 	   do k = -1, nnk+2
 	   do j = -1, nnj+2
 c             Free-slip
+	u(nni,j,k,1) = u(nni-1,j,k,1)
         u(nni+1,j,k,1) =   u(nni,j,k,1)
 c       u(nni+1,j,k,1) =   2.D0 * 0.0025D0/16/16/xix(nni,j,k) 
 c    <                          - u(nni,j,k,1)

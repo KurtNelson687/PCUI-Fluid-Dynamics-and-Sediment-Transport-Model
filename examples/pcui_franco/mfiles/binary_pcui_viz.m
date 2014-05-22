@@ -2,7 +2,7 @@
 clear all; clc; close all;
 
 % PLOTTING OPTIONS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-timestep = 1000; %timestep to plot
+timestep = 10000; %timestep to plot
 delta_ts = 0; %averaging
 FIGURE_ON = 1; %figure visible?
     print_ext = '-dpng'; %image file type
@@ -257,7 +257,7 @@ if(display_velocity)
         if(~FIGURE_ON)
            set(velocity_fig_xz,'visible','off');
         end
-        imagesc(x_xz(:,1),z_xz(1,:),u_xz');
+        imagesc(x_xz(:,1),z_xz(1,:),w_xz');
         colorbar;
         colormap gray;
         if(plot_quiver)

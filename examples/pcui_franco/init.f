@@ -17,7 +17,15 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c...... Velocity at west bc
         do k = -1, nnk+2
         do j = -1, nnj+2
-           u_west(j,k) = 0.05D0/0.3D0*xp(1,j,k,2)
+c          u_west(j,k) = 0.05D0/0.3D0*xp(1,j,k,2)
+	if ( xp(1,j,k,2) .lt. .2020D0 ) then
+		u_west(j,k) = 0.3564D0 / 2D0 * (tanh(22.07D0
+     <		 * (xp(1,j,k,2) - 0.1717D0)) + 1.188D0)
+	endif
+	if ( xp(1,j,k,2) .ge. .2020D0) then
+		u_west(j,k) = 0.04114D0 / 0.41D0 *
+     <          log((xp(1,j,k,2) - 0.1632D0) / 0.001665D0)
+	endif
         enddo
         enddo
 
