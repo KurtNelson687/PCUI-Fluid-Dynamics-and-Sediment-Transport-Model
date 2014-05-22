@@ -11,7 +11,7 @@
 
 clear all; close all; clc;
 
-working_folder = '/Users/fjzarama/Desktop/Research/DownstreamDevelopment/pcui-3d/examples/pcui_franco';
+working_folder = '../pcui_franco';
 
 % These are the output files with the filenames stripped out of extensions 
 % (extensions are chosen automatically based on number of processors).
