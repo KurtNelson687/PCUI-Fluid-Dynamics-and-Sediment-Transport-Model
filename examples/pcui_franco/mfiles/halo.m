@@ -90,6 +90,6 @@ legend('x=1','x=32','x=64','x=96','x=128','location','northwest')
 ylim([0 0.3])
 xlabel('u [m s^{-1}]','fontsize',14)
 ylabel('z [m]','fontsize',14)
-print('-f4','-r500','-dpng','development')
+% print('-f4','-r500','-dpng','development')
 u_west = 1/6*squeeze(yh(1,:,1));
 % plot(u_west,squeeze(yh(1,:,1)),'g--');

@@ -1,4 +1,4 @@
-COMP = /opt/local/bin/mpif90-mpich-mp
+COMP = mpif90
 FLAG = -c -w -O3 
 
 OBCA = ns.o mp.o io.o \

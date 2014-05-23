@@ -21,8 +21,8 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	iscalar   = 0
 	ieddy     = 0
 	mg_level  = 5
-	nstep     = 10000
-	nsave     = 1000
+	nstep     = 1000
+	nsave     = 100
 	maxstep   = 100
 
 	do i = 1, 5
@@ -36,7 +36,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         slowiter(1) = 0.7D0
 	maxiter(5)  = 30
         vis         = 1.0e-3
-        ak          = 1.0e-4
+        ak          = 1.0e-3
         g           = 9.81D0
         omg_cyl     = 0
         omg_lid     = 0

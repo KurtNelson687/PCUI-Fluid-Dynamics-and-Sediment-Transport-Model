@@ -11,7 +11,7 @@
 
 clear all; close all; clc;
 
-working_folder = '../pcui_franco';
+working_folder = '../';
 
 % These are the output files with the filenames stripped out of extensions 
 % (extensions are chosen automatically based on number of processors).
@@ -67,7 +67,7 @@ rho_full_pcui = rho_init_pcui;
 % u_pcui = 0.05/0.3*y; %pure shear flow
 load fastfit %load fast data
 u_pcui = [ftanh(y(1,y(1,:,1)<jhoverlap,1)); flog(y(1,y(1,:,1)>=jhoverlap,1))];
-u_pcui = repmat(u_pcui,[1 144 20]);
+u_pcui = repmat(u_pcui,[1 params.ni+4*params.px params.nk+4*params.pz]);
 u_pcui = permute(u_pcui,[2,1,3]);
 v_pcui = zeros(size(rho_init_pcui)); 
 w_pcui = zeros(size(rho_init_pcui));
@@ -92,4 +92,21 @@ rho_init_plot = ones(size(x_plot));
 rho_full_plot = rho_init_plot;
 pcolor(x_plot,y_plot,rho_full_plot);
 colorbar;
+colormap gray;
+axis equal;
+
+% -------------------------------------------------------------------------
+% Verify initialized velocity
+% -------------------------------------------------------------------------
+% Plot density field
+fig2 = figure(2);
+clf
+set(fig2,'Renderer','zbuffer');
+set(fig2,'Color','white');
+u_plot = [ftanh(y_plot(1,y_plot(1,:,1)<jhoverlap,1)); flog(y_plot(1,y_plot(1,:,1)>=jhoverlap,1))];
+u_plot = repmat(u_plot,[1 params.ni]);
+u_plot = permute(u_plot,[2,1]);
+pcolor(x_plot,y_plot,u_plot);
+colorbar;
+colormap gray;
 axis equal;

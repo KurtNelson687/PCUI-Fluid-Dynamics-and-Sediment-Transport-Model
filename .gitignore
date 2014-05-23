@@ -18,3 +18,4 @@ examples/pcui_cavity/mfiles/*.mat
 examples/pcui_harold/mfiles/*.mat
 examples/pcui_energy_test/mfiles/*.mat
 examples/pcui_lock_exchange/mfiles/*.mat
+examples/pcui_franco/Makefile
