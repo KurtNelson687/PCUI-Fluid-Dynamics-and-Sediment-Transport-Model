@@ -13,22 +13,54 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	integer :: i, j, k
 	logical :: iostat
 	character*4 :: ID
+       double precision, dimension(-1:nni+2,-1:nnj+2,-1:nnk+2) ::
+     <  	      u_west_init
 
 c...... Velocity at west bc
+c       do k = -1, nnk+2
+c       do j = -1, nnj+2
+c          u_west(j,k) = 0.05D0/0.3D0*xp(1,j,k,2)
+c       if ( xp(1,j,k,2) .lt. .2020D0 ) then
+c        	u_west(j,k) = 0.3564D0 / 2D0 * (tanh(22.07D0
+c    <		 * (xp(1,j,k,2) - 0.1717D0)) + 1.188D0)
+c       endif
+c       if ( xp(1,j,k,2) .ge. .2020D0) then
+c       	u_west(j,k) = 0.04114D0 / 0.41D0 *
+c    <          log((xp(1,j,k,2) - 0.1632D0) / 0.001665D0)
+c       endif
+c       enddo
+c       enddo
+       
+       Qw = 0.D0
+       if ( n_west .eq. MPI_PROC_NULL ) then
+        write(ID, fmt='(I3)') 700+myid
+        inquire(file='u_west_init_from_matlab.'//ID, exist=iostat) 
+        if (iostat.eqv..true..and.grid_only.ne.1) then
+           open(700+myid, file = 'u_west_init_from_matlab.'//ID,
+     <                       form='unformatted',status='unknown')
+           read(700+myid) u_west_init
+           close(700+myid)
+        end if
+
         do k = -1, nnk+2
         do j = -1, nnj+2
-c          u_west(j,k) = 0.05D0/0.3D0*xp(1,j,k,2)
-	if ( xp(1,j,k,2) .lt. .2020D0 ) then
-		u_west(j,k) = 0.3564D0 / 2D0 * (tanh(22.07D0
-     <		 * (xp(1,j,k,2) - 0.1717D0)) + 1.188D0)
-	endif
-	if ( xp(1,j,k,2) .ge. .2020D0) then
-		u_west(j,k) = 0.04114D0 / 0.41D0 *
-     <          log((xp(1,j,k,2) - 0.1632D0) / 0.001665D0)
-	endif
+           u_west(j,k) = u_west_init(1,j,k)
+           if (k .eq. 7) then
+             write(*,*) xp(1,j,1,2), u_west(j,7)
+           endif
         enddo
         enddo
 
+        do k = 1, nnk
+        do j = 1, nnj
+           Qw = Qw + u_west(j,k) * xix(0,j,k)
+        enddo
+        enddo
+       end if
+
+       call global_sum(Qw)
+       write(*,*) Qw
+      
 C...... lid velocities u_lid and w_lid
 
 	if ( case .eq. 1 .and. n_nrth .eq. MPI_PROC_NULL ) then
@@ -212,3 +244,22 @@ C...... lid velocities u_lid and w_lid
 
 	return
 	end
+
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+
+      subroutine global_sum(a)
+
+      include "mpif.h"
+      include "mpi.inc"
+
+      double precision a, total
+
+      call MPI_REDUCE( a, total, 1, MPI_DOUBLE_PRECISION, MPI_SUM, 0, 
+     <                 MPI_COMM_WORLD, ierr )
+      call MPI_BCAST( total, 1, MPI_DOUBLE_PRECISION, 0,
+     <                 MPI_COMM_WORLD, ierr )
+      a = total
+
+      return
+      end
+

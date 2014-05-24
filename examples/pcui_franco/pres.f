@@ -23,7 +23,7 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	integer i, j, k, L, n
 
 	double precision resid, bbsum, ermin, ermax, resbc, sumbc
-	double precision temp, Qw, Qe, Qenew
+	double precision temp, Qe, Qenew
 
 	resid = 0.D0
 
@@ -82,7 +82,7 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 CBCBCBC	BCBCBCBCBCBCBCBCBCBC
 
 	temp = 0.125D0 / dtime
-       Qw = 0.D0
+c      Qw = 0.D0
        Qe = 0.D0
        Qenew = 0.D0
 
@@ -100,10 +100,11 @@ CBCBCBC	BCBCBCBCBCBCBCBCBCBC
      <	                     - 10.D0 * u(2,j,k,3) 
      <                       +  3.D0 * u(3,j,k,3) ) )
 	     uxi(0,j,k) = u_west(j,k) * xix(0,j,k) 
-       Qw = Qw + uxi(0,j,k)
+c      Qw = Qw + uxi(0,j,k)
 	enddo
 	enddo
 	endif
+
 	if ( n_east .eq. MPI_PROC_NULL ) then
 	do k = 1, nnk
 	do j = 1, nnj
@@ -126,10 +127,10 @@ c    <          - 0.125D0 * u(nni-1,j,k,1) )
         Qe = Qe + uxi(nni,j,k)
 	enddo
 	enddo
-
+       write(*,*) Qw
        do k = 1, nnk
        do j = 1, nnj
-          uxi(nni,j,k) = uxi(nni,j,k) + (0.017357487730381496D0
+          uxi(nni,j,k) = uxi(nni,j,k) + (Qw
      <                   - Qe)/16/16
           Qenew = Qenew + uxi(nni,j,k)
        enddo
@@ -368,3 +369,5 @@ c    <	      write(*,*)  n, resid/bbsum
 
 	return
 	end
+
+

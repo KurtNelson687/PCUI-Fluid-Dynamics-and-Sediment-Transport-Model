@@ -21,8 +21,8 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	iscalar   = 0
 	ieddy     = 0
 	mg_level  = 5
-	nstep     = 1000
-	nsave     = 100
+	nstep     = 1
+	nsave     = 1
 	maxstep   = 100
 
 	do i = 1, 5

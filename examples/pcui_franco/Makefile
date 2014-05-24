@@ -1,4 +1,5 @@
 COMP = mpif90
+#COMP = /opt/local/bin/mpif90-mpich-mp 
 FLAG = -c -w -O3 
 
 OBCA = ns.o mp.o io.o \
@@ -26,7 +27,7 @@ grid : $(OBJG) $(INCS) cavity.inc
 clean :
 	/bin/rm -f *.o
 cleano:
-	/bin/rm -f output* continue_run* uvw* xyz* rho* fort* qoutput grid cav
+	/bin/rm -f output* continue_run* uvw* u_west* xyz* rho* fort* qoutput grid cav
 # main program ( with statistics )
 nsst.o : nsst.f $(INCS)
 	$(COMP) $(FLAG) nsst.f 

@@ -21,6 +21,7 @@ fname_uvw = 'input_UVW';
 fname_UVW_to_PCUI = 'uvw_init_from_matlab';
 fname_rho_init_to_PCUI = 'rho_init_from_matlab';
 fname_rho_full_to_PCUI = 'rho_full_from_matlab';
+fname_u_west_to_pcui = 'u_west_init_from_matlab';
 
 % -------------------------------------------------------------------------
 % Get problem parameters and variables from PCUI
@@ -64,10 +65,12 @@ y_plot = squeeze(y_plot(:,:,floor(length(z_plot(1,1,:)/2))));
 D = params.by;
 rho_init_pcui = ones(size(x));
 rho_full_pcui = rho_init_pcui;
-% u_pcui = 0.05/0.3*y; %pure shear flow
+% u_prof = 0.05/0.3*y; %pure shear flow
 load fastfit %load fast data
-u_pcui = [ftanh(y(1,y(1,:,1)<jhoverlap,1)); flog(y(1,y(1,:,1)>=jhoverlap,1))];
-u_pcui = repmat(u_pcui,[1 params.ni+4*params.px params.nk+4*params.pz]);
+u_prof = [ftanh(y(1,y(1,:,1)<jhoverlap,1)); flog(y(1,y(1,:,1)>=jhoverlap,1))];
+u_west_pcui = repmat(u_prof,[1 params.ni+4*params.px params.nk+4*params.pz]);
+u_west_pcui = permute(u_west_pcui,[2,1,3]);
+u_pcui = repmat(u_prof,[1 params.ni+4*params.px params.nk+4*params.pz]);
 u_pcui = permute(u_pcui,[2,1,3]);
 v_pcui = zeros(size(rho_init_pcui)); 
 w_pcui = zeros(size(rho_init_pcui));
@@ -79,34 +82,55 @@ uvw_pcui(:,:,:,3) = w_pcui;
 write_binary_file_pcui(working_folder, fname_rho_full_to_PCUI, params, rho_full_pcui);
 write_binary_file_pcui(working_folder, fname_rho_init_to_PCUI, params, rho_init_pcui);
 write_binary_file_pcui(working_folder, fname_UVW_to_PCUI, params, uvw_pcui); 
+write_binary_file_pcui(working_folder, fname_u_west_to_pcui, params, u_west_pcui);
 
-% -------------------------------------------------------------------------
-% Verify initialized density
-% -------------------------------------------------------------------------
-% Plot density field
-fig1 = figure(1);
-clf
-set(fig1,'Renderer','zbuffer');
-set(fig1,'Color','white');
-rho_init_plot = ones(size(x_plot));
-rho_full_plot = rho_init_plot;
-pcolor(x_plot,y_plot,rho_full_plot);
-colorbar;
-colormap gray;
-axis equal;
+% fid = fopen('../u_west_init_from_matlab.700', 'w');
+% precision = 'float64';
+% headerflag = 'float32'; % This needs to be changed to float64 to read in C binary data
+% footerflag = headerflag;
+% a = fwrite(fid,1,headerflag);%header
+% data = fwrite(fid,u_west_pcui,precision);%data
+% b = fwrite(fid,1, footerflag);%footer
 
-% -------------------------------------------------------------------------
-% Verify initialized velocity
-% -------------------------------------------------------------------------
-% Plot density field
-fig2 = figure(2);
-clf
-set(fig2,'Renderer','zbuffer');
-set(fig2,'Color','white');
-u_plot = [ftanh(y_plot(1,y_plot(1,:,1)<jhoverlap,1)); flog(y_plot(1,y_plot(1,:,1)>=jhoverlap,1))];
-u_plot = repmat(u_plot,[1 params.ni]);
-u_plot = permute(u_plot,[2,1]);
-pcolor(x_plot,y_plot,u_plot);
-colorbar;
-colormap gray;
-axis equal;
+% % -------------------------------------------------------------------------
+% % Verify initialized density
+% % -------------------------------------------------------------------------
+% % Plot density field
+% fig1 = figure(1);
+% clf
+% set(fig1,'Renderer','zbuffer');
+% set(fig1,'Color','white');
+% rho_init_plot = ones(size(x_plot));
+% rho_full_plot = rho_init_plot;
+% pcolor(x_plot,y_plot,rho_full_plot);
+% colorbar;
+% colormap gray;
+% axis equal;
+% 
+% % -------------------------------------------------------------------------
+% % Verify initialized velocity profile (same as u_west)
+% % -------------------------------------------------------------------------
+% % Plot density field
+% fig2 = figure(2);
+% clf
+% set(fig2,'Renderer','zbuffer');
+% set(fig2,'Color','white');
+% u_prof_plot = [ftanh(y_plot(1,y_plot(1,:,1)<jhoverlap,1)); flog(y_plot(1,y_plot(1,:,1)>=jhoverlap,1))];
+% plot(u_prof_plot,y_plot(1,:),'k-o');
+% axis([0 max(u_prof_plot) 0 D]);
+% 
+% % -------------------------------------------------------------------------
+% % Verify initialized initial velocity
+% % -------------------------------------------------------------------------
+% % Plot density field
+% fig3 = figure(3);
+% clf
+% set(fig3,'Renderer','zbuffer');
+% set(fig3,'Color','white');
+% u_plot = [ftanh(y_plot(1,y_plot(1,:,1)<jhoverlap,1)); flog(y_plot(1,y_plot(1,:,1)>=jhoverlap,1))];
+% u_plot = repmat(u_plot,[1 params.ni]);
+% u_plot = permute(u_plot,[2,1]);
+% pcolor(x_plot,y_plot,u_plot);
+% colorbar;
+% colormap gray;
+% axis equal;
