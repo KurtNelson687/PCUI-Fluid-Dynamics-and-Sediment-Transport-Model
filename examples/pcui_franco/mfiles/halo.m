@@ -52,41 +52,41 @@ end
 uh = uh(exi,exj,exk);
 yh = yh(exi,exj,exk);
 
-imagesc(squeeze(uh(:,:,1))'); 
-colorbar; 
-colormap gray;
-
-figure;
-plot(squeeze(uh(1,:,1)),squeeze(yh(1,:,1)),'ko-'); 
-hold on; 
-plot(squeeze(uh(2,:,1)),squeeze(yh(2,:,1)),'bo-'); 
-plot(squeeze(uh(3,:,1)),squeeze(yh(3,:,1)),'mo-'); 
-plot(squeeze(uh(4,:,1)),squeeze(yh(4,:,1)),'ro-');
-% plot(squeeze(uh(5,:,1)),squeeze(yh(5,:,1)),'co-');
-u_west = 1/6*squeeze(yh(1,:,1));
-% plot(u_west,squeeze(yh(1,:,1)),'k--');
-legend('n=-1','n=0','n=1','n=2','prescribed u_{west}','location','southeast');
-xlabel('u [m/s]');
-ylabel('z [m]');
-
-figure;
-plot(squeeze(uh(end,:,1)),squeeze(yh(end,:,1)),'ko-'); 
-hold on; 
-plot(squeeze(uh(end-1,:,1)),squeeze(yh(end-1,:,1)),'bo-'); 
-plot(squeeze(uh(end-2,:,1)),squeeze(yh(end-2,:,1)),'mo'); 
-plot(squeeze(uh(end-3,:,1)),squeeze(yh(end-3,:,1)),'co-');
-plot(squeeze(uh(end-4,:,1)),squeeze(yh(end-4,:,1)),'r--');
-u_west = 1/6*squeeze(yh(1,:,1));
-% plot(u_west,squeeze(yh(1,:,1)),'g--');
+% imagesc(squeeze(uh(:,:,1))'); 
+% colorbar; 
+% colormap gray;
+% 
+% figure;
+% plot(squeeze(uh(1,:,1)),squeeze(yh(1,:,1)),'ko-'); 
+% hold on; 
+% plot(squeeze(uh(2,:,1)),squeeze(yh(2,:,1)),'bo-'); 
+% plot(squeeze(uh(3,:,1)),squeeze(yh(3,:,1)),'mo-'); 
+% plot(squeeze(uh(4,:,1)),squeeze(yh(4,:,1)),'ro-');
+% % plot(squeeze(uh(5,:,1)),squeeze(yh(5,:,1)),'co-');
+% u_west = 1/6*squeeze(yh(1,:,1));
+% % plot(u_west,squeeze(yh(1,:,1)),'k--');
+% legend('n=-1','n=0','n=1','n=2','prescribed u_{west}','location','southeast');
+% xlabel('u [m/s]');
+% ylabel('z [m]');
+% 
+% figure;
+% plot(squeeze(uh(end,:,1)),squeeze(yh(end,:,1)),'ko-'); 
+% hold on; 
+% plot(squeeze(uh(end-1,:,1)),squeeze(yh(end-1,:,1)),'bo-'); 
+% plot(squeeze(uh(end-2,:,1)),squeeze(yh(end-2,:,1)),'mo'); 
+% plot(squeeze(uh(end-3,:,1)),squeeze(yh(end-3,:,1)),'co-');
+% plot(squeeze(uh(end-4,:,1)),squeeze(yh(end-4,:,1)),'r--');
+% u_west = 1/6*squeeze(yh(1,:,1));
+% % plot(u_west,squeeze(yh(1,:,1)),'g--');
 
 figure;
 plot(squeeze(uh(1,:,10)),squeeze(yh(1,:,1)),'ko-'); 
 hold on; 
-plot(squeeze(uh(32,:,10)),squeeze(yh(32,:,1)),'bo-'); 
-plot(squeeze(uh(64,:,10)),squeeze(yh(64,:,1)),'mo-'); 
-plot(squeeze(uh(96,:,10)),squeeze(yh(96,:,1)),'co-');
-plot(squeeze(uh(128,:,10)),squeeze(yh(128,:,1)),'r--');
-legend('x=1','x=32','x=64','x=96','x=128','location','northwest')
+plot(squeeze(uh(32,:,10)),squeeze(yh(64,:,1)),'bo-'); 
+plot(squeeze(uh(64,:,10)),squeeze(yh(128,:,1)),'mo-'); 
+plot(squeeze(uh(96,:,10)),squeeze(yh(192,:,1)),'co-');
+plot(squeeze(uh(128,:,10)),squeeze(yh(256,:,1)),'ro-');
+legend('x/L=0','x/L=0.25','x/L=0.5','x/L=0.75','x/L=1','location','northwest')
 ylim([0 0.3])
 xlabel('u [m s^{-1}]','fontsize',14)
 ylabel('z [m]','fontsize',14)

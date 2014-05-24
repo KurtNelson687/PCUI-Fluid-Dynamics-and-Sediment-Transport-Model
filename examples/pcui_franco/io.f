@@ -21,8 +21,9 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	iscalar   = 0
 	ieddy     = 0
 	mg_level  = 5
-	nstep     = 1
-	nsave     = 1
+	nstep     = 1000
+	nsave     = 100
+      ncont = 1000
 	maxstep   = 100
 
 	do i = 1, 5
@@ -57,6 +58,8 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	call MPI_BCAST(nstep,       1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(nsave,       1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
+      call MPI_BCAST(ncont,   1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
+
 
 	call MPI_BCAST(maxstep,     1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(iterchk(1),  5,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)

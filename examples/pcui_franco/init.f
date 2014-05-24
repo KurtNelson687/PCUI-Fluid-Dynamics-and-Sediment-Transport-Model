@@ -45,9 +45,9 @@ c       enddo
         do k = -1, nnk+2
         do j = -1, nnj+2
            u_west(j,k) = u_west_init(1,j,k)
-           if (k .eq. 7) then
-             write(*,*) xp(1,j,1,2), u_west(j,7)
-           endif
+c          if (k .eq. 7) then
+c            write(*,*) xp(1,j,1,2), u_west(j,7)
+c          endif
         enddo
         enddo
 
@@ -59,7 +59,6 @@ c       enddo
        end if
 
        call global_sum(Qw)
-       write(*,*) Qw
       
 C...... lid velocities u_lid and w_lid
 

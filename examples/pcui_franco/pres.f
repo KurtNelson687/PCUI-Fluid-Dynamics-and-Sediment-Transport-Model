@@ -127,20 +127,26 @@ c    <          - 0.125D0 * u(nni-1,j,k,1) )
         Qe = Qe + uxi(nni,j,k)
 	enddo
 	enddo
-       write(*,*) Qw
+      endif
+
+      call global_sum(Qe)
+
+      if ( n_east .eq. MPI_PROC_NULL ) then
        do k = 1, nnk
        do j = 1, nnj
-          uxi(nni,j,k) = uxi(nni,j,k) + (Qw
-     <                   - Qe)/16/16
+          uxi(nni,j,k) = uxi(nni,j,k) + (Qw - Qe)/nj/nk
           Qenew = Qenew + uxi(nni,j,k)
        enddo
        enddo
+      endif
 
-	endif
-
-       write(*,*) MYID, 'Qw = ', Qw
-       write(*,*) MYID, 'Qe = ', Qe 
-       write(*,*) MYID, 'Qenew = ', Qenew
+       call global_sum(Qenew)
+       
+       if (MYID .eq. 0) then
+         write(*,*) MYID, 'Qw = ', Qw
+         write(*,*) MYID, 'Qe = ', Qe 
+         write(*,*) MYID, 'Qenew = ', Qenew
+       endif
 
 	if ( n_suth .eq. MPI_PROC_NULL ) then
 	do k = 1, nnk
