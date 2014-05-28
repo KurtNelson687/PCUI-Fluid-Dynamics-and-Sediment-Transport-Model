@@ -102,6 +102,8 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	
 	integer i, j, k, L
 
+	double precision :: ran0
+
 	if ( n_nrth .eq. MPI_PROC_NULL ) then
 	   do k = -1, nnk+2
 	   do i = -1, nni+2
@@ -150,6 +152,12 @@ c	   enddo
 	   enddo
 	   enddo
 	endif
+
+	do k = -1, nnk+2
+	do j = -1, nnj+2
+	   u_west(j,k) = u_west_mean(j,k) + ran0(idum)*.001D0 - .0005D0
+	enddo
+	enddo
 
 	if ( n_west .eq. MPI_PROC_NULL ) then
 c	   do L = 1, 3

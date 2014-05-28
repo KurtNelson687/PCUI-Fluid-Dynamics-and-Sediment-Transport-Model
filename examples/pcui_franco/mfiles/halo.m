@@ -82,10 +82,10 @@ yh = yh(exi,exj,exk);
 figure;
 plot(squeeze(uh(1,:,10)),squeeze(yh(1,:,1)),'ko-'); 
 hold on; 
-plot(squeeze(uh(32,:,10)),squeeze(yh(64,:,1)),'bo-'); 
-plot(squeeze(uh(64,:,10)),squeeze(yh(128,:,1)),'mo-'); 
-plot(squeeze(uh(96,:,10)),squeeze(yh(192,:,1)),'co-');
-plot(squeeze(uh(128,:,10)),squeeze(yh(256,:,1)),'ro-');
+plot(squeeze(uh(4,:,10)),squeeze(yh(2,:,1)),'bo-'); 
+plot(squeeze(uh(5,:,10)),squeeze(yh(3,:,1)),'mo-'); 
+plot(squeeze(uh(6,:,10)),squeeze(yh(96,:,1)),'co-');
+plot(squeeze(uh(128,:,10)),squeeze(yh(128,:,1)),'ro-');
 legend('x/L=0','x/L=0.25','x/L=0.5','x/L=0.75','x/L=1','location','northwest')
 ylim([0 0.3])
 xlabel('u [m s^{-1}]','fontsize',14)

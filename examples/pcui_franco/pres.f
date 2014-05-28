@@ -82,7 +82,7 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 CBCBCBC	BCBCBCBCBCBCBCBCBCBC
 
 	temp = 0.125D0 / dtime
-c      Qw = 0.D0
+       Qw = 0.D0
        Qe = 0.D0
        Qenew = 0.D0
 
@@ -100,10 +100,12 @@ c      Qw = 0.D0
      <	                     - 10.D0 * u(2,j,k,3) 
      <                       +  3.D0 * u(3,j,k,3) ) )
 	     uxi(0,j,k) = u_west(j,k) * xix(0,j,k) 
-c      Qw = Qw + uxi(0,j,k)
+        Qw = Qw + uxi(0,j,k)
 	enddo
 	enddo
 	endif
+
+	call global_sum(Qw)
 
 	if ( n_east .eq. MPI_PROC_NULL ) then
 	do k = 1, nnk

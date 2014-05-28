@@ -37,7 +37,9 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	double precision, dimension(-1:nni+2, -1:nnk+2) ::
      <		w_lid, u_lid
             double precision, dimension(-1:nnj+2,-1:nnk+2) ::
-     <    u_west
+     <    u_west, u_west_mean
+            integer :: idum
        double precision Qw
 	common/xyz/
-     <		xp, phi_init, w_lid, u_lid, u_west, Qw
+     <		xp, phi_init, w_lid, u_lid, u_west, u_west_mean, Qw,
+     <          idum
