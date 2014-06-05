@@ -121,7 +121,7 @@ for istep = istart:iskip:iend
     
     subplot(2,1,2)    
     cla
-    h3=pcolor(x,y,phi);     
+    h3=pcolor(x,y,u);     
     %set(h3, 'EdgeColor', 'none');   
     xlabel('x (m)','color','w')
     ylabel('y (m)','color','w')
@@ -150,7 +150,7 @@ for istep = istart:iskip:iend
 %               'Position', [0.4 0.48 0.23 0.04]);
     display(istep*params.dt*params.nsave);    
     drawnow;
-%     pause;
+    pause;
 end
 
 if isprint

@@ -80,12 +80,12 @@ yh = yh(exi,exj,exk);
 % % plot(u_west,squeeze(yh(1,:,1)),'g--');
 
 figure;
-plot(squeeze(uh(1,:,10)),squeeze(yh(1,:,1)),'ko-'); 
+plot(mean(uh(4,:,:),3),squeeze(yh(1,:,Ny/2)),'ko-','linewidth',2); 
 hold on; 
-plot(squeeze(uh(4,:,10)),squeeze(yh(2,:,1)),'bo-'); 
-plot(squeeze(uh(5,:,10)),squeeze(yh(3,:,1)),'mo-'); 
-plot(squeeze(uh(6,:,10)),squeeze(yh(96,:,1)),'co-');
-plot(squeeze(uh(128,:,10)),squeeze(yh(128,:,1)),'ro-');
+plot(mean(uh(Nx/4,:,:),3),squeeze(yh(Nx/4,:,Ny/2)),'bo-','linewidth',2); 
+plot(mean(uh(Nx/2,:,:),3),squeeze(yh(Nx/2,:,Ny/2)),'mo-','linewidth',2); 
+plot(mean(uh(3*Nx/4,:,:),3),squeeze(yh(3*Nx/4,:,Ny/2)),'co-','linewidth',2);
+plot(mean(uh(Nx-2,:,:),3),squeeze(yh(Nx,:,Ny/2)),'ro-','linewidth',2);
 legend('x/L=0','x/L=0.25','x/L=0.5','x/L=0.75','x/L=1','location','northwest')
 ylim([0 0.3])
 xlabel('u [m s^{-1}]','fontsize',14)

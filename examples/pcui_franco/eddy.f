@@ -676,7 +676,8 @@ C	kappaT = C/PrT D**2 |S|
         do k = 1, nnk
         do j = 1, nnj
         do i = 1, nni
-	    vst(i,j,k) = max( vst(i,j,k), -vis)
+c    vst(i,j,k) = max( vst(i,j,k), -vis)
+        vst(i,j,k) = max( vst(i,j,k), 0.D0)
 	   akst(i,j,k) = max(akst(i,j,k), -ak )
 	enddo
 	enddo

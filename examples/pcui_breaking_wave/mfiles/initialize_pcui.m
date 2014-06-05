@@ -55,7 +55,7 @@ params.pz = variable_value_pcui('pz',ftext);
 % -------------------------------------------------------------------------
 % Load global grid from grid generator file and rearrange y and z
 % load '/home/barthur/zang/grids/grid_6mglevels_test_323.mat'
-load 'grid_128x32x16_f64.mat';
+load 'grid_test1.mat';
 x_global = x; x_global = permute(x_global,[1 3 2]);
 y_global = z; y_global = permute(y_global,[1 3 2]);
 z_global = y; z_global = permute(z_global,[1 3 2]);
@@ -121,15 +121,16 @@ write_binary_file_pcui(working_folder, fname_grid_to_PCUI, params, xyz_pcui);
 % Initialize PCUI with a solitary wave
 % -------------------------------------------------------------------------
 % Prepare density field
-h1 = -0.04;
-a = 0.024;
-Lw = 0.23;
-delta = 0.02;
+drho = 0.03;
+h1 = -0.4;
+a = 0.1;
+Lw = 0.7;
+delta = 0.1;
 alpha = 0.99;
 rho_init_pcui = ones(size(x_pcui));
 zeta = -a*exp(-(x_pcui/Lw).^2) + 0.001*rand(size(x_pcui));
 % zeta = -a*sech(x_pcui/Lw).^2 + 0.001*rand(size(x_pcui));
-rho_pert_pcui = -0.5*0.04*tanh(2*(y_pcui - zeta - h1)/delta*atanh(alpha));
+rho_pert_pcui = -0.5*drho*tanh(2*(y_pcui - zeta - h1)/delta*atanh(alpha));
 rho_full_pcui = rho_init_pcui+rho_pert_pcui;
 u_pcui = zeros(size(rho_init_pcui));
 v_pcui = u_pcui; w_pcui = u_pcui;
@@ -164,7 +165,7 @@ set(fig1,'Color','white');
 rho_init_plot = ones(size(x_plot));
 zeta_plot = -a*exp(-(x_plot/Lw).^2) + 0.001*rand(size(x_plot));
 % zeta_plot = -a*sech(x_plot/Lw).^2 + 0.001*rand(size(x_plot));
-rho_pert_plot = -0.5*0.04*tanh(2*(y_plot - zeta_plot - h1)/delta*atanh(alpha));
+rho_pert_plot = -0.5*drho*tanh(2*(y_plot - zeta_plot - h1)/delta*atanh(alpha));
 rho_full_plot = rho_init_plot+rho_pert_plot;
 pcolor(x_plot,y_plot,rho_full_plot);
 axis image;

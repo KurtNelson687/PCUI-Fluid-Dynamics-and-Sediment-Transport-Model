@@ -63,11 +63,13 @@ y_plot = squeeze(y_plot(:,:,floor(length(z_plot(1,1,:)/2))));
 % -------------------------------------------------------------------------
 % Prepare density field
 D = params.by;
+uvw_pcui = zeros([size(x),3]);
 rho_init_pcui = ones(size(x));
 rho_full_pcui = rho_init_pcui;
-% u_prof = 0.05/0.3*y; %pure shear flow
-load fastfit %load fast data
-u_prof = [ftanh(y(1,y(1,:,1)<jhoverlap,1)); flog(y(1,y(1,:,1)>=jhoverlap,1))];
+u_prof = 0.1*ones(size(y(1,:,1)')); %uniform flow
+% u_prof = 0.05/0.3*y(1,:,1)'; %pure shear flow
+% load fastfit %load fast data
+% u_prof = [ftanh(y(1,y(1,:,1)<jhoverlap,1)); flog(y(1,y(1,:,1)>=jhoverlap,1))];
 u_west_pcui = repmat(u_prof,[1 params.ni+4*params.px params.nk+4*params.pz]);
 u_west_pcui = permute(u_west_pcui,[2,1,3]);
 u_pcui = repmat(u_prof,[1 params.ni+4*params.px params.nk+4*params.pz]);
@@ -95,7 +97,6 @@ write_binary_file_pcui(working_folder, fname_u_west_to_pcui, params, u_west_pcui
 % % -------------------------------------------------------------------------
 % % Verify initialized density
 % % -------------------------------------------------------------------------
-% % Plot density field
 % fig1 = figure(1);
 % clf
 % set(fig1,'Renderer','zbuffer');
@@ -107,30 +108,33 @@ write_binary_file_pcui(working_folder, fname_u_west_to_pcui, params, u_west_pcui
 % colormap gray;
 % axis equal;
 % 
-% % -------------------------------------------------------------------------
-% % Verify initialized velocity profile (same as u_west)
-% % -------------------------------------------------------------------------
-% % Plot density field
-% fig2 = figure(2);
-% clf
-% set(fig2,'Renderer','zbuffer');
-% set(fig2,'Color','white');
+% -------------------------------------------------------------------------
+% Verify initialized velocity profile (same as u_west)
+% -------------------------------------------------------------------------
+fig2 = figure(2);
+clf
+set(fig2,'Renderer','zbuffer');
+set(fig2,'Color','white');
+u_prof_plot = 0.1*ones(size(y_plot(1,:,1)'));
+% u_prof_plot = 0.05/0.3*y_plot(1,:,1)';
 % u_prof_plot = [ftanh(y_plot(1,y_plot(1,:,1)<jhoverlap,1)); flog(y_plot(1,y_plot(1,:,1)>=jhoverlap,1))];
-% plot(u_prof_plot,y_plot(1,:),'k-o');
-% axis([0 max(u_prof_plot) 0 D]);
-% 
-% % -------------------------------------------------------------------------
-% % Verify initialized initial velocity
-% % -------------------------------------------------------------------------
-% % Plot density field
-% fig3 = figure(3);
-% clf
-% set(fig3,'Renderer','zbuffer');
-% set(fig3,'Color','white');
+plot(u_prof_plot,y_plot(1,:),'k-o');
+axis([0 max(u_prof_plot) 0 D]);
+
+% -------------------------------------------------------------------------
+% Verify initialized initial velocity
+% -------------------------------------------------------------------------
+fig3 = figure(3);
+clf
+set(fig3,'Renderer','zbuffer');
+set(fig3,'Color','white');
+u_plot = 0.1*ones(size(y_plot(1,:,1)'));
+% u_plot = 0.05*3*y_plot(1,:,1)';
 % u_plot = [ftanh(y_plot(1,y_plot(1,:,1)<jhoverlap,1)); flog(y_plot(1,y_plot(1,:,1)>=jhoverlap,1))];
-% u_plot = repmat(u_plot,[1 params.ni]);
-% u_plot = permute(u_plot,[2,1]);
-% pcolor(x_plot,y_plot,u_plot);
-% colorbar;
-% colormap gray;
-% axis equal;
+u_plot = repmat(u_plot,[1 params.ni]);
+u_plot = permute(u_plot,[2,1]);
+pcolor(x_plot,y_plot,u_plot);
+colorbar;
+shading flat;
+colormap gray;
+axis equal;

@@ -100,7 +100,7 @@ CBCBCBC	BCBCBCBCBCBCBCBCBCBC
      <	                     - 10.D0 * u(2,j,k,3) 
      <                       +  3.D0 * u(3,j,k,3) ) )
 	     uxi(0,j,k) = u_west(j,k) * xix(0,j,k) 
-        Qw = Qw + uxi(0,j,k)
+       Qw = Qw + uxi(0,j,k)
 	enddo
 	enddo
 	endif

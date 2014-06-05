@@ -13,15 +13,16 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	if ( MYID .eq. 0 ) then
 
-	dtime     = 0.01D0
+	dtime     = 0.04D0
 	case      = 0
 	newrun    = 1
 	periodic  = 1
 	iscalar   = 1
 	ieddy     = 0
 	mg_level  = 5
-	nstep     = 7000
+	nstep     = 2000
 	nsave     = 50
+       ncont= 20000
 	maxstep   = 10
 
 	do i = 1, 6
@@ -55,6 +56,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	call MPI_BCAST(nstep,       1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(nsave,       1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
+      call MPI_BCAST(ncont,   1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 
 	call MPI_BCAST(maxstep,     1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(iterchk(1),  5,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)

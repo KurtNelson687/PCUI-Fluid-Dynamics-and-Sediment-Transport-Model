@@ -2,7 +2,7 @@
 clear all; clc; close all;
 
 % PLOTTING OPTIONS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-timestep = 2000; %timestep to plot
+timestep = 1500; %timestep to plot
 delta_ts = 0; %averaging
 FIGURE_ON = 1; %figure visible?
     print_ext = '-dpng'; %image file type
@@ -201,7 +201,7 @@ if(display_density)
        colorbar;
 %        contour(x_xz,z_xz,rho_xz,[1, 1],'k');
        axis equal;
-       axis([0 x_length -z_length 0]);
+%        axis([0 x_length -z_length 0]);
        xlabel('x [m]');
        ylabel('z [m]');
        title('Density \Delta\rho/\rho_0, x-z slice');
@@ -263,7 +263,7 @@ if(display_velocity)
             quiver(x_xz,z_xz,u_xz,w_xz,'k');
         end
         axis equal;
-        axis([0 x_length -z_length 0]);
+%         axis([0 x_length -z_length 0]);
         xlabel('x [m]');
         ylabel('z [m]');
         title('Velocity u, x-z slice');
@@ -289,7 +289,7 @@ if(display_velocity)
             quiver(y_yz,z_yz,v_yz,w_yz);
         end
         axis equal;
-        axis([0 y_length -z_length 0]);
+%         axis([0 y_length -z_length 0]);
         xlabel('y [m]');
         ylabel('z [m]');
         title('Velocity u, y-z slice');

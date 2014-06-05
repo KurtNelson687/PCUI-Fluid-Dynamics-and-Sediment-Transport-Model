@@ -104,6 +104,78 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	double precision :: ran0
 
+cdo k = -1, nnk+2
+cdo j = -1, nnj+2
+c   u_west(j,k) = u_west_mean(j,k) + ran0(idum)*.01D0 - .005D0
+cenddo
+cenddo
+
+	if ( n_west .eq. MPI_PROC_NULL ) then
+c	   do L = 1, 3
+	   do k = -1, nnk+2
+	   do j = -1, nnj+2
+c             Free-slip
+c       u(0,j,k,1) =   2.D0 * u_west(j,k) - u(1,j,k,1)
+        u(0,j,k,1) =   u_west(j,k) 
+        u(1,j,k,1) =   u_west(j,k) 
+	      u(0,j,k,2) =   u(1,j,k,2)
+	      u(0,j,k,3) =   u(1,j,k,3)
+
+c             No-slip
+c	      u( 0,j,k,L) = - u(1,j,k,L)
+	   enddo
+	   enddo
+c	   enddo
+          do k = -1, nnk+2
+	        do j = -1, nnj+2
+c            u(-1,j,k,1) = 2.D0*u(0,j,k,1) - u(1,j,k,1)
+             u(-1,j,k,1) = u_west(j,k)
+c            u(-1,j,k,1) = u(0,j,k,1)
+          enddo
+	        enddo
+
+	   do L = 2, 3
+	   do k = -1, nnk+2
+	   do j = -1, nnj+2
+	      u(-1,j,k,L) = 3.D0*( u(0,j,k,L)-u(1,j,k,L) ) + u(2,j,k,L)
+	   enddo
+	   enddo
+	   enddo
+	endif
+
+	if ( n_east .eq. MPI_PROC_NULL ) then
+c	   do L = 1, 3
+	   do k = -1, nnk+2
+	   do j = -1, nnj+2
+c             Free-slip
+	      u(nni,j,k,1)   =   u(nni-1,j,k,1)
+        u(nni+1,j,k,1) =   u(nni,j,k,1)
+c       u(nni+1,j,k,1) =   2.D0 * 0.0025D0/16/16/xix(nni,j,k) 
+c    <                          - u(nni,j,k,1)
+	      u(nni+1,j,k,2) =   u(nni,j,k,2)
+	      u(nni+1,j,k,3) =   u(nni,j,k,3)
+
+c             No-slip
+c	      u(nni+1,j,k,L) = - u(nni,j,k,L)
+	   enddo
+	   enddo
+c	   enddo
+           do k = -1, nnk+2
+	         do j = -1, nnj+2
+              u(nni+2,j,k,1) = u(nni,j,k,1)
+	         enddo
+	         enddo
+
+	   do L = 2, 3
+	   do k = -1, nnk+2
+	   do j = -1, nnj+2
+	      u(nni+2,j,k,L) = 3.D0*( u(nni+1,j,k,L)-u(nni,j,k,L) ) 
+     <                       + u(nni-1,j,k,L)
+	   enddo
+	   enddo
+	   enddo
+	endif
+
 	if ( n_nrth .eq. MPI_PROC_NULL ) then
 	   do k = -1, nnk+2
 	   do i = -1, nni+2
@@ -133,14 +205,14 @@ c	   do L = 1, 3
 	   do k = -1, nnk+2
 	   do i = -1, nni+2
 c             Free-slip
-c       u(i,0,k,1) =   u(i,1,k,1)
-c       u(i,0,k,2) = - u(i,1,k,2)
-c       u(i,0,k,3) =   u(i,1,k,3)
+        u(i,0,k,1) =   u(i,1,k,1)
+        u(i,0,k,2) = - u(i,1,k,2)
+        u(i,0,k,3) =   u(i,1,k,3)
 
 c             No-slip
-        u(i, 0,k,1) = - u(i,1,k,1) 
-        u(i, 0,k,2) = - u(i,1,k,2)
-        u(i, 0,k,3) = - u(i,1,k,3)
+c      u(i, 0,k,1) = - u(i,1,k,1) 
+c       u(i, 0,k,2) = - u(i,1,k,2)
+c       u(i, 0,k,3) = - u(i,1,k,3)
 	   enddo
 	   enddo
 c	   enddo
@@ -148,77 +220,6 @@ c	   enddo
 	   do k = -1, nnk+2
 	   do i = -1, nni+2
 	      u(i,-1,k,L) = 3.D0*( u(i,0,k,L)-u(i,1,K,L) ) + u(i,2,k,L)
-	   enddo
-	   enddo
-	   enddo
-	endif
-
-	do k = -1, nnk+2
-	do j = -1, nnj+2
-	   u_west(j,k) = u_west_mean(j,k) + ran0(idum)*.001D0 - .0005D0
-	enddo
-	enddo
-
-	if ( n_west .eq. MPI_PROC_NULL ) then
-c	   do L = 1, 3
-	   do k = -1, nnk+2
-	   do j = -1, nnj+2
-c             Free-slip
-c       u(0,j,k,1) =   2.D0 * u_west(j,k) - u(1,j,k,1)
-        u(0,j,k,1) =   u_west(j,k) 
-        u(1,j,k,1) =   u_west(j,k) 
-	      u(0,j,k,2) =   u(1,j,k,2)
-	      u(0,j,k,3) =   u(1,j,k,3)
-
-c             No-slip
-c	      u( 0,j,k,L) = - u(1,j,k,L)
-	   enddo
-	   enddo
-c	   enddo
-          do k = -1, nnk+2
-	        do j = -1, nnj+2
-c            u(-1,j,k,1) = 2.D0*u(0,j,k,1) - u(1,j,k,1)
-             u(-1,j,k,1) = u_west(j,k)
-          enddo
-	        enddo
-
-	   do L = 2, 3
-	   do k = -1, nnk+2
-	   do j = -1, nnj+2
-	      u(-1,j,k,L) = 3.D0*( u(0,j,k,L)-u(1,j,k,L) ) + u(2,j,k,L)
-	   enddo
-	   enddo
-	   enddo
-	endif
-
-	if ( n_east .eq. MPI_PROC_NULL ) then
-c	   do L = 1, 3
-	   do k = -1, nnk+2
-	   do j = -1, nnj+2
-c             Free-slip
-	u(nni,j,k,1) = u(nni-1,j,k,1)
-        u(nni+1,j,k,1) =   u(nni,j,k,1)
-c       u(nni+1,j,k,1) =   2.D0 * 0.0025D0/16/16/xix(nni,j,k) 
-c    <                          - u(nni,j,k,1)
-	      u(nni+1,j,k,2) =   u(nni,j,k,2)
-	      u(nni+1,j,k,3) =   u(nni,j,k,3)
-
-c             No-slip
-c	      u(nni+1,j,k,L) = - u(nni,j,k,L)
-	   enddo
-	   enddo
-c	   enddo
-           do k = -1, nnk+2
-	         do j = -1, nnj+2
-              u(nni+2,j,k,1) = u(nni,j,k,1)
-	         enddo
-	         enddo
-
-	   do L = 2, 3
-	   do k = -1, nnk+2
-	   do j = -1, nnj+2
-	      u(nni+2,j,k,L) = 3.D0*( u(nni+1,j,k,L)-u(nni,j,k,L) ) 
-     <                       + u(nni-1,j,k,L)
 	   enddo
 	   enddo
 	   enddo

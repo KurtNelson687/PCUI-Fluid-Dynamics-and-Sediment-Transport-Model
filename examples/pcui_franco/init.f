@@ -50,13 +50,21 @@ c       enddo
         enddo
         enddo
 
-        do k = 1, nnk
-        do j = 1, nnj
-	   u_west(j,k) = u_west_mean(j,k) + ran0(idum)*.001D0 - .0005D0
+        do k = -1, nnk+2
+        do j = -1, nnj+2
+           u_west(j,k) = u_west_mean(j,k) 
+c    <                 + ran0(idum)*.01D0 - .005D0
            Qw = Qw + u_west(j,k) * xix(0,j,k)
 c          write(*,*) xp(1,j,1,2), u_west_mean(j,k), u_west(j,k)
         enddo
         enddo
+        
+        do k = 1, nnk
+        do j = 1, nnj
+           Qw = Qw + u_west(j,k) * xix(0,j,k)
+        enddo
+        enddo
+
        end if
 
        call global_sum(Qw)
@@ -146,13 +154,13 @@ C...... lid velocities u_lid and w_lid
 	      close(700+myid)
 	   end if
 	   
-	   do k = 1, nnk
-	   do j = 1, nnj
-	   do i = 1, nni
-		u(i,j,k,1) = u(i,j,k,1) + .001D0*ran0(idum) - .0005D0
-	   enddo
-	   enddo
-	   enddo
+c   do k = 1, nnk
+c   do j = 1, nnj
+c   do i = 1, nni
+c	u(i,j,k,1) = u(i,j,k,1) + .01D0*ran0(idum) - .005D0
+c   enddo
+c   enddo
+c   enddo
 
 	   call u_bc
 
