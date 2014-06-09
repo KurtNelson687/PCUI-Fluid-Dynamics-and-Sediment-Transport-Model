@@ -50,32 +50,40 @@ end
 
 
 uh = uh(exi,exj,exk);
+vh = vh(exi,exj,exk);
+wh = wh(exi,exj,exk);
 yh = yh(exi,exj,exk);
 
 % imagesc(squeeze(uh(:,:,1))'); 
 % colorbar; 
 % colormap gray;
 % 
-% figure;
-% plot(squeeze(uh(1,:,1)),squeeze(yh(1,:,1)),'ko-'); 
-% hold on; 
-% plot(squeeze(uh(2,:,1)),squeeze(yh(2,:,1)),'bo-'); 
-% plot(squeeze(uh(3,:,1)),squeeze(yh(3,:,1)),'mo-'); 
-% plot(squeeze(uh(4,:,1)),squeeze(yh(4,:,1)),'ro-');
-% % plot(squeeze(uh(5,:,1)),squeeze(yh(5,:,1)),'co-');
+figure;
+plot(squeeze(uh(1,:,1)),squeeze(yh(1,:,1)),'ko-'); 
+hold on; 
+plot(squeeze(uh(2,:,1)),squeeze(yh(2,:,1)),'bo-'); 
+plot(squeeze(uh(3,:,1)),squeeze(yh(3,:,1)),'mo-'); 
+plot(squeeze(uh(4,:,1)),squeeze(yh(4,:,1)),'ro-');
+load fastfit %load fast data
+u_west = [ftanh(squeeze(yh(1,squeeze(yh(1,:,1))<jhoverlap,1))); ...
+    flog(squeeze(yh(1,squeeze(yh(1,:,1))>=jhoverlap,1)))];
+% plot(squeeze(uh(5,:,1)),squeeze(yh(5,:,1)),'co-');
 % u_west = 1/6*squeeze(yh(1,:,1));
-% % plot(u_west,squeeze(yh(1,:,1)),'k--');
-% legend('n=-1','n=0','n=1','n=2','prescribed u_{west}','location','southeast');
-% xlabel('u [m/s]');
-% ylabel('z [m]');
+plot(u_west,squeeze(yh(1,:,1)),'k--','linewidth',2);
+legend('n=-1','n=0','n=1','n=2','prescribed u_{west}','location','southeast');
+xlabel('u [m/s]');
+ylabel('z [m]');
 % 
-% figure;
-% plot(squeeze(uh(end,:,1)),squeeze(yh(end,:,1)),'ko-'); 
-% hold on; 
-% plot(squeeze(uh(end-1,:,1)),squeeze(yh(end-1,:,1)),'bo-'); 
-% plot(squeeze(uh(end-2,:,1)),squeeze(yh(end-2,:,1)),'mo'); 
-% plot(squeeze(uh(end-3,:,1)),squeeze(yh(end-3,:,1)),'co-');
-% plot(squeeze(uh(end-4,:,1)),squeeze(yh(end-4,:,1)),'r--');
+figure;
+plot(squeeze(uh(end,:,1)),squeeze(yh(end,:,1)),'k<-'); 
+hold on; 
+plot(squeeze(uh(end-1,:,1)),squeeze(yh(end-1,:,1)),'b*'); 
+plot(squeeze(uh(end-2,:,1)),squeeze(yh(end-2,:,1)),'mo'); 
+plot(squeeze(uh(end-3,:,1)),squeeze(yh(end-3,:,1)),'co');
+plot(squeeze(uh(end-4,:,1)),squeeze(yh(end-4,:,1)),'ro-');
+legend('n=N+2','n=N+1','n=N','n=N-1','n=N-2','location','southeast');
+xlabel('u [m/s]');
+ylabel('z [m]');
 % u_west = 1/6*squeeze(yh(1,:,1));
 % % plot(u_west,squeeze(yh(1,:,1)),'g--');
 
@@ -93,3 +101,19 @@ ylabel('z [m]','fontsize',14)
 % print('-f4','-r500','-dpng','development')
 u_west = 1/6*squeeze(yh(1,:,1));
 % plot(u_west,squeeze(yh(1,:,1)),'g--');
+
+figure;
+plot(squeeze(wh(1,:,3)),squeeze(yh(1,:,1)),'ko-'); 
+hold on; 
+plot(squeeze(wh(2,:,3)),squeeze(yh(2,:,1)),'bo-'); 
+plot(squeeze(wh(3,:,3)),squeeze(yh(3,:,1)),'mo-'); 
+plot(squeeze(wh(4,:,3)),squeeze(yh(4,:,1)),'ro-');
+load fastfit %load fast data
+u_west = [ftanh(squeeze(yh(1,squeeze(yh(1,:,1))<jhoverlap,1))); ...
+    flog(squeeze(yh(1,squeeze(yh(1,:,1))>=jhoverlap,1)))];
+% plot(squeeze(uh(5,:,1)),squeeze(yh(5,:,1)),'co-');
+% u_west = 1/6*squeeze(yh(1,:,1));
+% plot(u_west,squeeze(yh(1,:,1)),'k--','linewidth',2);
+legend('n=-1','n=0','n=1','n=2','location','southeast');
+xlabel('w [m/s]');
+ylabel('z [m]');

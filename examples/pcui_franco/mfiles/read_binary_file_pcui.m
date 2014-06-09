@@ -67,7 +67,6 @@ for indxz  = 1: pz
                 ddd = getdata(fid, N, precision);                   
             end
             fclose(fid);
-
             if isempty(ddd)
                 break
             end

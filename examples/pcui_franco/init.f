@@ -196,9 +196,9 @@ C......	UXI
          if ( n_east .eq. MPI_PROC_NULL ) then
             do k = 1, nnk
           	do j = 1, nnj
-            uxi(nni,j,k) = uxi(nni-1,j,k)
-c           uxi(nni,j,k) = (u(nni,j,k,1)+u(nni+1,j,k,1))/2.D0 
-c    <                     * xix(nni,j,k)
+c            uxi(nni,j,k) = uxi(nni-1,j,k)
+           uxi(nni,j,k) = (u(nni,j,k,1)+u(nni+1,j,k,1))/2.D0 
+     <                     * xix(nni,j,k)
             enddo
             enddo
          endif
