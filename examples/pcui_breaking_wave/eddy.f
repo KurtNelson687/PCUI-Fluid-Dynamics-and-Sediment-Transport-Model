@@ -12,6 +12,10 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	double precision, dimension(0:nni+1,0:nnj+1,0:nnk+1,9) :: 
      <		ss, tt, zz
+       double precision, dimension(1:nni,1:nnj,1:nnk,6) ::
+     <    Sij
+       double precision, dimension(1:nni,1:nnj,1:nnk) ::
+     <    diss_sgs_1, diss_sgs_2
 
 	integer i, j, k, m
 
@@ -150,6 +154,18 @@ C	rsx (7) rsy (8) rsz (9)
 	enddo
 	enddo
 	enddo 
+        do k = 1, nnk
+        do j = 1, nnj
+        do i = 1, nni
+           Sij(i,j,k,1) = ss(i,j,k,1)
+           Sij(i,j,k,2) = ss(i,j,k,2)
+           Sij(i,j,k,3) = ss(i,j,k,3)
+           Sij(i,j,k,4) = ss(i,j,k,4)
+           Sij(i,j,k,5) = ss(i,j,k,5)
+           Sij(i,j,k,6) = ss(i,j,k,6)
+        enddo
+        enddo
+        enddo
 
 C	|S|
 
@@ -341,6 +357,20 @@ C	K1  (7) K2  (8) K3  (9)
 	enddo
 	enddo
 	enddo 
+
+C.......Calulate 2nd term in SGS dissipation LijSij
+        do k = 1, nnk
+        do j = 1, nnj
+        do i = 1, nni
+           diss_sgs_2(i,j,k) = Sij(i,j,k,1)*tt(i,j,k,1) +
+     <                         Sij(i,j,k,2)*tt(i,j,k,2) +
+     <                         Sij(i,j,k,3)*tt(i,j,k,3) +
+     <                2.D0 * ( Sij(i,j,k,4)*tt(i,j,k,4) +
+     <                         Sij(i,j,k,5)*tt(i,j,k,5) +
+     <                         Sij(i,j,k,6)*tt(i,j,k,6) )
+        enddo
+        enddo
+        enddo
 
 C	R:
 C	u (1) v (2) w (3) r (4)
@@ -685,6 +715,24 @@ C	kappaT = C/PrT D**2 |S|
 	call eddybc
 	call p_exchange( nni, nnj, nnk,  vst )   
 	call p_exchange( nni, nnj, nnk, akst )   
+
+C.......Calculate SGS Dissipation
+        do k = 1, nnk
+        do j = 1, nnj
+        do i = 1, nni
+           vst_o(i,j,k) = vst(i,j,k)
+           akst_o(i,j,k) = akst(i,j,k)
+           diss_sgs_1(i,j,k) = -2.D0 * vst_o(i,j,k) * 
+     <                                 ( Sij(i,j,k,1)**2 +
+     <                                   Sij(i,j,k,2)**2 +
+     <                                   Sij(i,j,k,3)**2 +
+     <                          2.D0 * ( Sij(i,j,k,4)**2 +
+     <                                   Sij(i,j,k,5)**2 +
+     <                                   Sij(i,j,k,6)**2 ) )
+           diss_sgs(i,j,k) = diss_sgs_1(i,j,k) + diss_sgs_2(i,j,k)
+        enddo
+        enddo
+        enddo
 
 C	T:
 C	uu (1) vv (2) ww (3)

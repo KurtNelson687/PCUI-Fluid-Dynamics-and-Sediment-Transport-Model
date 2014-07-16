@@ -18,9 +18,9 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	newrun    = 1
 	periodic  = 1
 	iscalar   = 1
-	ieddy     = 0
+	ieddy     = 1
 	mg_level  = 5
-	nstep     = 2000
+	nstep     = 1000
 	nsave     = 50
        ncont= 20000
 	maxstep   = 10
@@ -142,6 +142,14 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
      >          status='old',position='append')
 	   open(200+myid, file='output_UVW.'//ID, form='unformatted',
      >          status='old',position='append')
+       if (ieddy.eq.1) then
+         open(300+myid, file='output_vst.'//ID, form='unformatted',
+     >          status='old',position='append')
+         open(400+myid, file='output_akst.'//ID, form='unformatted',
+     >          status='old',position='append')
+	       open(500+myid, file='output_diss_sgs.'//ID, form='unformatted',
+     >          status='old',position='append')
+       endif
 	else
 	   open(50+myid, file='output_S.'//ID, form='unformatted',
      >          status='unknown')	   
@@ -149,14 +157,33 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
      >          status='unknown')	   
 	   open(200+myid, file='output_UVW.'//ID, form='unformatted',
      >          status='unknown')	   
+       if (ieddy.eq.1) then
+         open(300+myid, file='output_vst.'//ID, form='unformatted',
+     >          status='unknown',position='append')
+         open(400+myid, file='output_akst.'//ID, form='unformatted',
+     >          status='unknown',position='append')
+	       open(500+myid, file='output_diss_sgs.'//ID, form='unformatted',
+     >          status='unknown',position='append')
+       endif
+
 	end if
 
 	write(200+myid) u
 	write(50+myid) phi
       write(100+myid) phi2
+      if (ieddy.eq.1) then
+        write(300+myid) vst_o
+        write(400+myid) akst_o
+        write(500+myid) diss_sgs
+      endif
 	close(unit = 50+myid)
 	close(unit = 200+myid)
       close(unit = 100+myid)
+      if (ieddy.eq.1) then
+        close(unit = 300+myid) 
+        close(unit = 400+myid)
+        close(unit = 500+myid)
+      endif
 
 	return
 	end

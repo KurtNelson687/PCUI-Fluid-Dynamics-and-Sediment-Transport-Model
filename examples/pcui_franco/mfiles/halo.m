@@ -117,3 +117,19 @@ u_west = [ftanh(squeeze(yh(1,squeeze(yh(1,:,1))<jhoverlap,1))); ...
 legend('n=-1','n=0','n=1','n=2','location','southeast');
 xlabel('w [m/s]');
 ylabel('z [m]');
+
+figure;
+plot(squeeze(vh(1,:,3)),squeeze(yh(1,:,1)),'ko-'); 
+hold on; 
+plot(squeeze(vh(2,:,3)),squeeze(yh(2,:,1)),'bo-'); 
+plot(squeeze(vh(3,:,3)),squeeze(yh(3,:,1)),'mo-'); 
+plot(squeeze(vh(4,:,3)),squeeze(yh(4,:,1)),'ro-');
+load fastfit %load fast data
+u_west = [ftanh(squeeze(yh(1,squeeze(yh(1,:,1))<jhoverlap,1))); ...
+    flog(squeeze(yh(1,squeeze(yh(1,:,1))>=jhoverlap,1)))];
+% plot(squeeze(uh(5,:,1)),squeeze(yh(5,:,1)),'co-');
+% u_west = 1/6*squeeze(yh(1,:,1));
+% plot(u_west,squeeze(yh(1,:,1)),'k--','linewidth',2);
+legend('n=-1','n=0','n=1','n=2','location','southeast');
+xlabel('v [m/s]');
+ylabel('z [m]');

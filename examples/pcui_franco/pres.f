@@ -100,6 +100,9 @@ CBCBCBC	BCBCBCBCBCBCBCBCBCBC
      <	                     - 10.D0 * u(2,j,k,3) 
      <                       +  3.D0 * u(3,j,k,3) ) )
 	     uxi(0,j,k) = u_west(j,k) * xix(0,j,k) 
+c       if ( j .eq. 0D0 ) then
+c         uxi(0,0,k)=0D0
+c       endif
        Qw = Qw + uxi(0,j,k)
 	enddo
 	enddo

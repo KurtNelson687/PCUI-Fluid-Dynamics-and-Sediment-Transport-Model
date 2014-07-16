@@ -2,7 +2,7 @@
 clear all; clc; close all;
 
 % PLOTTING OPTIONS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-timestep = 1500; %timestep to plot
+timestep = 850; %timestep to plot
 delta_ts = 0; %averaging
 FIGURE_ON = 1; %figure visible?
     print_ext = '-dpng'; %image file type
@@ -13,6 +13,9 @@ display_density = 1;
 display_velocity = 0;
 display_scalar = 0;
 display_pressure = 0;
+display_vst = 1;
+display_akst = 1;
+display_diss_sgs = 1;
 display_density_isosurface = 0;
     rho_iso = 1;
 display_omega_1_isosurface = 0;
@@ -35,6 +38,9 @@ fname_xyz = 'xyz';
 fname_rho = 'output_S';
 fname_phi = 'output_phi';
 fname_uvw = 'output_UVW';
+fname_vst = 'output_vst_o';
+fname_akst = 'output_akst_o';
+fname_diss_sgs = 'output_diss_sgs';
 
 % OTHER PARAMETERS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % read the file containing the parameter definition
@@ -355,6 +361,108 @@ if(display_scalar)
        end
        %print(phi_fig_yz,print_ext,print_res,'scalar_yz');
        %saveas(phi_fig_yz,'scalar_yz.fig');
+   end
+end
+
+% EDDY VISCOSITY %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if(display_vst)
+    vst = read_binary_file_pcui(working_folder, fname_vst, istep, ...
+                                 params, 0,0);     
+    vst = permute(vst,[1 3 2]);
+   
+   if(plot_xz)
+       vst_xz = squeeze(vst(:,y_slice,:));
+       vst_fig_xz = figure;
+       hold all;
+       if(~FIGURE_ON)
+           set(vst_fig_xz,'visible','off');
+       end
+       pcolor(x_xz,z_xz,vst_xz);
+       colorbar;
+%        contour(x_xz,z_xz,rho_xz,[1, 1],'k');
+       axis equal;
+%        axis([0 x_length -z_length 0]);
+       xlabel('x [m]');
+       ylabel('z [m]');
+       title('Eddy Viscosity, x-z slice');
+       if(~show_grid_lines)
+           shading flat;
+       end
+       if (plot_yz)
+           hold on;
+           plot([x_loc x_loc],[z(x_slice,1,1) z(x_slice,1,end)],'k-','LineWidth',2);
+           hold off;
+       end
+       %print(rho_fig_xz,print_ext,print_res,'density_xz');
+       %saveas(rho_fig_xz,'density_xz.png');
+   end
+end
+
+% EDDY DIFFUSIVITY %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if(display_akst)
+    akst = read_binary_file_pcui(working_folder, fname_akst, istep, ...
+                                 params, 0,0);     
+    akst = permute(akst,[1 3 2]);
+   
+   if(plot_xz)
+       akst_xz = squeeze(akst(:,y_slice,:));
+       akst_fig_xz = figure;
+       hold all;
+       if(~FIGURE_ON)
+           set(akst_fig_xz,'visible','off');
+       end
+       pcolor(x_xz,z_xz,akst_xz);
+       colorbar;
+%        contour(x_xz,z_xz,rho_xz,[1, 1],'k');
+       axis equal;
+%        axis([0 x_length -z_length 0]);
+       xlabel('x [m]');
+       ylabel('z [m]');
+       title('Eddy Diffusivity, x-z slice');
+       if(~show_grid_lines)
+           shading flat;
+       end
+       if (plot_yz)
+           hold on;
+           plot([x_loc x_loc],[z(x_slice,1,1) z(x_slice,1,end)],'k-','LineWidth',2);
+           hold off;
+       end
+       %print(rho_fig_xz,print_ext,print_res,'density_xz');
+       %saveas(rho_fig_xz,'density_xz.png');
+   end
+end
+
+% SGS DISSIPATION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if(display_diss_sgs)
+    diss_sgs = read_binary_file_pcui(working_folder, fname_diss_sgs, istep, ...
+                                 params, 0,0);     
+    diss_sgs = permute(diss_sgs,[1 3 2]);
+   
+   if(plot_xz)
+       diss_sgs_xz = squeeze(diss_sgs(:,y_slice,:));
+       diss_sgs_fig_xz = figure;
+       hold all;
+       if(~FIGURE_ON)
+           set(diss_sgs_fig_xz,'visible','off');
+       end
+       pcolor(x_xz,z_xz,diss_sgs_xz);
+       colorbar;
+%        contour(x_xz,z_xz,rho_xz,[1, 1],'k');
+       axis equal;
+%        axis([0 x_length -z_length 0]);
+       xlabel('x [m]');
+       ylabel('z [m]');
+       title('SGS Dissipation, x-z slice');
+       if(~show_grid_lines)
+           shading flat;
+       end
+       if (plot_yz)
+           hold on;
+           plot([x_loc x_loc],[z(x_slice,1,1) z(x_slice,1,end)],'k-','LineWidth',2);
+           hold off;
+       end
+       %print(rho_fig_xz,print_ext,print_res,'density_xz');
+       %saveas(rho_fig_xz,'density_xz.png');
    end
 end
 

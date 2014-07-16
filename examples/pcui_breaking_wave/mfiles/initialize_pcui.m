@@ -55,7 +55,7 @@ params.pz = variable_value_pcui('pz',ftext);
 % -------------------------------------------------------------------------
 % Load global grid from grid generator file and rearrange y and z
 % load '/home/barthur/zang/grids/grid_6mglevels_test_323.mat'
-load 'grid_test1.mat';
+load 'grid_test1b.mat';
 x_global = x; x_global = permute(x_global,[1 3 2]);
 y_global = z; y_global = permute(y_global,[1 3 2]);
 z_global = y; z_global = permute(z_global,[1 3 2]);
@@ -122,7 +122,7 @@ write_binary_file_pcui(working_folder, fname_grid_to_PCUI, params, xyz_pcui);
 % -------------------------------------------------------------------------
 % Prepare density field
 drho = 0.03;
-h1 = -0.4;
+h1 = -0.3;
 a = 0.1;
 Lw = 0.7;
 delta = 0.1;
