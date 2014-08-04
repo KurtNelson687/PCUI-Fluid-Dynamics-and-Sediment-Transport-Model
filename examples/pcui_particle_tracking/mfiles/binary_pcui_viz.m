@@ -2,20 +2,20 @@
 clear all; clc; close all;
 
 % PLOTTING OPTIONS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-timestep = 850; %timestep to plot
+timestep = 0; %timestep to plot
 delta_ts = 0; %averaging
 FIGURE_ON = 1; %figure visible?
     print_ext = '-dpng'; %image file type
     print_res = '-r200'; %image resolution
 
 display_grid = 0;
-display_density = 1;
+display_density = 0;
 display_velocity = 0;
 display_scalar = 0;
 display_pressure = 0;
-display_vst = 1;
-display_akst = 1;
-display_diss_sgs = 1;
+display_vst = 0;
+display_akst = 0;
+display_diss_sgs = 0;
 display_density_isosurface = 0;
     rho_iso = 1;
 display_omega_1_isosurface = 0;
@@ -38,6 +38,8 @@ fname_xyz = 'xyz';
 fname_rho = 'output_S';
 fname_phi = 'output_phi';
 fname_uvw = 'output_UVW';
+filename_xpart = 'output_xPart.dat';
+filename_upart = 'output_uPart.dat';
 fname_vst = 'output_vst_o';
 fname_akst = 'output_akst_o';
 fname_diss_sgs = 'output_diss_sgs';
@@ -567,6 +569,11 @@ if(display_density_isosurface)
     %print(isoplot,print_ext,print_res,'isoplot_3D');
     %saveas(isoplot,'isoplot_3D.fig');
 end
+
+% PARTICLES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+xpart = read_binary_particles_pcui(working_folder, filename_xpart, istep, params);
+plot(xpart(:,2),xpart(:,3),'k.');
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 display('Complete');

@@ -13,12 +13,19 @@
    	double precision, parameter :: lby = 0.D0
    	double precision, parameter :: uby = 1.D0
 
-	integer, parameter :: lbi = (1 + (ni-1+2)*lbx)
-	integer, parameter :: ubi = (1 + (ni-1+2)*ubx)
-	integer, parameter :: lbj = (1 + (nj-1+2)*lby)
-	integer, parameter :: ubj = (1 + (nj-1+2)*uby)
-	integer, parameter :: lbk = (1 + (nk-1+2)*lbz)
-	integer, parameter :: ubk = (1 + (nk-1+2)*ubz)
+c	integer, parameter :: lbi = (1 + (ni-1+2)*lbx)
+c	integer, parameter :: ubi = (1 + (ni-1+2)*ubx)
+c	integer, parameter :: lbj = (1 + (nj-1+2)*lby)
+c	integer, parameter :: ubj = (1 + (nj-1+2)*uby)
+c	integer, parameter :: lbk = (1 + (nk-1+2)*lbz)
+c	integer, parameter :: ubk = (1 + (nk-1+2)*ubz)
+ 	integer, parameter :: lbi = 1
+ 	integer, parameter :: ubi = ni
+ 	integer, parameter :: lbj = 1
+ 	integer, parameter :: ubj = nj
+ 	integer, parameter :: lbk = 1
+ 	integer, parameter :: ubk = nk
+
 	integer, parameter :: nPart = (ubi-lbi+1)*(ubj-lbj+1)*(ubk-lbk+1)
 	integer            :: iPart, ipstep
 
