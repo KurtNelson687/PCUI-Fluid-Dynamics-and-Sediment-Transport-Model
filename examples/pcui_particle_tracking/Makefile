@@ -1,19 +1,21 @@
-COMP = mpif90
-FLAG = -c -w -O3 -g
+COMP = mpif90 
+FLAG = -c -w -O3 
 
 OBCA = ns.o mp.o io.o \
        init.o conv.o pred.o corr.o trid.o scal.o\
        pres.o smad.o resd.o fctr.o exch.o eddy.o\
-			 indexx.o energy.o scal2.o
+			 indexx.o energy.o scal2.o kdtree2.o\
+			 particle_transport.o interpolate3D.o
 
 OBCAS =nsst.o mp.o io.o stat.o\
        init.o conv.o pred.o corr.o trid.o scal.o\
-       pres.o smad.o resd.o fctr.o exch.o eddy.o
+       pres.o smad.o resd.o fctr.o exch.o eddy.o\
+			 kdtree2.o particle_transport.o interpolate3D.o
 
 OBJG = grid_init.o mp.o io.o cavity.o
 
 INCS = size.inc mpi.inc para.inc \
-       ns.inc metric.inc stat.inc eddy.inc
+       ns.inc metric.inc stat.inc eddy.inc particles.inc
 
 # 3-D cavity
 cav : $(OBCA) $(INCS) cavity.inc cavity.o 	
@@ -116,3 +118,16 @@ indexx.o : indexx.f $(INCS)
 # energy
 energy.o : energy.f $(INCS)
 	$(COMP) $(FLAG) energy.f
+
+# particle_transport
+particle_transport.o : particle_transport.f $(INCS)
+	$(COMP) $(FLAG) particle_transport.f 
+
+# interpolate3d
+interpolate3D.o : interpolate3D.f90 $(INCS)
+	$(COMP) $(FLAG) interpolate3D.f90 
+
+# kdtree
+kdtree2.o : kdtree2.f90 $(INCS)
+	$(COMP) $(FLAG) kdtree2.f90
+

@@ -18,7 +18,8 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	newrun    = 1
 	periodic  = 1
 	iscalar   = 1
-	ieddy     = 1
+	ieddy     = 0
+       parts= 1
 	mg_level  = 5
 	nstep     = 1000
 	nsave     = 50
@@ -52,6 +53,8 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	call MPI_BCAST(periodic,    1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(iscalar,     1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(ieddy,       1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
+       call MPI_BCAST(parts,  1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
+
 	call MPI_BCAST(mg_level,    1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 
 	call MPI_BCAST(nstep,       1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)

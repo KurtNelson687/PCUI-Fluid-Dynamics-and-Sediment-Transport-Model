@@ -84,7 +84,15 @@ C          if ( mod(istep, nsave) .eq. 0 .and. MYID .EQ. 0 )
       endif
 	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	   t4 = t4 + MPI_Wtime() - tt
-	   
+
+         call MPI_Barrier(MPI_COMM_WORLD, ierr)
+	       tt = MPI_Wtime()
+	       if ( parts .eq. 1 ) then
+            call particle_transport
+         endif
+	       call MPI_Barrier(MPI_COMM_WORLD, ierr)
+	       t5 = t5 + MPI_Wtime() - tt
+
 	   kount = kount + 1
 	   time = time + dtime
 

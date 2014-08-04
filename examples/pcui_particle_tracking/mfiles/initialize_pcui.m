@@ -11,7 +11,7 @@
 
 clear all; close all; clc;
 
-working_folder = '/home/barthur/pcui-3d/examples/pcui_breaking_wave';
+working_folder = '/home/barthur/pcui-3d/examples/pcui_particle_tracking';
 
 % These are the output files with the filenames stripped out of extensions 
 % (extensions are chosen automatically based on number of processors).
