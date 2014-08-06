@@ -55,10 +55,16 @@ params.pz = variable_value_pcui('pz',ftext);
 % -------------------------------------------------------------------------
 % Load global grid from grid generator file and rearrange y and z
 % load '/home/barthur/zang/grids/grid_6mglevels_test_323.mat'
-load 'grid_test1b.mat';
-x_global = x; x_global = permute(x_global,[1 3 2]);
-y_global = z; y_global = permute(y_global,[1 3 2]);
-z_global = y; z_global = permute(z_global,[1 3 2]);
+% load 'grid_test1b.mat';
+% x_global = x; x_global = permute(x_global,[1 3 2]);
+% y_global = z; y_global = permute(y_global,[1 3 2]);
+% z_global = y; z_global = permute(z_global,[1 3 2]);
+L = 3.5; H = 0.56; W = 0.1;
+Nx = 32; Ny = 16; Nz = 16; 
+dx = L/Nx; dy = H/Ny; dz = W/Nz;
+x = (-1.5*dx:dx:L+1.5*dx)'; x = repmat(x,[1 Ny+4]); x_global = repmat(x,[1 1 Nz+4]);
+y = -1.5*dy:dy:H+1.5*dy;    y = repmat(y,[Nx+4 1]); y_global = repmat(y,[1 1 Nz+4]);
+z = -1.5*dz:dz:W+1.5*dz;    z = reshape(z,[1 1 Nz+4]); z_global = repmat(z,[Nx+4 Ny+4 1]);
 
 %Prepare for writing (account for multiple processors with 2 cell halos)
 ni_wh = params.ni+4*params.px; %includes halo for each proc
@@ -122,7 +128,7 @@ write_binary_file_pcui(working_folder, fname_grid_to_PCUI, params, xyz_pcui);
 % -------------------------------------------------------------------------
 % Prepare density field
 drho = 0.03;
-h1 = -0.3;
+h1 = 0.3;
 a = 0.1;
 Lw = 0.7;
 delta = 0.1;

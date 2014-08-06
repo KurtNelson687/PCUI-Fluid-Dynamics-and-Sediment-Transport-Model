@@ -572,9 +572,9 @@ end
 
 % PARTICLES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 xpart = read_binary_particles_pcui(working_folder, filename_xpart, istep, params);
-% plot3(xpart(:,1),xpart(:,3),xpart(:,2),'k.');
+plot3(xpart(:,1),xpart(:,3),xpart(:,2),'k.');
 % plot(xpart(:,1),xpart(:,2),'k.');
-plot(xpart(:,1),xpart(:,3),'k.');
+% plot(xpart(:,1),xpart(:,3),'k.');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

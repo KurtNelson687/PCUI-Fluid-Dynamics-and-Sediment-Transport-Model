@@ -150,7 +150,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
      >          status='old',position='append')
          open(400+myid, file='output_akst.'//ID, form='unformatted',
      >          status='old',position='append')
-	       open(500+myid, file='output_diss_sgs.'//ID, form='unformatted',
+        open(500+myid, file='output_diss_sgs.'//ID, form='unformatted',
      >          status='old',position='append')
        endif
 	else
@@ -165,7 +165,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
      >          status='unknown',position='append')
          open(400+myid, file='output_akst.'//ID, form='unformatted',
      >          status='unknown',position='append')
-	       open(500+myid, file='output_diss_sgs.'//ID, form='unformatted',
+        open(500+myid, file='output_diss_sgs.'//ID, form='unformatted',
      >          status='unknown',position='append')
        endif
 

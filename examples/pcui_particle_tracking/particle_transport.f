@@ -45,7 +45,7 @@
 
       xxL = 0.D0                !(xp(0,0,0,:)+xp(1,1,1,:))/2.D0
       xxR(1) = xxL(1)+bx
-      xxR(2) = xxL(2)-by
+      xxR(2) = xxL(2)+by
       xxR(3) = xxL(3)+bz
 
       call getX
@@ -62,7 +62,7 @@
          do k = lbk, ubk
             do j = lbj, ubj
                do i = lbi, ubi
-                     ntPart = ntPart + 1         
+                  ntPart = ntPart + 1         
                      xPart(ntPart,:) = xxp(i,j,k,:)
                      uPart(ntPart,:) = uu(i,j,k,:)
                end do 
@@ -146,13 +146,11 @@
 !     ---- Advance particle in time using RK4 and adjust for boundary crossings
             xPart = xPart + (1.D0/6.D0)*(k1 + 2.D0*(k2+k3)+k4)
 !            if (istep.eq.347) then
-!              print *, xPart(nPart,1),uPart(nPart,1)
-!              stop
-!           end if
+ !              print *, xPart(nPart,1),uPart(nPart,1)
+ !              stop
+ !           end if
 !     ---- Store results
-             if (mod(istep,nsave) .eq. 0) then
-                call output_particles          
-             endif
+            call output_particles          
 
          end if
 
@@ -174,13 +172,9 @@
             end do
          end do
 
-         print *, 'here1'
-
          call interpolate3D(uPart,xPart,xxp,uu,ni+2,nj+2,nk+2,nPart,
      <                      xxL,xxR,xPartB,xPartBT,xPartS)
         
-         print *, 'here2' 
-
          k1 = 2.D0*dtime*uPart  
 
          print *, '*********************---RK1o----********************'
@@ -599,30 +593,18 @@ c$$$         close(unit = 123)
 
          xxp(1,:,:,1)      = xxL(1)
          xxp(ni+2,:,:,1)   = xxR(1)
-         do k = 2, nk+1
-         do j = 2, nj+1
          do i = 2, ni+1
-            xxp(i,j,k,1) = xxxp(i-1,j-1,k-1,1)
-         end do
-         end do
+            xxp(i,:,:,1) = xxxp(i-1,1,1,1)
          end do
          xxp(:,1,:,2)      = xxL(2)
          xxp(:,nj+2,:,2)   = xxR(2)
-         do k = 2, nk+1
          do j = 2, nj+1
-         do i = 2, ni+1
-            xxp(i,j,k,2) = xxxp(i-1,j-1,k-1,2)
-         end do
-         end do
+            xxp(:,j,:,2) = xxxp(1,j-1,1,2)
          end do
          xxp(:,:,1,3)      = xxL(3)
          xxp(:,:,nk+2,3)   = xxR(3)
          do k = 2, nk+1
-         do j = 2, nj+1
-         do i = 2, ni+1
-            xxp(i,j,k,3) = xxxp(i-1,j-1,k-1,3)
-         end do
-         end do
+            xxp(:,:,k,3) = xxxp(1,1,k-1,3)
          end do
 
          open(123, file='output_XYZ.dat',form='unformatted',
