@@ -2,15 +2,15 @@
 clear all; clc; close all;
 
 % PLOTTING OPTIONS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-timestep = 0; %timestep to plot
+timestep = 200; %timestep to plot
 delta_ts = 0; %averaging
 FIGURE_ON = 1; %figure visible?
     print_ext = '-dpng'; %image file type
     print_res = '-r200'; %image resolution
 
 display_grid = 0;
-display_density = 0;
-display_velocity = 0;
+display_density = 1;
+display_velocity = 1;
 display_scalar = 0;
 display_pressure = 0;
 display_vst = 0;
@@ -572,9 +572,15 @@ end
 
 % PARTICLES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 xpart = read_binary_particles_pcui(working_folder, filename_xpart, istep, params);
-plot3(xpart(:,1),xpart(:,3),xpart(:,2),'k.');
-% plot(xpart(:,1),xpart(:,2),'k.');
+figure;
+hold on;
+% plot3(xpart(:,1),xpart(:,3),xpart(:,2),'k.');
+plot(x_xz(:,:), z_xz(:,:), 'k.'); 
+plot(xpart(:,1),xpart(:,2),'r.');
 % plot(xpart(:,1),xpart(:,3),'k.');
+axis equal;
+axis([0 params.bx 0 params.by]);
+hold off;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

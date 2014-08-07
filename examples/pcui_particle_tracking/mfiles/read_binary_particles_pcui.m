@@ -16,7 +16,7 @@ ni = params.ni;
 nj = params.nj;
 nk = params.nk;
 % npart = (ni+2)*(nj+2)*(nk+2);
-npart = ni*nj*nk;
+npart = ni*nj;
 N = npart*3;
 ptrD = 8*N;
               

@@ -60,7 +60,7 @@ params.pz = variable_value_pcui('pz',ftext);
 % y_global = z; y_global = permute(y_global,[1 3 2]);
 % z_global = y; z_global = permute(z_global,[1 3 2]);
 L = 3.5; H = 0.56; W = 0.1;
-Nx = 32; Ny = 16; Nz = 16; 
+Nx = params.ni; Ny = params.nj; Nz = params.nk; 
 dx = L/Nx; dy = H/Ny; dz = W/Nz;
 x = (-1.5*dx:dx:L+1.5*dx)'; x = repmat(x,[1 Ny+4]); x_global = repmat(x,[1 1 Nz+4]);
 y = -1.5*dy:dy:H+1.5*dy;    y = repmat(y,[Nx+4 1]); y_global = repmat(y,[1 1 Nz+4]);
@@ -128,8 +128,8 @@ write_binary_file_pcui(working_folder, fname_grid_to_PCUI, params, xyz_pcui);
 % -------------------------------------------------------------------------
 % Prepare density field
 drho = 0.03;
-h1 = 0.3;
-a = 0.1;
+h1 = 0.4;
+a = 0.2;
 Lw = 0.7;
 delta = 0.1;
 alpha = 0.99;

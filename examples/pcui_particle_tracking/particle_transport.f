@@ -150,8 +150,9 @@
  !              stop
  !           end if
 !     ---- Store results
-            call output_particles          
-
+!           if (mod(istep,nsave) .eq. 0) then
+                call output_particles          
+!           endif
          end if
 
          xPartI = xPart

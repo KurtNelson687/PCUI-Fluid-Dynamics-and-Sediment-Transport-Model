@@ -23,8 +23,8 @@ c	integer, parameter :: ubk = (1 + (nk-1+2)*ubz)
  	integer, parameter :: ubi = ni+1
  	integer, parameter :: lbj = 2
  	integer, parameter :: ubj = nj+1
- 	integer, parameter :: lbk = 2
- 	integer, parameter :: ubk = nk+1
+ 	integer, parameter :: lbk = 8
+ 	integer, parameter :: ubk = 8
 
 	integer, parameter :: nPart = (ubi-lbi+1)*(ubj-lbj+1)*(ubk-lbk+1)
 	integer            :: iPart, ipstep
