@@ -22,7 +22,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
        parts= 1
 	mg_level  = 5
 	nstep     = 400
-	nsave     = 1
+	nsave     = 10
        ncont= 20000
 	maxstep   = 10
 

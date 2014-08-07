@@ -112,13 +112,13 @@
       if (istep.eq.2*ipstep-1) then 
          if (istep.gt.1) then 
                       
-            print *, '********************---RK4i---*******************'
-            write (*,10) xPart(nPart-3:nPart,1)+k3(nPart-3:nPart,1)
-            write (*,11) xPartS(nPart-3:nPart,1)
-            write (*,10) xPartI(nPart-3:nPart,1)
-            write (*,10) uPart(nPart-3:nPart,1)
-            write (*,10) uPartI(nPart-3:nPart,1)
-            print *, '*************************************************'
+!           print *, '********************---RK4i---*******************'
+!           write (*,10) xPart(nPart-3:nPart,1)+k3(nPart-3:nPart,1)
+!           write (*,11) xPartS(nPart-3:nPart,1)
+!           write (*,10) xPartI(nPart-3:nPart,1)
+!           write (*,10) uPart(nPart-3:nPart,1)
+!           write (*,10) uPartI(nPart-3:nPart,1)
+!           print *, '*************************************************'
 
             do n = 1,nPart
                do ci = 1,3
@@ -132,39 +132,40 @@
 
             k4 = 2.D0*dtime*uPart
 
-            print *, '*******************---RK4o---********************'
-            write (*,10) xPart(nPart-3:nPart,1) +
-     <                (1.D0/6.D0)*(k1(nPart-3:nPart,1) + 2.D0 *
-     <                (k2(nPart-3:nPart,1)+k3(nPart-3:nPart,1)) +
-     <                 k4(nPart-3:nPart,1))
-            write (*,11) xPartS(nPart-3:nPart,1)
-            write (*,10) xPartI(nPart-3:nPart,1)
-            write (*,10) uPart(nPart-3:nPart,1)
-            write (*,10) uPartI(nPart-3:nPart,1)
-            print *, '*************************************************'
+!           print *, '*******************---RK4o---********************'
+!           write (*,10) xPart(nPart-3:nPart,1) +
+!    <                (1.D0/6.D0)*(k1(nPart-3:nPart,1) + 2.D0 *
+!    <                (k2(nPart-3:nPart,1)+k3(nPart-3:nPart,1)) +
+!    <                 k4(nPart-3:nPart,1))
+!           write (*,11) xPartS(nPart-3:nPart,1)
+!           write (*,10) xPartI(nPart-3:nPart,1)
+!           write (*,10) uPart(nPart-3:nPart,1)
+!           write (*,10) uPartI(nPart-3:nPart,1)
+!           print *, '*************************************************'
 
 !     ---- Advance particle in time using RK4 and adjust for boundary crossings
             xPart = xPart + (1.D0/6.D0)*(k1 + 2.D0*(k2+k3)+k4)
 !            if (istep.eq.347) then
- !              print *, xPart(nPart,1),uPart(nPart,1)
- !              stop
- !           end if
+!              print *, xPart(nPart,1),uPart(nPart,1)
+!              stop
+!            end if
 !     ---- Store results
-!           if (mod(istep,nsave) .eq. 0) then
+             if (mod(istep+1,nsave) .eq. 0) then
+                print *,'Output particles.'
                 call output_particles          
-!           endif
+             endif
          end if
 
          xPartI = xPart
          uPartI = uPart
 
-         print *, '*********************---RK1i----********************'
-         write (*,10) xPart(nPart-3:nPart,1)
-         write (*,11) xPartS(nPart-3:nPart,1)
-         write (*,10) xPartI(nPart-3:nPart,1)
-         write (*,10) uPart(nPart-3:nPart,1)
-         write (*,10) uPartI(nPart-3:nPart,1)
-         print *, '****************************************************'
+!        print *, '*********************---RK1i----********************'
+!        write (*,10) xPart(nPart-3:nPart,1)
+!        write (*,11) xPartS(nPart-3:nPart,1)
+!        write (*,10) xPartI(nPart-3:nPart,1)
+!        write (*,10) uPart(nPart-3:nPart,1)
+!        write (*,10) uPartI(nPart-3:nPart,1)
+!        print *, '****************************************************'
 
          do n = 1,nPart
             do ci = 1,3
@@ -178,23 +179,23 @@
         
          k1 = 2.D0*dtime*uPart  
 
-         print *, '*********************---RK1o----********************'
-         write (*,10) xPart(nPart-3:nPart,1)+0.5D0*k1(nPart-3:nPart,1)
-         write (*,11) xPartS(nPart-3:nPart,1)
-         write (*,10) xPartI(nPart-3:nPart,1)
-         write (*,10) uPart(nPart-3:nPart,1)
-         write (*,10) uPartI(nPart-3:nPart,1)
-         print *, '****************************************************'
+!        print *, '*********************---RK1o----********************'
+!        write (*,10) xPart(nPart-3:nPart,1)+0.5D0*k1(nPart-3:nPart,1)
+!        write (*,11) xPartS(nPart-3:nPart,1)
+!        write (*,10) xPartI(nPart-3:nPart,1)
+!        write (*,10) uPart(nPart-3:nPart,1)
+!        write (*,10) uPartI(nPart-3:nPart,1)
+!        print *, '****************************************************'
 
       else
 
-         print *, '*********************---RK2i----********************'
-         write (*,10) xPart(nPart-3:nPart,1)
-         write (*,11) xPartS(nPart-3:nPart,1)
-         write (*,10) xPartI(nPart-3:nPart,1)
-         write (*,10) uPart(nPart-3:nPart,1)
-         write (*,10) uPartI(nPart-3:nPart,1)
-         print *, '****************************************************'
+!        print *, '*********************---RK2i----********************'
+!        write (*,10) xPart(nPart-3:nPart,1)
+!        write (*,11) xPartS(nPart-3:nPart,1)
+!        write (*,10) xPartI(nPart-3:nPart,1)
+!        write (*,10) uPart(nPart-3:nPart,1)
+!        write (*,10) uPartI(nPart-3:nPart,1)
+!        print *, '****************************************************'
 
          do n = 1,nPart
             do ci = 1,3
@@ -208,13 +209,13 @@
 
          k2 = 2.D0*dtime*uPart
 
-         print *, '********************---RK2o,3i----******************'
-         write (*,10) xPart(nPart-3:nPart,1)+0.5D0*k2(nPart-3:nPart,1)
-         write (*,11) xPartS(nPart-3:nPart,1)
-         write (*,10) xPartI(nPart-3:nPart,1)
-         write (*,10) uPart(nPart-3:nPart,1)
-         write (*,10) uPartI(nPart-3:nPart,1)
-         print *, '****************************************************'
+!        print *, '********************---RK2o,3i----******************'
+!        write (*,10) xPart(nPart-3:nPart,1)+0.5D0*k2(nPart-3:nPart,1)
+!        write (*,11) xPartS(nPart-3:nPart,1)
+!        write (*,10) xPartI(nPart-3:nPart,1)
+!        write (*,10) uPart(nPart-3:nPart,1)
+!        write (*,10) uPartI(nPart-3:nPart,1)
+!        print *, '****************************************************'
 
          do n = 1,nPart
             do ci = 1,3
@@ -228,13 +229,13 @@
 
          k3 = 2.D0*dtime*uPart
 
-         print *, '*********************---RK3o----********************'
-         write (*,10) xPart(nPart-3:nPart,1)+k3(nPart-3:nPart,1)
-         write (*,11) xPartS(nPart-3:nPart,1)
-         write (*,10) xPartI(nPart-3:nPart,1)
-         write (*,10) uPart(nPart-3:nPart,1)
-         write (*,10) uPartI(nPart-3:nPart,1)
-         print *, '****************************************************'
+!        print *, '*********************---RK3o----********************'
+!        write (*,10) xPart(nPart-3:nPart,1)+k3(nPart-3:nPart,1)
+!        write (*,11) xPartS(nPart-3:nPart,1)
+!        write (*,10) xPartI(nPart-3:nPart,1)
+!        write (*,10) uPart(nPart-3:nPart,1)
+!        write (*,10) uPartI(nPart-3:nPart,1)
+!        print *, '****************************************************'
 
          ipstep = ipstep + 1
       end if
@@ -269,16 +270,16 @@ c      print *, x, xL(ci),xR(ci)
       if (x.lt.xL(ci).and.periods(ci).eqv..true.) then
          xPartB(n,ci) = -1
          xPartBT(n,ci) = xPartBT(n,ci) + 1               
-         print *, '---...Symmetry...---'
+c        print *, '---...Symmetry...---'
          xPartS(n,ci) = xPartS(n,ci) + xPartB(n,ci)
-         print *, '--> ',xPart(n,ci),x
+c        print *, '--> ',xPart(n,ci),x
          xPart(n,ci) = x - xPartB(n,ci)*D(ci)
       elseif(x.gt.xR(ci).and.periods(ci).eqv..true.) then    
          xPartB(n,ci) = 1
          xPartBT(n,ci) = xPartBT(n,ci) + 1
-         print *, '---...Symmetry...---'
+c        print *, '---...Symmetry...---'
          xPartS(n,ci) = xPartS(n,ci) + xPartB(n,ci)
-         print *, '--> ',xPart(n,ci),x
+c        print *, '--> ',xPart(n,ci),x
          xPart(n,ci) = x - xPartB(n,ci)*D(ci)
       end if
 

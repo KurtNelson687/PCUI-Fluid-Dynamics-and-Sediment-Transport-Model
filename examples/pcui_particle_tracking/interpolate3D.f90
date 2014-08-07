@@ -110,21 +110,21 @@
             s = xparticle(num,2)-xp(neighbors(1,1),neighbors(1,2),neighbors(1,3),2)
             t = xparticle(num,3)-xp(neighbors(1,1),neighbors(1,2),neighbors(1,3),3)
           
-            if (num.eq.Np) then
-               print *, '*1**>',x(1),i,j,k,xp(i,j,k,1),u(i,j,k,1)
-               print *, xparticle(nP,1),uparticle(nP,1)
-               do ci = 1,8
-                  print *, u(neighbors(ci,1),neighbors(ci,2),neighbors(ci,3),1)
-               end do
-            end if
+!           if (num.eq.Np) then
+!              print *, '*1**>',x(1),i,j,k,xp(i,j,k,1),u(i,j,k,1)
+!              print *, xparticle(nP,1),uparticle(nP,1)
+!              do ci = 1,8
+!                 print *, u(neighbors(ci,1),neighbors(ci,2),neighbors(ci,3),1)
+!              end do
+!           end if
             do ci = 1,3
                call interpolate(uparticle(num,ci),neighbors,num,ci, &
                        xp,u,Np,il,jl,kl,r,s,t)          
             end do
-            if (num.eq.Np) then
-               print *, '*2**>',x(1),i,j,k,xp(i,j,k,1),u(i,j,k,1)
-               print *, xparticle(nP,1),uparticle(nP,1)
-            end if
+!           if (num.eq.Np) then
+!              print *, '*2**>',x(1),i,j,k,xp(i,j,k,1),u(i,j,k,1)
+!              print *, xparticle(nP,1),uparticle(nP,1)
+!           end if
         
  !        end if
       end do

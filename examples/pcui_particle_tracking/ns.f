@@ -7,7 +7,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	include "mpi.inc"
 	include "para.inc"
 
-	double precision ta, tt, t0, t1, t2, t3, t4, t5, t6
+	double precision ta, tt, t0, t1, t2, t3, t4, t5, t6, t7
 
 	call MPI_INIT( ierr )
 
@@ -18,9 +18,10 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	t1 = 0.D0
 	t2 = 0.D0
 	t3 = 0.D0
-	t4 = 0.D0
+c t4 = 0.D0
 	t5 = 0.D0
 	t6 = 0.D0
+       t7 = 0.D0
 
 	call parameter
 	call mpi_initial
@@ -83,7 +84,7 @@ C          if ( mod(istep, nsave) .eq. 0 .and. MYID .EQ. 0 )
         call scalar2_solve
       endif
 	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
-	   t4 = t4 + MPI_Wtime() - tt
+	   t5 = t5 + MPI_Wtime() - tt
 
          call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	       tt = MPI_Wtime()
@@ -91,7 +92,7 @@ C          if ( mod(istep, nsave) .eq. 0 .and. MYID .EQ. 0 )
             call particle_transport
          endif
 	       call MPI_Barrier(MPI_COMM_WORLD, ierr)
-	       t5 = t5 + MPI_Wtime() - tt
+	       t7 = t7 + MPI_Wtime() - tt
 
 	   kount = kount + 1
 	   time = time + dtime
@@ -120,9 +121,9 @@ C          if ( mod(istep, nsave) .eq. 0 .and. MYID .EQ. 0 )
      	   WRITE(*,*) ' Predictor: ', t1/nstep, int(t1/ta*100.D0), '%'		
      	   WRITE(*,*) ' Pressure:  ', t2/nstep, int(t2/ta*100.D0), '%'		
      	   WRITE(*,*) ' Corrector: ', t3/nstep, int(t3/ta*100.D0), '%'		
-     	   WRITE(*,*) ' Scalarp:   ', t5/nstep, int(t5/ta*100.D0), '%' 		
-     	   WRITE(*,*) ' Scalars:   ', t4/nstep, int(t4/ta*100.D0), '%' 		
+     	   WRITE(*,*) ' Scalar:    ', t5/nstep, int(t5/ta*100.D0), '%' 		
      	   WRITE(*,*) ' Output:    ', t6/nstep, int(t6/ta*100.D0), '%' 		
+         WRITE(*,*) ' Particles: ', t7/nstep, int(t7/ta*100.D0), '%'
 	endif
 
 	call MPI_FINALIZE( ierr )

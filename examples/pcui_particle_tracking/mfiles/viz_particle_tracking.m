@@ -49,30 +49,29 @@ n = [0, params.nsave:params.nsave:params.nsteps, params.nsteps+1];
 
 TEND = 400;
 xpartall = nan(params.ni*params.nj,3,1);
-for timestep = 0:TEND/2-1
+for timestep = 0:params.nsave:TEND
     display(timestep);
     istep = find(n==timestep,1);
-    xpartall(:,:,istep+1) = read_binary_particles_pcui(working_folder, filename_xpart, istep, params);
+    xpartall(:,:,istep) = read_binary_particles_pcui(working_folder, filename_xpart, istep, params);
 end
 
 %%
+clc; close all;
 np = params.ni;
 figure;
 hold on;
-for N=1:TEND 
-    display(N);
-    rho = read_binary_file_pcui(working_folder, fname_rho, N, ...
+for timestep=0:params.nsave:TEND
+    istep = find(n==timestep,1);
+    display(istep);
+    rho = read_binary_file_pcui(working_folder, fname_rho, istep, ...
                                  params, 0,0);  
     cla;
     contour(x,y,squeeze(rho(:,:,1)),[1 1],'r');
-%     display(N);
-    plot(squeeze(xpartall(:,1,1:floor(N/2))),squeeze(xpartall(:,2,1:floor(N/2))),'k.');
-%     plot(xpartall(N,1,1),xpartall(N,2,1),'k.');
-%     pause;
+    plot(squeeze(xpartall(:,1,1:istep)),squeeze(xpartall(:,2,1:istep)),'k.');
     axis equal;
     axis([0 params.bx 0 params.by]);
     drawnow;
-%     pause;
+    pause;
 end
 hold off;
     
