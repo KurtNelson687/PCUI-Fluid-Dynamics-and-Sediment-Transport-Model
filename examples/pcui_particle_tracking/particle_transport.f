@@ -123,7 +123,7 @@
             do n = 1,nPart
                do ci = 1,3
                   x = abs(xPart(n,ci) + k3(n,ci))
-                  call boundary_check(x,n,ci)   
+                  call boundary_adjustment(x,n,ci)   
                end do
             end do
 
@@ -170,7 +170,7 @@
          do n = 1,nPart
             do ci = 1,3
                x = abs(xPart(n,ci))
-               call boundary_check(x,n,ci)
+               call boundary_adjustment(x,n,ci)
             end do
          end do
 
@@ -200,7 +200,7 @@
          do n = 1,nPart
             do ci = 1,3
                x = abs(xPart(n,ci)+0.5D0*k1(n,ci))
-               call boundary_check(x,n,ci)   
+               call boundary_adjustment(x,n,ci)   
             end do
          end do
 
@@ -220,7 +220,7 @@
          do n = 1,nPart
             do ci = 1,3
                x = abs(xPart(n,ci)+0.5D0*k2(n,ci))
-               call boundary_check(x,n,ci)
+               call boundary_adjustment(x,n,ci)
             end do
          end do
 
@@ -289,7 +289,7 @@ c        print *, '--> ',xPart(n,ci),x
 
 !cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
-      subroutine boundary_adjustment(n,ci,x)
+      subroutine boundary_adjustment(x,n,ci)
 
       include 'size.inc'
       include 'ns.inc'
@@ -298,17 +298,26 @@ c        print *, '--> ',xPart(n,ci),x
       include "para.inc"
       include 'mpi.inc'
 
-      double precision, dimension(3) :: xL,xR,D,bN,uN,
+      double precision, dimension(3) :: xL,xR,D,bN,uN,uV,
      <                                  distV,xB
       integer                        :: n, ci
-      double precision               :: dist, r1, r2, x
+      double precision               :: twall, r1, r2, x
 
       xL = abs(xxL)
       xR = abs(xxR)
       D = xR-xL
       
 !     ---- Symmetry/boundary check
-      
+      if (x.lt.xL(ci)) then
+         xPartB(n,ci) = -1
+         xPartBT(n,ci) = xPartBT(n,ci) + 1               
+      elseif(x.gt.xR(ci)) then    
+         xPartB(n,ci) = 1
+         xPartBT(n,ci) = xPartBT(n,ci) + 1
+      else
+         return
+      end if
+     
 !     ---- If periodic it applies symmetry condition
       if (periods(ci).eqv..true.) then
          print *, '---...Symmetry...---'
@@ -319,32 +328,38 @@ c        print *, '--> ',xPart(n,ci),x
          print *, uPart(n,ci)
       else
 !     ---- If it hits the wall it bounces off
-         print *, '---...Hit-Wall...---'
+         print *, '---...',n,' Hit-Wall...---'
 !     ---- Unit vector in the direction of velocity vector
+         uV = uPartI(n,:)
          uN = uPartI(n,:)/sqrt(uPartI(n,1)**2.D0 + 
      <        uPartI(n,2)**2.D0+uPartI(n,3)**2.D0)
+         print *, Un
 !     ---- Vector normal to boundary is just the boundary vector
          bN = xPartB(n,:)
+         print *, bN
 !     ---- Calculate distance from the particle to the boundary along the velocity vector
          if (xPartB(n,ci).eq.-1) then
             r1 = dot_product(xL - xPartI(n,:),bN)
          else if (xPartB(n,ci).eq.1) then
             r1 = dot_product(xR - xPartI(n,:),bN)
          end if
-         r2 = dot_product(uN,bN)
+         r2 = dot_product(uV,bN)
 
          if (r2.eq.0.D0.and.r1.ne.0.D0) then
+            print *, r1, r2
             print *, 'The line is outside the plane and is parallel 
      <                to it'
-            stop
+            xPart(n,ci) = xPartI(n,ci) + 20*r1
+            return
          elseif (r2.eq.0.D0.and.r1.eq.0.D0) then
+           print *, r1, r2
            print *, 'The line is inside the plane and is parallel to it'
-            stop
+           return
          end if                
 
-         dist = r1/r2
+         twall = r1/r2
 !     ---- Bounce it off the wall                   
-         xPartW(n,:) = xPartI(n,:) + dist*uN
+         xPartW(n,:) = xPartI(n,:) + twall*uV
          distV = xPart(n,:)-xPartW(n,:)
 
          if (ci.eq.1) then
@@ -361,6 +376,8 @@ c        print *, '--> ',xPart(n,ci),x
             xPart(n,3) = xPartW(n,3)-distV(3)
          end if
       end if
+
+      xPartB(n,ci) = 0
 
       end subroutine boundary_adjustment
 

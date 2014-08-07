@@ -47,12 +47,13 @@ y = squeeze(y(:,:,1));
 %Find correct istep value
 n = [0, params.nsave:params.nsave:params.nsteps, params.nsteps+1];
 
-TEND = 400;
+TEND = 280;
 xpartall = nan(params.ni*params.nj,3,1);
 for timestep = 0:params.nsave:TEND
     display(timestep);
     istep = find(n==timestep,1);
     xpartall(:,:,istep) = read_binary_particles_pcui(working_folder, filename_xpart, istep, params);
+%     xpart = read_binary_particles_pcui(working_folder, filename_xpart, istep, params);
 end
 
 %%
@@ -67,9 +68,14 @@ for timestep=0:params.nsave:TEND
                                  params, 0,0);  
     cla;
     contour(x,y,squeeze(rho(:,:,1)),[1 1],'r');
-    plot(squeeze(xpartall(:,1,1:istep)),squeeze(xpartall(:,2,1:istep)),'k.');
+    plot(squeeze(xpartall(:,1,max(1,istep-1):istep)),squeeze(xpartall(:,2,max(1,istep-1):istep)),'k.');
+    plot([0 0],[0 params.by],'k-');
+    plot([params.bx params.bx],[0 params.by],'k-');
+    plot([0 params.bx],[0 0],'k-');
+    plot([0 params.bx],[params.by params.by],'k-');
     axis equal;
-    axis([0 params.bx 0 params.by]);
+%     axis([-0.5 params.bx+0.5 -0.1 params.by+0.1]);
+%     plot3(squeeze(xpartall(1024,1,istep)),squeeze(xpartall(1024,3,istep)),squeeze(xpartall(1024,1,istep)),'k.');
     drawnow;
     pause;
 end

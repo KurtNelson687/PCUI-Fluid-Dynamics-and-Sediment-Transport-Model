@@ -17,7 +17,7 @@ nj = params.nj;
 nk = params.nk;
 % npart = (ni+2)*(nj+2)*(nk+2);
 npart = ni*nj;
-N = npart*3;
+N = npart*3+1;
 ptrD = 8*N;
               
 fid = fopen(ffD, 'r');

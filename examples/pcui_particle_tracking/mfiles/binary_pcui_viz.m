@@ -2,7 +2,7 @@
 clear all; clc; close all;
 
 % PLOTTING OPTIONS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-timestep = 200; %timestep to plot
+timestep = 50; %timestep to plot
 delta_ts = 0; %averaging
 FIGURE_ON = 1; %figure visible?
     print_ext = '-dpng'; %image file type
@@ -265,7 +265,7 @@ if(display_velocity)
         if(~FIGURE_ON)
            set(velocity_fig_xz,'visible','off');
         end
-        pcolor(x_xz,z_xz,u_xz);
+        pcolor(x_xz,z_xz,w_xz);
         colorbar;
         if(plot_quiver)
             quiver(x_xz,z_xz,u_xz,w_xz,'k');
@@ -571,16 +571,16 @@ if(display_density_isosurface)
 end
 
 % PARTICLES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-xpart = read_binary_particles_pcui(working_folder, filename_xpart, istep, params);
-figure;
-hold on;
-% plot3(xpart(:,1),xpart(:,3),xpart(:,2),'k.');
-plot(x_xz(:,:), z_xz(:,:), 'k.'); 
-plot(xpart(:,1),xpart(:,2),'r.');
-% plot(xpart(:,1),xpart(:,3),'k.');
-axis equal;
-axis([0 params.bx 0 params.by]);
-hold off;
+% xpart = read_binary_particles_pcui(working_folder, filename_xpart, istep, params);
+% figure;
+% hold on;
+% % plot3(xpart(:,1),xpart(:,3),xpart(:,2),'k.');
+% plot(x_xz(:,:), z_xz(:,:), 'k.'); 
+% plot(xpart(:,1),xpart(:,2),'r.');
+% % plot(xpart(:,1),xpart(:,3),'k.');
+% axis equal;
+% axis([0 params.bx 0 params.by]);
+% hold off;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
