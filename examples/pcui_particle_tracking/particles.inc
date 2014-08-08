@@ -33,11 +33,11 @@ c	integer, parameter :: ubk = (1 + (nk-1+2)*ubz)
 	double precision,dimension(1:ni,1:nj,1:nk,3) :: uuu,xxxp
 
 	double precision,dimension(nPart, 3) :: xPart,uPart,k1,k2,k3,k4,
-     <                                          uPartI,xPartI,xPartW
+     <                                    xPartC
 	double precision,dimension(3)        :: lb,rb,xxL,xxR
 	integer,dimension(nPart,3)           :: xPartS,xPartB,xPartBT
 
 	common/particles/ 
      <			  xPart, uPart, xPartS, uu, xxp, iPart, ipstep, 
      <                    lb,rb,k1,k2,k3,k4,xxL,xxR,xxxp,uuu,
-     <                    xPartB,xPartBT,uPartI,xPartI,xPartW
+     <                    xPartB,xPartBT,xPartC

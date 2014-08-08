@@ -45,7 +45,7 @@
 
       xxL = 0.D0                !(xp(0,0,0,:)+xp(1,1,1,:))/2.D0
       xxR(1) = xxL(1)+bx
-      xxR(2) = xxL(2)+by
+      xxR(2) = 0.D0
       xxR(3) = xxL(3)+bz
 
       call getX
@@ -97,90 +97,44 @@
       include "para.inc"
       include "mpi.inc"
 
-      integer                        :: ci,n,row,col
-      double precision, dimension(3) :: xL,xR,D
-      double precision               :: x
+      integer                        :: n, ci
               
       ! If the index of the NS solver is the same as the index of the particle
       ! solver where i_ns = 2*i_particle-1 then the particle solver is at a
       ! full timestep, otherwise it is at a half timestep.
 
-      xL = abs(xxL)
-      xR = abs(xxR)
-      D = xR-xL
-
       if (istep.eq.2*ipstep-1) then 
          if (istep.gt.1) then 
                       
-!           print *, '********************---RK4i---*******************'
-!           write (*,10) xPart(nPart-3:nPart,1)+k3(nPart-3:nPart,1)
-!           write (*,11) xPartS(nPart-3:nPart,1)
-!           write (*,10) xPartI(nPart-3:nPart,1)
-!           write (*,10) uPart(nPart-3:nPart,1)
-!           write (*,10) uPartI(nPart-3:nPart,1)
-!           print *, '*************************************************'
-
             do n = 1,nPart
                do ci = 1,3
-                  x = abs(xPart(n,ci) + k3(n,ci))
-                  call boundary_adjustment(x,n,ci)   
+                  xPartC(n,ci) = xPart(n,ci)+k3(n,ci)
+                  call boundary_adjustment(xPartC(n,:),n,ci)   
                end do
             end do
 
-            call interpolate3D(uPart,xPart+k3,xxp,uu,ni+2,nj+2,nk+2,
+            call interpolate3D(uPart,xPartC,xxp,uu,ni+2,nj+2,nk+2,
      <                         nPart,xxL,xxR,xPartB,xPartBT,xPartS)
 
             k4 = 2.D0*dtime*uPart
 
-!           print *, '*******************---RK4o---********************'
-!           write (*,10) xPart(nPart-3:nPart,1) +
-!    <                (1.D0/6.D0)*(k1(nPart-3:nPart,1) + 2.D0 *
-!    <                (k2(nPart-3:nPart,1)+k3(nPart-3:nPart,1)) +
-!    <                 k4(nPart-3:nPart,1))
-!           write (*,11) xPartS(nPart-3:nPart,1)
-!           write (*,10) xPartI(nPart-3:nPart,1)
-!           write (*,10) uPart(nPart-3:nPart,1)
-!           write (*,10) uPartI(nPart-3:nPart,1)
-!           print *, '*************************************************'
-
 !     ---- Advance particle in time using RK4 and adjust for boundary crossings
             xPart = xPart + (1.D0/6.D0)*(k1 + 2.D0*(k2+k3)+k4)
-!            if (istep.eq.347) then
-!              print *, xPart(nPart,1),uPart(nPart,1)
-!              stop
-!            end if
-        end if
+         end if
 
-         xPartI = xPart
-         uPartI = uPart
-
-!        print *, '*********************---RK1i----********************'
-!        write (*,10) xPart(nPart-3:nPart,1)
-!        write (*,11) xPartS(nPart-3:nPart,1)
-!        write (*,10) xPartI(nPart-3:nPart,1)
-!        write (*,10) uPart(nPart-3:nPart,1)
-!        write (*,10) uPartI(nPart-3:nPart,1)
-!        print *, '****************************************************'
+!        Location of particle at current position in RK4         
+         xPartC = xPart
 
          do n = 1,nPart
             do ci = 1,3
-               x = abs(xPart(n,ci))
-               call boundary_adjustment(x,n,ci)
+               call boundary_adjustment(xPartC(n,:),n,ci)
             end do
          end do
 
-         call interpolate3D(uPart,xPart,xxp,uu,ni+2,nj+2,nk+2,nPart,
+         call interpolate3D(uPart,xPartC,xxp,uu,ni+2,nj+2,nk+2,nPart,
      <                      xxL,xxR,xPartB,xPartBT,xPartS)
         
          k1 = 2.D0*dtime*uPart  
-
-!        print *, '*********************---RK1o----********************'
-!        write (*,10) xPart(nPart-3:nPart,1)+0.5D0*k1(nPart-3:nPart,1)
-!        write (*,11) xPartS(nPart-3:nPart,1)
-!        write (*,10) xPartI(nPart-3:nPart,1)
-!        write (*,10) uPart(nPart-3:nPart,1)
-!        write (*,10) uPartI(nPart-3:nPart,1)
-!        print *, '****************************************************'
 
 !     ---- Store results
          if (mod(istep+1,nsave) .eq. 0) then
@@ -189,102 +143,38 @@
          endif
       else
 
-!        print *, '*********************---RK2i----********************'
-!        write (*,10) xPart(nPart-3:nPart,1)
-!        write (*,11) xPartS(nPart-3:nPart,1)
-!        write (*,10) xPartI(nPart-3:nPart,1)
-!        write (*,10) uPart(nPart-3:nPart,1)
-!        write (*,10) uPartI(nPart-3:nPart,1)
-!        print *, '****************************************************'
-
          do n = 1,nPart
             do ci = 1,3
-               x = abs(xPart(n,ci)+0.5D0*k1(n,ci))
-               call boundary_adjustment(x,n,ci)   
+               xPartC(n,ci) = xPart(n,ci)+0.5D0*k1(n,ci)
+               call boundary_adjustment(xPartC(n,:),n,ci)   
             end do
          end do
 
-         call interpolate3D(uPart,xPart+0.5D0*k1,xxp,uu,ni+2,nj+2,nk+2,
+         call interpolate3D(uPart,xPartC,xxp,uu,ni+2,nj+2,nk+2,
      <                      nPart,xxL,xxR,xPartB,xPartBT,xPartS)
 
          k2 = 2.D0*dtime*uPart
 
-!        print *, '********************---RK2o,3i----******************'
-!        write (*,10) xPart(nPart-3:nPart,1)+0.5D0*k2(nPart-3:nPart,1)
-!        write (*,11) xPartS(nPart-3:nPart,1)
-!        write (*,10) xPartI(nPart-3:nPart,1)
-!        write (*,10) uPart(nPart-3:nPart,1)
-!        write (*,10) uPartI(nPart-3:nPart,1)
-!        print *, '****************************************************'
-
          do n = 1,nPart
             do ci = 1,3
-               x = abs(xPart(n,ci)+0.5D0*k2(n,ci))
-               call boundary_adjustment(x,n,ci)
+               xPartC(n,ci) = xPart(n,ci)+0.5D0*k2(n,ci)
+               call boundary_adjustment(xPartC(n,:),n,ci)
             end do
          end do
 
-         call interpolate3D(uPart,xPart+0.5D0*k2,xxp,uu,ni+2,nj+2,
+         call interpolate3D(uPart,xPartC,xxp,uu,ni+2,nj+2,
      <                      nk+2,nPart,xxL,xxR,xPartB,xPartBT,xPartS)     
 
          k3 = 2.D0*dtime*uPart
 
-!        print *, '*********************---RK3o----********************'
-!        write (*,10) xPart(nPart-3:nPart,1)+k3(nPart-3:nPart,1)
-!        write (*,11) xPartS(nPart-3:nPart,1)
-!        write (*,10) xPartI(nPart-3:nPart,1)
-!        write (*,10) uPart(nPart-3:nPart,1)
-!        write (*,10) uPartI(nPart-3:nPart,1)
-!        print *, '****************************************************'
-
          ipstep = ipstep + 1
       end if
- 10      format(4f15.12)
- 11      format(4i15)
- 100                 format('---... Boundary adjustment (n,ci,s) = ',
-     <                        '(', i2, ',',i2,',',i2,') ...---')
 
-      end subroutine
+!10      format(4f15.12)
+!11      format(4i15)
+!100                 format('---... Boundary adjustment (n,ci,s) = ',
+!    <                        '(', i2, ',',i2,',',i2,') ...---')
 
-!cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-
-      subroutine boundary_check(x,n,ci)
-
-      include 'size.inc'
-      include 'ns.inc'
-      include 'particles.inc'
-      include "metric.inc"
-      include "para.inc"
-      include 'mpi.inc'
-
-      double precision, dimension(3) :: xL,xR,D
-      integer                        :: n,ci
-      double precision               :: x, xPartTemp
-
-      xL = abs(xxL)
-      xR = abs(xxR)
-      D = xR-xL
-
-c      print *, x, xL(ci),xR(ci)
-
-      if (x.lt.xL(ci).and.periods(ci).eqv..true.) then
-         xPartB(n,ci) = -1
-         xPartBT(n,ci) = xPartBT(n,ci) + 1               
-c        print *, '---...Symmetry...---'
-         xPartS(n,ci) = xPartS(n,ci) + xPartB(n,ci)
-c        print *, '--> ',xPart(n,ci),x
-         xPart(n,ci) = x - xPartB(n,ci)*D(ci)
-      elseif(x.gt.xR(ci).and.periods(ci).eqv..true.) then    
-         xPartB(n,ci) = 1
-         xPartBT(n,ci) = xPartBT(n,ci) + 1
-c        print *, '---...Symmetry...---'
-         xPartS(n,ci) = xPartS(n,ci) + xPartB(n,ci)
-c        print *, '--> ',xPart(n,ci),x
-         xPart(n,ci) = x - xPartB(n,ci)*D(ci)
-      end if
-
-      xPartB(n,ci) = 0
-               
       end subroutine
 
 !cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
@@ -298,15 +188,54 @@ c        print *, '--> ',xPart(n,ci),x
       include "para.inc"
       include 'mpi.inc'
 
-      double precision, dimension(3) :: xL,xR,D,bN,uN,uV,
-     <                                  distV,xB
-      integer                        :: n, ci
-      double precision               :: twall, r1, r2, x
+      double precision, dimension(3) :: x,xW,bN
+      double precision               :: xL,xR,D
+      integer                        :: n,ci
 
-      xL = abs(xxL)
-      xR = abs(xxR)
-      D = xR-xL
-      
+!     Calculate appropriate boundary value
+      if (ci.eq.1.or.ci.eq.3)  then
+        xL = xxL(ci)
+        xR = xxR(ci)
+        D = xR-xL
+      else
+        xR = xxR(ci)
+        call get_bottom(x(1),xL)
+      end if
+
+!     Calculate appropriate boundary normal unit vector 
+!     bN points INTO the domain
+      bN = 0.D0
+      if (ci.eq.1.or.ci.eq.3)  then
+        if (x(ci).lt.xL) then
+          bN(n,ci) = 1
+        elseif(x(ci).gt.xR) then    
+          bN(n,ci) = -1
+        else
+          return
+        end if
+      else
+        if (x(ci).lt.xL) then
+          call get_boundary_normal(x(1),bN)
+        elseif(x(ci).gt.xR) then    
+          bN(n,ci) = -1
+        else
+          return
+        end if
+      end if
+
+!     ADJUST PARTICLE LOCATION
+!     If periodic apply symmetry condition
+      if (periods(ci).eqv..true.) then
+        print *, '---...Symmetry...---'
+        xPartC(n,ci) = xPartC(n,ci) + bN(n,ci)*D(ci)
+
+      else
+!     If it hits the wall it bounces off
+        print *, '---...',n,' Hit-Wall...---'
+      end if
+
+     
+!     OLD!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !     ---- Symmetry/boundary check
       if (x.lt.xL(ci)) then
          xPartB(n,ci) = -1
