@@ -149,12 +149,7 @@
 !              print *, xPart(nPart,1),uPart(nPart,1)
 !              stop
 !            end if
-!     ---- Store results
-             if (mod(istep+1,nsave) .eq. 0) then
-                print *,'Output particles.'
-                call output_particles          
-             endif
-         end if
+        end if
 
          xPartI = xPart
          uPartI = uPart
@@ -187,6 +182,11 @@
 !        write (*,10) uPartI(nPart-3:nPart,1)
 !        print *, '****************************************************'
 
+!     ---- Store results
+         if (mod(istep+1,nsave) .eq. 0) then
+            print *,'Output particles.'
+            call output_particles          
+         endif
       else
 
 !        print *, '*********************---RK2i----********************'
