@@ -14,6 +14,7 @@ qoutput
 *.png
 *.eps
 *.dat
+*.mod
 rho_full*
 examples/pcui_internal_seiche/mfiles/*.mat
 examples/pcui_breaking_wave/mfiles/*.mat
