@@ -56,7 +56,6 @@
          xPartB = 0
          xPartBT = 0
          xPartS = 0
-         xPartW = 0.D0
          ntPart = 0
 
          do k = lbk, ubk
@@ -188,36 +187,45 @@
       include "para.inc"
       include 'mpi.inc'
 
-      double precision, dimension(3) :: x,xW,bN
+      double precision, dimension(3) :: x,xW,bN,rN
       double precision               :: xL,xR,D
       integer                        :: n,ci
 
 !     Calculate appropriate boundary value
-      if (ci.eq.1.or.ci.eq.3)  then
+      if (ci.eq.1.or.ci.eq.3) then
         xL = xxL(ci)
         xR = xxR(ci)
         D = xR-xL
       else
-        xR = xxR(ci)
         call get_bottom(x(1),xL)
+        xR = xxR(ci)
       end if
 
 !     Calculate appropriate boundary normal unit vector 
-!     bN points INTO the domain
+!     bN points INTO the domain. rN is vector from x to 
+!     the wall in the direction of bN.
       bN = 0.D0
-      if (ci.eq.1.or.ci.eq.3)  then
+      rN = 0.D0
+      if (ci.eq.1.or.ci.eq.3) then
         if (x(ci).lt.xL) then
-          bN(n,ci) = 1
+          bN(ci) = 1
+          rN(ci) = bN(ci)*(x(ci)-xL)
         elseif(x(ci).gt.xR) then    
-          bN(n,ci) = -1
+          bN(ci) = -1
+          rN(ci) = bN(ci)*(x(ci)-xR)
         else
           return
         end if
       else
         if (x(ci).lt.xL) then
           call get_boundary_normal(x(1),bN)
+          xW(1) = x(1)
+          xW(2) = xL
+          xW(3) = x(3)
+          rN = bN*dot_product(xW-x,bN) 
         elseif(x(ci).gt.xR) then    
-          bN(n,ci) = -1
+          bN(ci) = -1
+          rN(ci) = bN(ci)*(x(ci)-xR)
         else
           return
         end if
@@ -227,89 +235,64 @@
 !     If periodic apply symmetry condition
       if (periods(ci).eqv..true.) then
         print *, '---...Symmetry...---'
-        xPartC(n,ci) = xPartC(n,ci) + bN(n,ci)*D(ci)
+        xPartC(n,ci) = xPartC(n,ci) + bN(ci)*D
 
       else
 !     If it hits the wall it bounces off
-        print *, '---...',n,' Hit-Wall...---'
+!        print *, '---...',n,' Hit-Wall...---'
+        xPartC(n,:) = xPartC(n,:) + 2*rN
       end if
-
-     
-!     OLD!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!     ---- Symmetry/boundary check
-      if (x.lt.xL(ci)) then
-         xPartB(n,ci) = -1
-         xPartBT(n,ci) = xPartBT(n,ci) + 1               
-      elseif(x.gt.xR(ci)) then    
-         xPartB(n,ci) = 1
-         xPartBT(n,ci) = xPartBT(n,ci) + 1
-      else
-         return
-      end if
-     
-!     ---- If periodic it applies symmetry condition
-      if (periods(ci).eqv..true.) then
-         print *, '---...Symmetry...---'
-         xPartS(n,ci) = xPartS(n,ci) + xPartB(n,ci)
-         print *, '--> ',xPart(n,ci),x
-         xPart(n,ci) = xPartI(n,ci) - xPartB(n,ci)*D(ci)
-         print *, xPart(n,ci)
-         print *, uPart(n,ci)
-      else
-!     ---- If it hits the wall it bounces off
-         print *, '---...',n,' Hit-Wall...---'
-!     ---- Unit vector in the direction of velocity vector
-         uV = uPartI(n,:)
-         uN = uPartI(n,:)/sqrt(uPartI(n,1)**2.D0 + 
-     <        uPartI(n,2)**2.D0+uPartI(n,3)**2.D0)
-         print *, Un
-!     ---- Vector normal to boundary is just the boundary vector
-         bN = xPartB(n,:)
-         print *, bN
-!     ---- Calculate distance from the particle to the boundary along the velocity vector
-         if (xPartB(n,ci).eq.-1) then
-            r1 = dot_product(xL - xPartI(n,:),bN)
-         else if (xPartB(n,ci).eq.1) then
-            r1 = dot_product(xR - xPartI(n,:),bN)
-         end if
-         r2 = dot_product(uV,bN)
-
-         if (r2.eq.0.D0.and.r1.ne.0.D0) then
-            print *, r1, r2
-            print *, 'The line is outside the plane and is parallel 
-     <                to it'
-            xPart(n,ci) = xPartI(n,ci) + 20*r1
-            return
-         elseif (r2.eq.0.D0.and.r1.eq.0.D0) then
-           print *, r1, r2
-           print *, 'The line is inside the plane and is parallel to it'
-           return
-         end if                
-
-         twall = r1/r2
-!     ---- Bounce it off the wall                   
-         xPartW(n,:) = xPartI(n,:) + twall*uV
-         distV = xPart(n,:)-xPartW(n,:)
-
-         if (ci.eq.1) then
-            xPart(n,1) = xPartW(n,1)-distV(1)
-            xPart(n,2) = xPartW(n,2)+distV(2)
-            xPart(n,3) = xPartW(n,3)+distV(3)
-         elseif (ci.eq.2) then
-            xPart(n,1) = xPartW(n,1)+distV(1)
-            xPart(n,2) = xPartW(n,2)-distV(2)
-            xPart(n,3) = xPartW(n,3)+distV(3)
-         elseif (ci.eq.3) then
-            xPart(n,1) = xPartW(n,1)+distV(1)
-            xPart(n,2) = xPartW(n,2)+distV(2)
-            xPart(n,3) = xPartW(n,3)-distV(3)
-         end if
-      end if
-
-      xPartB(n,ci) = 0
 
       end subroutine boundary_adjustment
 
+!cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+
+      subroutine get_bottom(x1,x2)
+
+      double precision :: x1,x2,xc,zc,xend,zend,r,s
+      xc = 1.675D0
+      zc = 2.44D0
+      xend = 2.537D0
+      zend = -0.4335D0
+      r = 3.D0
+      s = 0.3D0
+
+      if (x1.lt.xc) then
+        x2 = -by
+      elseif (x1.ge.xc.and.x1.lt.xend) then
+        x2 = -sqrt(r**2-(x1-xc)**2) + zc
+      else
+        x2 = s*x1 + (zend - s*xend)
+      end if
+
+      end subroutine
+
+!cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+
+      subroutine get_boundary_normal(x1,bN)
+
+      double precision               :: x1,xc,xend,r,s,theta
+      double precision, dimension(3) :: bN
+
+      xc = 1.675D0
+      xend = 2.537D0
+      r = 3.D0
+      s = 0.3D0
+
+      if (x1.lt.xc) then
+        bN(2) = 1
+      elseif (x1.ge.xc.and.x1.lt.xend) then
+        s = (x1-xc)/sqrt(r**2-(x1-xc)**2)
+        theta =  atan(s)
+        bN(1) = -sin(theta)
+        bN(2) =  cos(theta)
+      else
+        theta =  atan(s)
+        bN(1) = -sin(theta)
+        bN(2) =  cos(theta)
+      end if
+
+      end subroutine
 !cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 !
 !     Obtain u sub-matrices from each process and assemble them into a single global matrix

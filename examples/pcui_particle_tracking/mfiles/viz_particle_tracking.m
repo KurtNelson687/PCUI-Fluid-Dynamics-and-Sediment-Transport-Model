@@ -47,7 +47,7 @@ y = squeeze(y(:,:,1));
 %Find correct istep value
 n = [0, params.nsave:params.nsave:params.nsteps, params.nsteps+1];
 
-TEND = 280;
+TEND = 10;
 xpartall = nan(params.ni*params.nj,3,1);
 for timestep = 0:params.nsave:TEND
     display(timestep);
@@ -66,7 +66,10 @@ for timestep=0:params.nsave:TEND
     display(istep);
     rho = read_binary_file_pcui(working_folder, fname_rho, istep, ...
                                  params, 0,0);  
+%     [u,v,w] = read_binary_file_pcui(working_folder, fname_uvw, istep, ...
+%                                  params, 1,0); 
     cla;
+%     pcolor(x,y,squeeze(u(:,:,1))); shading flat; colorbar;
     contour(x,y,squeeze(rho(:,:,1)),[1 1],'r');
     plot(squeeze(xpartall(:,1,max(1,istep-1):istep)),squeeze(xpartall(:,2,max(1,istep-1):istep)),'k.');
     plot([0 0],[0 params.by],'k-');
