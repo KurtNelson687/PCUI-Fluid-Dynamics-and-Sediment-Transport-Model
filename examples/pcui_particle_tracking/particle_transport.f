@@ -43,7 +43,9 @@
      
       ipstep = 1
 
-      xxL = 0.D0                !(xp(0,0,0,:)+xp(1,1,1,:))/2.D0
+      xxL(1) = 0.D0                !(xp(0,0,0,:)+xp(1,1,1,:))/2.D0
+      xxL(2) = -by
+      xxL(3) = 0.D0
       xxR(1) = xxL(1)+bx
       xxR(2) = 0.D0
       xxR(3) = xxL(3)+bz
@@ -246,6 +248,8 @@
       end subroutine boundary_adjustment
 
 !cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+!
+!     Get vertical location of bottom given horizontal particle position
 
       subroutine get_bottom(x1,x2)
 
@@ -268,6 +272,8 @@
       end subroutine
 
 !cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+!
+!     Get boundary normal unit vector given horizontal particle position
 
       subroutine get_boundary_normal(x1,bN)
 
@@ -395,14 +401,12 @@
          uu = 0.D0
          ! Insides
          uu(2:ni+1,2:nj+1,2:nk+1,:) = uuu
-         ! Rigid Lid
+         ! Rigid Lid - free slip
          uu(1:ni+2,nj+2,1:nk+2,1) = uu(1:ni+2,nj+1,1:nk+2,1)
          uu(1:ni+2,nj+2,1:nk+2,3) = uu(1:ni+2,nj+1,1:nk+2,3)
-         ! Symmetry - x
-         uu(1,2:nj+1,2:nk+1,:)= (uu(ni+1,2:nj+1,2:nk+1,:) +
-     <                           uu(2,2:nj+1,2:nk+1,:))/2.D0
-         uu(nj+2,2:nj+1,2:nk+1,:) = uu(1,2:nj+1,2:nk+1,:)
-
+         ! Free slip - x
+         uu(1,2:nj+1,2:nk+1,:)    = uu(2,2:nj+1,2:nk+1,:) 
+         uu(ni+2,2:nj+1,2:nk+1,:) = uu(ni+1,2:nj+1,2:nk+1,:)
          ! Symmetry - z
          uu(2:ni+1,2:nj+1,1,:)= (uu(2:ni+1,2:nj+1,2,:) +
      <                           uu(2:ni+1,2:nj+1,nk+1,:))/2.D0
@@ -524,19 +528,36 @@ c$$$         close(unit = 123)
 
          xxp(1,:,:,1)      = xxL(1)
          xxp(ni+2,:,:,1)   = xxR(1)
-         do i = 2, ni+1
-            xxp(i,:,:,1) = xxxp(i-1,1,1,1)
-         end do
          xxp(:,1,:,2)      = xxL(2)
          xxp(:,nj+2,:,2)   = xxR(2)
-         do j = 2, nj+1
-            xxp(:,j,:,2) = xxxp(1,j-1,1,2)
-         end do
          xxp(:,:,1,3)      = xxL(3)
          xxp(:,:,nk+2,3)   = xxR(3)
+
          do k = 2, nk+1
-            xxp(:,:,k,3) = xxxp(1,1,k-1,3)
+         do j = 2, nj+1
+         do i = 2, ni+1
+            xxp(i,j,k,1) = xxxp(i-1,j-1,k-1,1)
+            xxp(i,j,k,2) = xxxp(i-1,j-1,k-1,2)
+            xxp(i,j,k,3) = xxxp(i-1,j-1,k-1,3)
          end do
+         end do
+         end do
+         
+!        xxp(1,:,:,1)      = xxL(1)
+!        xxp(ni+2,:,:,1)   = xxR(1)
+!        do i = 2, ni+1
+!           xxp(i,:,:,1) = xxxp(i-1,1,1,1)
+!        end do
+!        xxp(:,1,:,2)      = xxL(2)
+!        xxp(:,nj+2,:,2)   = xxR(2)
+!        do j = 2, nj+1
+!           xxp(:,j,:,2) = xxxp(1,j-1,1,2)
+!        end do
+!        xxp(:,:,1,3)      = xxL(3)
+!        xxp(:,:,nk+2,3)   = xxR(3)
+!        do k = 2, nk+1
+!           xxp(:,:,k,3) = xxxp(1,1,k-1,3)
+!        end do
 
          open(123, file='output_XYZ.dat',form='unformatted',
      >           status='unknown')
