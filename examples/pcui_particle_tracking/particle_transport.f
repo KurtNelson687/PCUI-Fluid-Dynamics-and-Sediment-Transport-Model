@@ -253,6 +253,8 @@
 
       subroutine get_bottom(x1,x2)
 
+      include 'cavity.inc'
+
       double precision :: x1,x2,xc,zc,xend,zend,r,s
       xc = 1.675D0
       zc = 2.44D0
@@ -448,7 +450,7 @@ c$$$         close(unit = 123)
       double precision, dimension(-1:nni+2,-1:nnj+2,-1:nnk+2) :: xpsend
       double precision, dimension(1:ni,1:nj,1:nk) :: xprecv 
       integer, dimension(:), allocatable :: counts, disps
-      double precision :: dp
+      double precision :: dp, bot
 
       call MPI_COMM_SIZE( MPI_COMM_WORLD, nprocs, ierr )
 !      call MPI_COMM_RANK( MPI_COMM_WORLD, myid, ierr )
@@ -526,13 +528,7 @@ c$$$         close(unit = 123)
          call MPI_TYPE_FREE(resizedrecvsubarray,ierr)
          deallocate(disps,counts)
 
-         xxp(1,:,:,1)      = xxL(1)
-         xxp(ni+2,:,:,1)   = xxR(1)
-         xxp(:,1,:,2)      = xxL(2)
-         xxp(:,nj+2,:,2)   = xxR(2)
-         xxp(:,:,1,3)      = xxL(3)
-         xxp(:,:,nk+2,3)   = xxR(3)
-
+!        Interior points
          do k = 2, nk+1
          do j = 2, nj+1
          do i = 2, ni+1
@@ -542,7 +538,39 @@ c$$$         close(unit = 123)
          end do
          end do
          end do
-         
+
+!        Boundary points
+!        Left and right
+         xxp(1,:,:,1)      = xxL(1)
+         xxp(ni+2,:,:,1)   = xxR(1)
+         xxp(1,:,:,2)      = xxp(2,:,:,2) 
+         xxp(ni+2,:,:,2)   = xxp(nj+1,:,:,2)
+         xxp(1,:,:,3)      = xxp(2,:,:,3) 
+         xxp(ni+2,:,:,3)   = xxp(ni+1,:,:,3)
+
+!        Top and bottom
+         xxp(:,1,:,1)    = xxp(:,2,:,1)
+         xxp(:,nj+2,:,1) = xxp(:,nj+1,:,1)
+         do i = 1, ni+2
+            call get_bottom(xxp(i,2,2,1),bot)
+!           print *, xxp(i,2,1,1)
+            xxp(i,1,:,2) = bot 
+         end do
+         xxp(:,nj+2,:,2) = xxR(2)
+         xxp(:,1,:,3)    = xxp(:,2,:,3)
+         xxp(:,nj+2,:,3) = xxp(:,nj+1,:,3)
+
+!        Front and back
+         xxp(:,:,1,1)      = xxp(:,:,2,1)
+         xxp(:,:,nk+2,1)   = xxp(:,:,nk+1,1)
+         xxp(:,:,1,2)      = xxp(:,:,2,2)
+         xxp(:,:,nk+2,2)   = xxp(:,:,nk+1,2) 
+         xxp(:,:,1,3)      = xxL(3)
+         xxp(:,:,nk+2,3)   = xxR(3)
+
+         print *, xxp(:,1,1,2)
+
+!        OLD         
 !        xxp(1,:,:,1)      = xxL(1)
 !        xxp(ni+2,:,:,1)   = xxR(1)
 !        do i = 2, ni+1

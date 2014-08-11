@@ -70,17 +70,20 @@ for timestep=0:params.nsave:TEND
 %                                  params, 1,0); 
     cla;
 %     pcolor(x,y,squeeze(u(:,:,1))); shading flat; colorbar;
-%     contour(x,y,squeeze(rho(:,:,1)),[1 1],'r');
-%     plot(squeeze(xpartall(:,1,max(1,istep-1):istep)),squeeze(xpartall(:,2,max(1,istep-1):istep)),'k.');
+    contour(x,y,squeeze(rho(:,:,1)),[1 1],'r');
+    plot(squeeze(xpartall(:,1,max(1,istep-1):istep)),squeeze(xpartall(:,2,max(1,istep-1):istep)),'k.');
 %     plot([0 0],[0 params.by],'k-');
 %     plot([params.bx params.bx],[0 params.by],'k-');
 %     plot([0 params.bx],[0 0],'k-');
 %     plot([0 params.bx],[params.by params.by],'k-');
-%     axis equal;
+    axis equal;
 %     axis([-0.5 params.bx+0.5 -0.1 params.by+0.1]);
-    plot3(squeeze(xpartall(:,1,istep)),squeeze(xpartall(:,3,istep)),squeeze(xpartall(:,2,istep)),'k.');
+%     plot3(squeeze(xpartall(:,1,istep)),squeeze(xpartall(:,3,istep)),squeeze(xpartall(:,2,istep)),'k.');
     drawnow;
-    pause;
+%     pause;
 end
 hold off;
-    
+
+%%
+xgrid = read_binary_particles_pcui(working_folder, 'output_XYZ.dat', 0, params);
+plot(squeeze(xgrid(:,1)),squeeze(xgrid(:,2)),'k.');
