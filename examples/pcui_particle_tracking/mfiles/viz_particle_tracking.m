@@ -47,7 +47,7 @@ y = squeeze(y(:,:,1));
 %Find correct istep value
 n = [0, params.nsave:params.nsave:params.nsteps, params.nsteps+1];
 
-TEND = 0;
+TEND = 1000;
 xpartall = nan(params.ni*params.nj,3,1);
 for timestep = 0:params.nsave:TEND
     display(timestep);
@@ -59,7 +59,12 @@ end
 %%
 clc; close all;
 np = params.ni;
+load '1b_bottom.mat';
+% v = [34 44 101];
+% v = [1 65 129 193];
+v = [1 27 34 44 53 65 101 126 128 129 193 897 965 979];
 figure;
+set(gcf,'position',[200 200 1200 1200]);
 hold on;
 for timestep=0:params.nsave:TEND
     istep = find(n==timestep,1);
@@ -71,19 +76,23 @@ for timestep=0:params.nsave:TEND
     cla;
 %     pcolor(x,y,squeeze(u(:,:,1))); shading flat; colorbar;
     contour(x,y,squeeze(rho(:,:,1)),[1 1],'r');
-    plot(squeeze(xpartall(:,1,max(1,istep-1):istep)),squeeze(xpartall(:,2,max(1,istep-1):istep)),'k.');
-%     plot([0 0],[0 params.by],'k-');
-%     plot([params.bx params.bx],[0 params.by],'k-');
-%     plot([0 params.bx],[0 0],'k-');
-%     plot([0 params.bx],[params.by params.by],'k-');
+    plot(squeeze(xpartall(:,1,istep)),squeeze(xpartall(:,2,istep)),'k.');
+    plot(squeeze(xpartall(v,1,istep)),squeeze(xpartall(v,2,istep)),'r.');
+    plot([0 0],[0 -params.by],'k-');
+    plot([params.bx params.bx],[0 -0.14],'k-');
+    plot([0 params.bx],[0 0],'k-');
+    plot([0 1.675],[-params.by -params.by],'k-');
+    plot(xbottom+1.675,bottom,'k-');
     axis equal;
-%     axis([-0.5 params.bx+0.5 -0.1 params.by+0.1]);
+    axis([-0.1 3.6 -0.6 0.005]); 
+%     axis([2.5 3 -0.56 -0.15]);
 %     plot3(squeeze(xpartall(:,1,istep)),squeeze(xpartall(:,3,istep)),squeeze(xpartall(:,2,istep)),'k.');
     drawnow;
-%     pause;
+    pause;
 end
 hold off;
 
 %%
 xgrid = read_binary_particles_pcui(working_folder, 'output_XYZ.dat', 0, params);
 plot(squeeze(xgrid(:,1)),squeeze(xgrid(:,2)),'k.');
+axis equal;

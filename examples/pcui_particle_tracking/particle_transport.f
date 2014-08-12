@@ -98,7 +98,7 @@
       include "para.inc"
       include "mpi.inc"
 
-      integer                        :: n, ci
+      integer                        :: n,ci
               
       ! If the index of the NS solver is the same as the index of the particle
       ! solver where i_ns = 2*i_particle-1 then the particle solver is at a
@@ -110,7 +110,7 @@
             do n = 1,nPart
                do ci = 1,3
                   xPartC(n,ci) = xPart(n,ci)+k3(n,ci)
-                  call boundary_adjustment(xPartC(n,:),n,ci)   
+                  call boundary_adjustment(n,ci)   
                end do
             end do
 
@@ -128,9 +128,11 @@
 
          do n = 1,nPart
             do ci = 1,3
-               call boundary_adjustment(xPartC(n,:),n,ci)
+               call boundary_adjustment(n,ci)
             end do
          end do
+
+         xPart = xPartC
 
          call interpolate3D(uPart,xPartC,xxp,uu,ni+2,nj+2,nk+2,nPart,
      <                      xxL,xxR,xPartB,xPartBT,xPartS)
@@ -147,7 +149,7 @@
          do n = 1,nPart
             do ci = 1,3
                xPartC(n,ci) = xPart(n,ci)+0.5D0*k1(n,ci)
-               call boundary_adjustment(xPartC(n,:),n,ci)   
+               call boundary_adjustment(n,ci)   
             end do
          end do
 
@@ -159,7 +161,7 @@
          do n = 1,nPart
             do ci = 1,3
                xPartC(n,ci) = xPart(n,ci)+0.5D0*k2(n,ci)
-               call boundary_adjustment(xPartC(n,:),n,ci)
+               call boundary_adjustment(n,ci)
             end do
          end do
 
@@ -180,7 +182,7 @@
 
 !cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
-      subroutine boundary_adjustment(x,n,ci)
+      subroutine boundary_adjustment(n,ci)
 
       include 'size.inc'
       include 'ns.inc'
@@ -199,35 +201,38 @@
         xR = xxR(ci)
         D = xR-xL
       else
-        call get_bottom(x(1),xL)
+        call get_bottom(xPartC(n,1),xL)
         xR = xxR(ci)
       end if
 
 !     Calculate appropriate boundary normal unit vector 
-!     bN points INTO the domain. rN is vector from x to 
-!     the wall in the direction of bN.
+!     rN is vector from x to the wall in the direction of bN.
       bN = 0.D0
       rN = 0.D0
       if (ci.eq.1.or.ci.eq.3) then
-        if (x(ci).lt.xL) then
+        if (xPartC(n,ci).lt.xL) then
           bN(ci) = 1
-          rN(ci) = bN(ci)*(x(ci)-xL)
-        elseif(x(ci).gt.xR) then    
-          bN(ci) = -1
-          rN(ci) = bN(ci)*(x(ci)-xR)
+          rN(ci) = bN(ci)*(xL-xPartC(n,ci))
+!         print *, bN, rN
+        elseif(xPartC(n,ci).gt.xR) then    
+          bN(ci) = 1
+          rN(ci) = bN(ci)*(xR-xPartC(n,ci))
+!         print *, bN, rN
         else
           return
         end if
       else
-        if (x(ci).lt.xL) then
-          call get_boundary_normal(x(1),bN)
-          xW(1) = x(1)
+        if (xPartC(n,ci).lt.xL) then
+          call get_boundary_normal(xPartC(n,1),bN)
+          xW(1) = xPartC(n,1)
           xW(2) = xL
-          xW(3) = x(3)
-          rN = bN*dot_product(xW-x,bN) 
-        elseif(x(ci).gt.xR) then    
-          bN(ci) = -1
-          rN(ci) = bN(ci)*(x(ci)-xR)
+          xW(3) = xPartC(n,3)
+          rN = bN*dot_product(xW-xPartC(n,:),bN) 
+          print *, bN, rN, xW-xPartC(n,:)
+        elseif(xPartC(n,ci).gt.xR) then    
+          bN(ci) = 1
+          rN(ci) = bN(ci)*(xR-xPartC(n,ci))
+!         print *, bn, rN
         else
           return
         end if
@@ -241,7 +246,7 @@
 
       else
 !     If it hits the wall it bounces off
-!        print *, '---...',n,' Hit-Wall...---'
+        print *, '---...',n,' Hit-Wall...---'
         xPartC(n,:) = xPartC(n,:) + 2*rN
       end if
 
@@ -540,7 +545,7 @@ c$$$         close(unit = 123)
          end do
 
 !        Boundary points
-!        Left and right
+!        ---Left and right
          xxp(1,:,:,1)      = xxL(1)
          xxp(ni+2,:,:,1)   = xxR(1)
          xxp(1,:,:,2)      = xxp(2,:,:,2) 
@@ -548,19 +553,18 @@ c$$$         close(unit = 123)
          xxp(1,:,:,3)      = xxp(2,:,:,3) 
          xxp(ni+2,:,:,3)   = xxp(ni+1,:,:,3)
 
-!        Top and bottom
+!        ---Top and bottom
          xxp(:,1,:,1)    = xxp(:,2,:,1)
          xxp(:,nj+2,:,1) = xxp(:,nj+1,:,1)
          do i = 1, ni+2
             call get_bottom(xxp(i,2,2,1),bot)
-!           print *, xxp(i,2,1,1)
             xxp(i,1,:,2) = bot 
          end do
          xxp(:,nj+2,:,2) = xxR(2)
          xxp(:,1,:,3)    = xxp(:,2,:,3)
          xxp(:,nj+2,:,3) = xxp(:,nj+1,:,3)
 
-!        Front and back
+!        ---Front and back
          xxp(:,:,1,1)      = xxp(:,:,2,1)
          xxp(:,:,nk+2,1)   = xxp(:,:,nk+1,1)
          xxp(:,:,1,2)      = xxp(:,:,2,2)
@@ -568,7 +572,7 @@ c$$$         close(unit = 123)
          xxp(:,:,1,3)      = xxL(3)
          xxp(:,:,nk+2,3)   = xxR(3)
 
-         print *, xxp(:,1,1,2)
+!        print *, xxp(:,1,1,2)
 
 !        OLD         
 !        xxp(1,:,:,1)      = xxL(1)
@@ -621,7 +625,7 @@ c$$$         close(unit = 123)
      >          status='old', position='append')
       endif
       
-      write(123) xPart      
+      write(123) xPart     
 
       close(unit = 123)
 
