@@ -21,9 +21,9 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	ieddy     = 0
        parts= 1
 	mg_level  = 5
-	nstep     = 50
+	nstep     = 1000
 	nsave     = 10
-       ncont= 50
+       ncont= 1000
 	maxstep   = 10
 
 	do i = 1, 6

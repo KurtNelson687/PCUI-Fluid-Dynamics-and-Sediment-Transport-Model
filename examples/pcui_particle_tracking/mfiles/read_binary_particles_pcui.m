@@ -1,4 +1,4 @@
-function xpart =  read_binary_particles_pcui(folder, filenameD, istep, params)
+function xpart =  read_binary_particles_pcui(folder, filenameD, istep, npart)
 %
 % Filename    : read_binary_particles_pcui.m
 
@@ -12,11 +12,6 @@ ffD = fullfile(folder, filenameD);
 
 precision = 'float64';
 
-ni = params.ni;
-nj = params.nj;
-nk = params.nk;
-% npart = (ni+2)*(nj+2)*(nk+2);
-npart = ni*nj;
 N = npart*3+1;
 ptrD = 8*N;
               

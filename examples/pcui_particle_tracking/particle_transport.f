@@ -561,7 +561,7 @@ c$$$         close(unit = 123)
          xxp(1,:,:,1)      = xxL(1)
          xxp(ni+2,:,:,1)   = xxR(1)
          xxp(1,:,:,2)      = xxp(2,:,:,2) 
-         xxp(ni+2,:,:,2)   = xxp(nj+1,:,:,2)
+         xxp(ni+2,:,:,2)   = xxp(ni+1,:,:,2)
          xxp(1,:,:,3)      = xxp(2,:,:,3) 
          xxp(ni+2,:,:,3)   = xxp(ni+1,:,:,3)
 
@@ -605,7 +605,7 @@ c$$$         close(unit = 123)
 
          open(123, file='output_XYZ.dat',form='unformatted',
      >           status='unknown')
-         write(123) xxxp
+         write(123) xxp
          close(unit = 123)
 
 c$$$         if(ipstep.eq.1) then
