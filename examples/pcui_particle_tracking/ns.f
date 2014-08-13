@@ -98,7 +98,7 @@ C          if ( mod(istep, nsave) .eq. 0 .and. MYID .EQ. 0 )
 	   time = time + dtime
 
 	   call cfl_check
-      if(mod(istep,nsave) .eq. 0) then
+      if(mod(istep,ncont) .eq. 0) then
  	     call MPI_Barrier(MPI_COMM_WORLD, ierr)
  	     call output_continue_run
  	     call MPI_Barrier(MPI_COMM_WORLD, ierr)

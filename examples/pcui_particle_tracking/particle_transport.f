@@ -38,6 +38,7 @@
       include 'particles.inc'
       include 'cavity.inc'
       include "mpi.inc"
+      include 'para.inc'
 
       integer :: i, j, k, ntPart, n, ci
      
@@ -55,27 +56,33 @@
 
       if (myid.eq.0) then
 
-         xPartB = 0
-         xPartBT = 0
-         xPartS = 0
-         ntPart = 0
+         if (newrun.eq.1) then
+           xPartB = 0
+           xPartBT = 0
+           xPartS = 0
+           ntPart = 0
 
-         do k = lbk, ubk
-            do j = lbj, ubj
-               do i = lbi, ubi
-                  ntPart = ntPart + 1         
-                     xPart(ntPart,:) = xxp(i,j,k,:)
-                     uPart(ntPart,:) = uu(i,j,k,:)
-               end do 
-            end do
-         end do
+           do k = lbk, ubk
+           do j = lbj, ubj
+           do i = lbi, ubi
+             ntPart = ntPart + 1         
+             xPart(ntPart,:) = xxp(i,j,k,:)
+             uPart(ntPart,:) = uu(i,j,k,:)
+           end do 
+           end do
+           end do
 
-         if (ntPart.ne.nPart) then
-            print *, 'Number of particles mismatch', ntPart, nPart
-            stop
+           if (ntPart.ne.nPart) then
+             print *, 'Number of particles mismatch', ntPart, nPart
+             stop
+           end if
+
+           call output_particles
+
+         else
+           call input_continue_particles
+           call output_particles
          end if
-
-         call output_particles
 
       end if
 
@@ -144,6 +151,11 @@
             print *,'Output particles.'
             call output_particles          
          endif
+         if (mod(istep+1,ncont) .eq. 0) then
+            print *,'Output continue particles.'
+            call output_continue_particles          
+         endif
+
       else
 
          do n = 1,nPart
@@ -655,9 +667,37 @@ c$$$         close(unit = 123)
 
       end subroutine
 
+!ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+
+      subroutine output_continue_particles
+
+      include 'size.inc'
+      include 'particles.inc'
+
+      open(123, file='continue_particles.dat', form='unformatted',
+     <     status='unknown')
+      write(123) xPart
+      write(123) uPart
+      close(123)
+
+      end subroutine
 
 !ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
+      subroutine input_continue_particles
+
+      include 'size.inc'
+      include 'particles.inc'
+
+      open(123, file='continue_particles.dat', form='unformatted',
+     <     status='unknown')
+      read(123) xPart
+      read(123) uPart
+      close(123)
+
+      end subroutine
+
+!ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 !c$$$      if (myid.eq.0) then
 !c$$$         do n = 1,3

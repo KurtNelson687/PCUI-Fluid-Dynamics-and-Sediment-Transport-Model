@@ -1,5 +1,5 @@
 % Displays PCUI particle tracking data 
-clear all; clc; close all;
+clear all; clc; 
 
 % PLOTTING OPTIONS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 working_folder = '../';
@@ -47,7 +47,7 @@ y = squeeze(y(:,:,1));
 %Find correct istep value
 n = [0, params.nsave:params.nsave:params.nsteps, params.nsteps+1];
 
-TEND = 1000;
+TEND = 50;
 xpartall = nan(params.ni*params.nj,3,1);
 for timestep = 0:params.nsave:TEND
     display(timestep);
@@ -57,7 +57,7 @@ for timestep = 0:params.nsave:TEND
 end
 
 %%
-clc; close all;
+clc; 
 np = params.ni;
 load '1b_bottom.mat';
 % v = [34 44 101];

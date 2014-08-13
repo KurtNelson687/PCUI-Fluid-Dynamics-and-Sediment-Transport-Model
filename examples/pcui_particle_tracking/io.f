@@ -21,9 +21,9 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	ieddy     = 0
        parts= 1
 	mg_level  = 5
-	nstep     = 1000
+	nstep     = 50
 	nsave     = 10
-       ncont= 20000
+       ncont= 50
 	maxstep   = 10
 
 	do i = 1, 6
@@ -138,7 +138,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	if (myid .eq. 0) print *, 'Recording to output files ...'
 
-	if (kount.gt.1) then
+	if (istep.gt.1) then
 	   open(50+myid, file='output_S.'//ID, form='unformatted',
      >          status='old',position='append')
       open(100+myid, file='output_phi.'//ID, form='unformatted',
