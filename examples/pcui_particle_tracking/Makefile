@@ -1,5 +1,5 @@
 COMP = mpif90 
-FLAG = -c -w -O3 
+FLAG = -c -w -O3
 
 OBCA = ns.o mp.o io.o \
        init.o conv.o pred.o corr.o trid.o scal.o\

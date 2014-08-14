@@ -60,7 +60,7 @@ y = squeeze(y(:,:,1));
 %Find correct istep value
 n = [0, params.nsave:params.nsave:params.nsteps, params.nsteps+1];
 
-TEND = 600;
+TEND = 1000;
 np = (40-17+1)*params.nj;
 xpartall = nan(np,3,1);
 for timestep = 0:params.nsave:TEND

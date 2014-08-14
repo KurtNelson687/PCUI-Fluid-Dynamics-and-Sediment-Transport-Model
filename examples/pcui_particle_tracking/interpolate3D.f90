@@ -66,7 +66,8 @@
 !         if (xPartB(num,1).eq.0.and.xPartB(num,2).eq.0.and.xPartB(num,3).eq.0) then
 
             ! ---- Locate particle
-            call kdtree2_n_nearest_brute_force(tree,xparticle(num,:),1,results)
+!            call kdtree2_n_nearest_brute_force(tree,xparticle(num,:),1,results)
+            call kdtree2_n_nearest(tree,xparticle(num,:),1,results)
             
             idx = results(1)%idx
 
