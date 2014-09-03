@@ -19,14 +19,15 @@ c	integer, parameter :: lbj = (1 + (nj-1+2)*lby)
 c	integer, parameter :: ubj = (1 + (nj-1+2)*uby)
 c	integer, parameter :: lbk = (1 + (nk-1+2)*lbz)
 c	integer, parameter :: ubk = (1 + (nk-1+2)*ubz)
- 	integer, parameter :: lbi = 17
- 	integer, parameter :: ubi = 40
+ 	integer, parameter :: lbi = 10
+ 	integer, parameter :: ubi = 50
+       integer, parameter :: iin = 5
  	integer, parameter :: lbj = 2
  	integer, parameter :: ubj = nj+1
  	integer, parameter :: lbk = 8
  	integer, parameter :: ubk = 8
 
-	integer, parameter :: nPart = (ubi-lbi+1)*(ubj-lbj+1)*(ubk-lbk+1)
+	integer, parameter :: nPart = ((ubi-lbi)/iin+1)*(ubj-lbj+1)*(ubk-lbk+1)
 	integer            :: iPart, ipstep
 
 	double precision,dimension(1:ni+2,1:nj+2,1:nk+2,3) :: uu,xxp

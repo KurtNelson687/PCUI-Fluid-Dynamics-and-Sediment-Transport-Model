@@ -64,7 +64,7 @@
 
            do k = lbk, ubk
            do j = lbj, ubj
-           do i = lbi, ubi
+           do i = lbi, ubi, iin
              ntPart = ntPart + 1         
              xPart(ntPart,:) = xxp(i,j,k,:)
              uPart(ntPart,:) = uu(i,j,k,:)
