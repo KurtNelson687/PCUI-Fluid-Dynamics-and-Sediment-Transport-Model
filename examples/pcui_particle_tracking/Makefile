@@ -5,12 +5,12 @@ OBCA = ns.o mp.o io.o \
        init.o conv.o pred.o corr.o trid.o scal.o\
        pres.o smad.o resd.o fctr.o exch.o eddy.o\
 			 indexx.o energy.o scal2.o kdtree2.o\
-			 particle_transport.o interpolate3D.o
+			 particle_transport.o interpolate3D.o random_normal.o
 
 OBCAS =nsst.o mp.o io.o stat.o\
        init.o conv.o pred.o corr.o trid.o scal.o\
        pres.o smad.o resd.o fctr.o exch.o eddy.o\
-			 kdtree2.o particle_transport.o interpolate3D.o
+			 kdtree2.o particle_transport.o interpolate3D.o random_normal.o
 
 OBJG = grid_init.o mp.o io.o cavity.o
 
@@ -19,7 +19,7 @@ INCS = size.inc mpi.inc para.inc \
 
 # 3-D cavity
 cav : $(OBCA) $(INCS) cavity.inc cavity.o 	
-	$(COMP) -o cavity $(OBCA) cavity.o	
+	$(COMP) -o cavity $(OBCA) cavity.o -mkl	
 
 # 3-D grid initialization
 grid : $(OBJG) $(INCS) cavity.inc
@@ -130,4 +130,8 @@ interpolate3D.o : interpolate3D.f90 $(INCS)
 # kdtree
 kdtree2.o : kdtree2.f90 $(INCS)
 	$(COMP) $(FLAG) kdtree2.f90
+
+# random_normal
+random_normal.o : random_normal.f90 $(INCS)
+	$(COMP) $(FLAG) random_normal.f90 -mkl
 

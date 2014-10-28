@@ -105,7 +105,8 @@
       include "para.inc"
       include "mpi.inc"
 
-      integer                        :: n,ci
+      integer :: n,ci
+      double precision, dimension(nPart,3) :: r
               
       ! If the index of the NS solver is the same as the index of the particle
       ! solver where i_ns = 2*i_particle-1 then the particle solver is at a
@@ -126,8 +127,12 @@
 
             k4 = 2.D0*dtime*uPart
 
-!     ---- Advance particle in time using RK4 and adjust for boundary crossings
+!     ---- Advance particle in time using RK4 
             xPart = xPart + (1.D0/6.D0)*(k1 + 2.D0*(k2+k3)+k4)
+
+!     ---- Add random walk to particle position             
+            call random_normal(r,nPart,ipstep)
+            xPart = xPart + r*sqrt(2.D0*ak*2.D0*dtime)
          end if
 
 !        Location of particle at current position in RK4         
