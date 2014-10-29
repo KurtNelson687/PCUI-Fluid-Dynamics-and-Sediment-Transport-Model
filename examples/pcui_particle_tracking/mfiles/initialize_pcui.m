@@ -54,7 +54,7 @@ params.pz = variable_value_pcui('pz',ftext);
 % Initialize PCUI grid
 % -------------------------------------------------------------------------
 % Load global grid from grid generator file and rearrange y and z
-% load '/home/barthur/zang/grids/grid_6mglevels_test_323.mat'
+load '/home/barthur/zang/grids/grid_6mglevels_test_323.mat'
 load 'grid_test1b_64x16x16.mat';
 x_global = x; x_global = permute(x_global,[1 3 2]);
 y_global = z; y_global = permute(y_global,[1 3 2]);
