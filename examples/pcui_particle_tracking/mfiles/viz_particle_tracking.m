@@ -61,7 +61,7 @@ y = squeeze(y(:,:,1));
 n = [0, params.nsave:params.nsave:params.nsteps, params.nsteps+1];
 
 TEND = 1000;
-np = ((50-10)/5+1)*params.nj;
+np = ((64-4)/4+1)*params.nj;
 xpartall = nan(np,3,1);
 for timestep = 0:params.nsave:TEND
     display(timestep);
@@ -91,13 +91,13 @@ for timestep=0:params.nsave:TEND
     plot(squeeze(xpartall(:,1,istep)),squeeze(xpartall(:,2,istep)),'k.');
 %     plot(squeeze(xpartall(v,1,istep)),squeeze(xpartall(v,2,istep)),'r.');
 
-    plot([0 0],[0 -params.by],'k-');
-    plot([params.bx params.bx],[0 -0.14],'k-');
-    plot([0 params.bx],[0 0],'k-');
-    plot([0 1.675],[-params.by -params.by],'k-');
-    plot(xbottom+1.675,bottom,'k-');
+%     plot([0 0],[0 -params.by],'k-');
+%     plot([params.bx params.bx],[0 -0.14],'k-');
+%     plot([0 params.bx],[0 0],'k-');
+%     plot([0 1.675],[-params.by -params.by],'k-');
+%     plot(xbottom+1.675,bottom,'k-');
     axis equal;
-    axis([-0.1 3.6 -0.6 0.005]); 
+%     axis([-0.1 3.6 -0.6 0.005]); 
 %     axis([2.5 3 -0.56 -0.15]);
 %     plot3(xp(:),zp(:),yp(:),'b.');
 %     plot3(squeeze(xpartall(:,1,istep)),squeeze(xpartall(:,3,istep)),squeeze(xpartall(:,2,istep)),'k.');
@@ -110,3 +110,36 @@ hold off;
 xgrid = read_binary_particles_pcui(working_folder, 'output_XYZ.dat', 0, params);
 plot(squeeze(xgrid(:,1)),squeeze(xgrid(:,2)),'k.');
 axis equal;
+
+%%
+%plot lateral distribution of particles
+close all; clc;
+
+figure;
+for n=1:101
+    display(n);
+    cla;
+    hist(xpartall(:,3,n));
+    axis([0 0.1 0 length(xpartall)]);
+    drawnow;
+    pause;
+end
+
+%%
+%lateral variance
+close all; clc;
+
+vary = nan(101,1);
+for n=1:101
+    display(n);
+    vary(n) = var(xpartall(:,3,n));
+end
+Dy = 0.5*(vary(3:end)-vary(1:end-2))/2/0.04/10;
+
+figure;
+plot(vary);
+figure;
+plot(Dy)
+
+
+    

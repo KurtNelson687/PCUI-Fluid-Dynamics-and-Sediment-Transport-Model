@@ -4,12 +4,12 @@ C...... nk/pz must be dividable by 16
 
         implicit none
 
-	integer, parameter :: px = 19
-	integer, parameter :: py = 8
+	integer, parameter :: px = 48
+	integer, parameter :: py = 4
 	integer, parameter :: pz = 1 
 
-	integer, parameter :: ni = 608
-	integer, parameter :: nj = 256 
+	integer, parameter :: ni = 1536
+	integer, parameter :: nj = 128 
 	integer, parameter :: nk = 16
 
 	integer, parameter :: ni1 = ni / 2

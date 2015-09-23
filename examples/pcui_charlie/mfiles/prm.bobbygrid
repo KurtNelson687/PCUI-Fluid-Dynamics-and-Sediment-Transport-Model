@@ -1,0 +1,9 @@
+input xy.bobbygrid
+output grid.bobbygrid
+nx 65
+ny 241
+nnodes 12
+precision 1.000000e-10
+newton 1
+rectangle rect.bobbygrid
+sigmas sigmas.bobbygrid

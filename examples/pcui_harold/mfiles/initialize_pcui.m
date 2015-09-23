@@ -63,8 +63,8 @@ params.pz = variable_value_pcui('pz',ftext);
 % z = -1.5*dz:dz:W+1.5*dz;    z = reshape(z,[1 1 20]); z_global = repmat(z,[N+4 N+4 1]);
 % load './grid_case3_2D.mat'
 % load '/home/barthur/zang/grids/grid_energy_test.mat'
-load './2ch_flat_part.mat'
-% load '/home/barthur/zang/grids/grid_1024x128x16_r102_w1_zstretch_s3_f128.mat';
+% load './2ch_flat_part.mat'
+load '/home/barthur/zang/grids/grid_1152x128x32_r102_w1_zstretch_s218_f128.mat';
 % load '/home/barthur/zang/grids/grid_1024x128x128_r102_w125_zstretch.mat'
 % load '/home/barthur/zang/grids/grid_2D_test.mat'
 % load '/home/barthur/zang/grids/grid_local_2D_test.mat';
