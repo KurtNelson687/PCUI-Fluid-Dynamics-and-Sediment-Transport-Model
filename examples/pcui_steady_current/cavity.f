@@ -11,10 +11,11 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	integer i, j, k
 
-	bx = 1.D0
+	bx = 1.D0 !note: bx and several other varibles in the start of this subroutine are common mapped
 	by = 1.D0
 	bz = 0.5D0
 
+C	These are flags - i'm still trying to figure out what exactly they do
 	stretchx = 0
 	stretchy = 0
 	stretchz = 0
@@ -97,7 +98,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	jj0 = npy * jj
 	kk0 = npz * kk
 
-	faci = 1.D0 / dble(ii*px)
+	faci = 1.D0 / dble(ii*px) !dble converts ii*px to double percision
 	facj = 1.D0 / dble(jj*py)
 	fack = 1.D0 / dble(kk*pz)
 

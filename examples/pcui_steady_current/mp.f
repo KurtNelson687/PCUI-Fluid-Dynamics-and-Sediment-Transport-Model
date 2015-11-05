@@ -20,6 +20,7 @@ C	call MPI_DIMS_CREATE( nprocs, ndims, dims, ierr )
 	dims(2) = py
 	dims(3) = pz
 
+C	periods is a logical array specifying which dimensions the grid is periodic in
 	periods(1) = .false.
 	periods(2) = .false.
 	periods(3) = .false.
@@ -33,12 +34,12 @@ C	call MPI_DIMS_CREATE( nprocs, ndims, dims, ierr )
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	reorder    = .true.
 	call MPI_CART_CREATE( MPI_COMM_WORLD, ndims, dims, 
-     <	                      periods, reorder, comm3d, ierr )
+     <	                      periods, reorder, comm3d, ierr )!note: comm3d and ierr are outputs here
 
 	coords(1) = 0
 	coords(2) = 0
 	coords(3) = 0
-	call MPI_CART_COORDS( comm3d, myid, 3, coords, ierr )
+	call MPI_CART_COORDS( comm3d, myid, 3, coords, ierr )!creates mapping of ranks to Cartesian coordinates
 	npx = coords(1)
 	npy = coords(2)
 	npz = coords(3)

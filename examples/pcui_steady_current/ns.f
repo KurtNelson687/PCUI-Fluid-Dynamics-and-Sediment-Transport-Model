@@ -9,11 +9,12 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	double precision ta, tt, t0, t1, t2, t3, t4, t5, t6
 
-	call MPI_INIT( ierr )
+	call MPI_INIT( ierr ) !initializes the MPI execution environment
 
-	call MPI_Barrier(MPI_COMM_WORLD, ierr)
+	call MPI_Barrier(MPI_COMM_WORLD, ierr) !stops program until all processes have reached this routine 
 	ta = MPI_Wtime()
 
+C	Time variables used to track how much time each major component of the code is taking
 	t0 = 0.D0
 	t1 = 0.D0
 	t2 = 0.D0
@@ -22,8 +23,8 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	t5 = 0.D0
 	t6 = 0.D0
 
-	call parameter
-	call mpi_initial
+	call parameter !defines computational parameters and broadcasts them
+	call mpi_initial !this sets up the partitioning and creates a map for the processors.
 	call grid
 	call output_xyz
 	call initial
