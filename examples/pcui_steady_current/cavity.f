@@ -11,15 +11,17 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	integer i, j, k
 
+C	These are setting the size of the domain. The streching is done assuming length 1 then scaled by these
 	bx = 1.D0 !note: bx and several other varibles in the start of this subroutine are common mapped
 	by = 1.D0
 	bz = 0.5D0
 
-C	These are flags - i'm still trying to figure out what exactly they do
+C	These are flags indicate if the grid is going to be streched in the x,y, or z direction
 	stretchx = 0
 	stretchy = 0
 	stretchz = 0
 
+C	These are parameters for streching
 	dm = 0.D0    
 	am = 3.2D0 
 	bm = 0.48D0
@@ -46,7 +48,7 @@ C	These are flags - i'm still trying to figure out what exactly they do
 	enddo
 
 	call metric(1, nni, nnj, nnk,
-     <          g11, g12, g13, g21, g22, g23, g31, g32, g33, gcc)
+     <          g11, g12, g13, g21, g22, g23, g31, g32, g33, gcc)!nni is the number of points on each processor in the i direction i.e ni/px. It is and input
 
 	call qf2c(nni, nnj, nnk, nni1, nnj1, nnk1, jac, jaf,
      <          g11, g12, g13, g21, g22, g23, g31, g32, g33, gcc,
@@ -94,18 +96,20 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	integer i, j, k
 	double precision faci, facj, fack
 
+C	ii here is the number of points on processors in the x direction and npx is equal to the first coordinate for the processor mapping
 	ii0 = npx * ii
 	jj0 = npy * jj
 	kk0 = npz * kk
 
-	faci = 1.D0 / dble(ii*px) !dble converts ii*px to double percision
-	facj = 1.D0 / dble(jj*py)
+C	These give dx, dy, and dz unstreched
+	faci = 1.D0 / dble(ii*px) !dble converts ii*px to double percision. Px is the number of processors in the x direction
+	facj = 1.D0 / dble(jj*py) !These are 1/(number of points in the given direction)
 	fack = 1.D0 / dble(kk*pz)
 
-	do k = -1, kk+2
+	do k = -1, kk+2 !ii, jj, and kk
 	do j = -1, jj+2
 	do i = -1, ii+2
-	   q11(i,j,k) = 0.D0
+	   q11(i,j,k) = 0.D0 !I'm not sure this is true - These are components of the mesh skewness tensor (Gmn - see 2.55 in Yangs defense
 	   q12(i,j,k) = 0.D0
 	   q13(i,j,k) = 0.D0
 	   q21(i,j,k) = 0.D0
@@ -122,7 +126,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	do k = -1, kk+2
 	do j = -1, jj+2
 	do i = -1, ii+2
-	   xi(i,j,k) = ( dble(ii0 + i) - 0.5D0 ) * faci
+	   xi(i,j,k) = ( dble(ii0 + i) - 0.5D0 ) * faci !This is setting up the unstretched grid spacing. These are the cell center locations at this point
 	   et(i,j,k) = ( dble(jj0 + j) - 0.5D0 ) * facj
 	   zt(i,j,k) = ( dble(kk0 + k) - 0.5D0 ) * fack
 	   x(i,j,k) = 0.D0
@@ -132,9 +136,9 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	enddo
 	enddo
 
-	call coord(ii, jj, kk, x, y, z, xi, et, zt)
+	call coord(ii, jj, kk, x, y, z, xi, et, zt) !subroutine that stretches the domain if activated
 
-	if ( level .eq. 1 .and. newrun .eq. 1 ) then
+	if ( level .eq. 1 .and. newrun .eq. 1 ) then !level is hard coded to 1 when metric is called. newrun is set in io.f
 	   write(200+myid) x, y, z
 	endif
 
@@ -142,7 +146,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	   do k = -1, kk+2
 	   do j = -1, jj+2
 	   do i = -1, ii+2
-	      xp(i,j,k,1) = x(i,j,k)
+	      xp(i,j,k,1) = x(i,j,k)!xp is a 4-dimensional array storing cell centered coordinates
 	      xp(i,j,k,2) = y(i,j,k)
 	      xp(i,j,k,3) = z(i,j,k)
 	   enddo
@@ -158,7 +162,7 @@ C...... I-face
 	   xxi = ( x(i+1,j,k) - x(i,j,k) )
 	   yxi = ( y(i+1,j,k) - y(i,j,k) )
 	   zxi = ( z(i+1,j,k) - z(i,j,k) )
-	   xet = 0.25D0 * ( x(i,  j+1,k) - x(i,  j-1,k) 
+	   xet = 0.25D0 * ( x(i,  j+1,k) - x(i,  j-1,k) !This is just the x coordinate of the face
      <                    + x(i+1,j+1,k) - x(i+1,j-1,k) )
 	   yet = 0.25D0 * ( y(i,  j+1,k) - y(i,  j-1,k)
      <                    + y(i+1,j+1,k) - y(i+1,j-1,k) )
@@ -170,13 +174,13 @@ C...... I-face
      <                    + y(i+1,j,k+1) - y(i+1,j,k-1) )
 	   zzt = 0.25D0 * ( z(i,  j,k+1) - z(i,  j,k-1)
      <                    + z(i+1,j,k+1) - z(i+1,j,k-1) )
-	   jab = xxi * yet * zzt
+	   jab = xxi * yet * zzt !This is the Jacobian
      <         + xet * yzt * zxi
      <         + xzt * yxi * zet
      <         - xzt * yet * zxi
      <         - xet * yxi * zzt
      <         - xxi * yzt * zet
-	   jab = 1.D0 / jab
+	   jab = 1.D0 / jab !This is the inverse Jacobian or cell volume
 	   xsx = ( yet * zzt - yzt * zet )
 	   esx = ( yzt * zxi - yxi * zzt )
 	   zsx = ( yxi * zet - yet * zxi )
@@ -497,7 +501,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	include "cavity.inc"
 	include "mpi.inc"
 
-	integer ii, jj, kk
+	integer ii, jj, kk !number of points on each processor in the i, j, k direction
 
 	double precision, dimension(-1:ii+2,-1:jj+2,-1:kk+2) :: x, xi
 
@@ -524,7 +528,7 @@ CBCBCBCBCBC
 	IF ( N_WEST .EQ. MPI_PROC_NULL ) THEN
 	DO K = -1, KK+2
 	DO J = -1, JJ+2
-	   X( 0,J,K) = - X(1,J,K)
+	   X( 0,J,K) = - X(1,J,K) !I believe these are just setting ghost cells
 	   X(-1,J,K) = - X(2,J,K)
 	ENDDO
 	ENDDO
@@ -544,7 +548,7 @@ CBCBCBCBCBC
 	do k = -1, kk+2
 	do j = -1, jj+2
 	do i = -1, ii+2
-	   x(i,j,k) = xi(i,j,k)
+	   x(i,j,k) = xi(i,j,k)!This sets the unstreched coordinate to the final x value
 	enddo
 	enddo
 	enddo
@@ -693,7 +697,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	include "size.inc"
 	include "cavity.inc"
 
-	integer ii, jj, kk
+	integer ii, jj, kk !These are the number of points on each processors in the i, j, and k direction
 
 	double precision, dimension(-1:ii+2,-1:jj+2,-1:kk+2) :: 
      <          x, y, z
@@ -703,10 +707,11 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	integer i, j, k
 	
-	call mapx(ii, jj, kk, x, xi)
+	call mapx(ii, jj, kk, x, xi) !maps the unstretched x to stretched x if stretch = 1
 	call mapy(ii, jj, kk, y, et)
 	call mapz(ii, jj, kk, z, zt)
 
+C	This is simply scaling the domain by what is indicated by bx, by, and bz
 	do k = -1, kk+2
 	do j = -1, jj+2
 	do i = -1, ii+2

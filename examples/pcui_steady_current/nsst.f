@@ -9,7 +9,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
         double precision ta, tt, t0, t1, t2, t3, t4, t5, t6
 
-	call MPI_INIT( ierr )
+	call MPI_INIT( ierr )!this intializes the mpi environment
 
 	call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	ta = MPI_Wtime()

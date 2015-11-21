@@ -27,7 +27,7 @@ C...... lid velocities u_lid and w_lid
 	   enddo
 	endif
 
-	if ( case .eq. 0 .and. n_nrth .eq. MPI_PROC_NULL  ) then
+	if ( case .eq. 0 .and. n_nrth .eq. MPI_PROC_NULL  ) then !This sets lid velocities to zero if case equals 0
 	   do k = -1, nnk+2
 	   do i = -1, nni+2
 	      u_lid(i,k) = 0.D0
@@ -74,7 +74,7 @@ C...... lid velocities u_lid and w_lid
 	   
 	rr = 0.D0
 
-	write(ID, fmt='(I3)') 700+myid
+	write(ID, fmt='(I3)') 700+myid !initializes the density field from matlab
 	if ( iscalar .eq. 1 ) then
 	   inquire(file='rho_init_from_matlab.'//ID, exist=iostat)
 	   if (iostat.eqv..true..and.grid_only.ne.1) then	      

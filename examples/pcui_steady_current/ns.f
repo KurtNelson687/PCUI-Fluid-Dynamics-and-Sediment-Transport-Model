@@ -11,8 +11,8 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	call MPI_INIT( ierr ) !initializes the MPI execution environment
 
-	call MPI_Barrier(MPI_COMM_WORLD, ierr) !stops program until all processes have reached this routine 
-	ta = MPI_Wtime()
+	call MPI_Barrier(MPI_COMM_WORLD, ierr) !stops program until all processes have reached this routine. MPI_COMM_WORLD is the type of communication used mpi 
+	ta = MPI_Wtime() !Time in seconds since some arbitrary time
 
 C	Time variables used to track how much time each major component of the code is taking
 	t0 = 0.D0
@@ -25,11 +25,11 @@ C	Time variables used to track how much time each major component of the code is
 
 	call parameter !defines computational parameters and broadcasts them
 	call mpi_initial !this sets up the partitioning and creates a map for the processors.
-	call grid
-	call output_xyz
-	call initial
+	call grid !This sets up the grid and calculates all the grid variables needed including the inverse Jacobian and the  mesh skewness tensor.
+	call output_xyz !This writes the x, y, and z coordinates of the created grid.
+	call initial !This initializes velocities, density field, and turbulence properties if LES is activatied
 
-	do istep = 1, nstep
+	do istep = 1, nstep !time stepping of simulation
 
 C          if ( mod(istep, nsave) .eq. 0 .and. MYID .EQ. 0 )
 	   

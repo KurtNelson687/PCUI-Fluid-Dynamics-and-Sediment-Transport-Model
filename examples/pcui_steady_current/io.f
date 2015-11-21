@@ -14,7 +14,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	if ( MYID .eq. 0 ) then
 
 	dtime     = 0.01D0
-	case      = 0
+	case      = 0 !This flag is used to indicate if this is lid driven cavity flow
 	newrun    = 1
 	periodic  = 1
 	iscalar   = 1
@@ -100,7 +100,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	end
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-
+C	This subroutine is simply writing the x,y, and z coordinates from each processor
         subroutine output_xyz
         
         include "size.inc"
