@@ -93,9 +93,9 @@ for istep = istart:iskip:iend
     axis([0 params.bx 0 params.by])
     if smooth
         shading interp 
-    end
-    colorbar    
-  
+    end 
+    colorbar
+
     subplot(2,2,2)    
     cla    
     h2=pcolor(x,y,v);     
@@ -107,6 +107,7 @@ for istep = istart:iskip:iend
     if smooth
         shading interp
     end
+    colorbar
     
     subplot(2,2,3)    
     cla
@@ -119,7 +120,7 @@ for istep = istart:iskip:iend
     if smooth
         shading interp
     end
-    %colorbar
+    colorbar
     
     subplot(2,2,4)    
     cla    
