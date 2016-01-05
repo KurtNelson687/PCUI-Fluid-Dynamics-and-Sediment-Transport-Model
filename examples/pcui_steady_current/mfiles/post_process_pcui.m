@@ -94,6 +94,7 @@ for istep = istart:iskip:iend
     if smooth
         shading interp
     end
+    colorbar
     
     subplot(2,2,2)    
     cla    
@@ -106,6 +107,7 @@ for istep = istart:iskip:iend
     if smooth
         shading interp
     end
+    colorbar
     
     subplot(2,2,3)    
     cla
@@ -118,7 +120,7 @@ for istep = istart:iskip:iend
     if smooth
         shading interp
     end
-    %colorbar
+    colorbar
     
     subplot(2,2,4)    
     cla    
