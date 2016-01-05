@@ -159,6 +159,7 @@ C...... I-face
 	do k =  0, kk+1
 	do j =  0, jj+1
 	do i = -1, ii+1
+C.... these are computing the derivatives of the cartesian components with respect to the general curvilinear components on the i faces
 	   xxi = ( x(i+1,j,k) - x(i,j,k) )
 	   yxi = ( y(i+1,j,k) - y(i,j,k) )
 	   zxi = ( z(i+1,j,k) - z(i,j,k) )
@@ -174,7 +175,7 @@ C...... I-face
      <                    + y(i+1,j,k+1) - y(i+1,j,k-1) )
 	   zzt = 0.25D0 * ( z(i,  j,k+1) - z(i,  j,k-1)
      <                    + z(i+1,j,k+1) - z(i+1,j,k-1) )
-	   jab = xxi * yet * zzt !This is the Jacobian
+	   jab = xxi * yet * zzt !This is the Jacobian on the i faces
      <         + xet * yzt * zxi
      <         + xzt * yxi * zet
      <         - xzt * yet * zxi
@@ -190,7 +191,7 @@ C...... I-face
 	   xsz = ( xet * yzt - xzt * yet )
 	   esz = ( xzt * yxi - xxi * yzt )
 	   zsz = ( xxi * yet - xet * yxi )
-	   q11(i,j,k) = jab * ( xsx * xsx + xsy * xsy + xsz * xsz )
+	   q11(i,j,k) = jab * ( xsx * xsx + xsy * xsy + xsz * xsz )!These are the mesh skewness tensor values on the i faces
 	   q12(i,j,k) = jab * ( xsx * esx + xsy * esy + xsz * esz )
 	   q13(i,j,k) = jab * ( xsx * zsx + xsy * zsy + xsz * zsz )
 	   if ( level .eq. 1 ) then
@@ -320,7 +321,7 @@ C...... Center
      <            - xet * yxi * zzt
      <            - xxi * yzt * zet
 	      jab = 1.D0 / jab
-	      jac(i,j,k) = jab
+	      jac(i,j,k) = jab!This is the jacobian at the cell center
 	   enddo
 	   enddo
 	   enddo
@@ -711,7 +712,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	call mapy(ii, jj, kk, y, et)
 	call mapz(ii, jj, kk, z, zt)
 
-C	This is simply scaling the domain by what is indicated by bx, by, and bz
+C	This is simply scaling the domain by what is indicated by bx, :by, and bz
 	do k = -1, kk+2
 	do j = -1, jj+2
 	do i = -1, ii+2

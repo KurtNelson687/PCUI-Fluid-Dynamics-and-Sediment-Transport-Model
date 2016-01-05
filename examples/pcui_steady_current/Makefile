@@ -28,6 +28,8 @@ clean :
 	/bin/rm -f *.o
 cleano:
 	/bin/rm -f output* continue_run* uvw* xyz* rho* fort* qoutput grid cavity
+cleanresults :
+	 /bin/rm -f *.o output* qoutput* cavity fort*
 
 # main program ( with statistics )
 nsst.o : nsst.f $(INCS)

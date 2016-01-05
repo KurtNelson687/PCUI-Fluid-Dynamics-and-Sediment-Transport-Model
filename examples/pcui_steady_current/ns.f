@@ -39,23 +39,26 @@ C          if ( mod(istep, nsave) .eq. 0 .and. MYID .EQ. 0 )
 	   if(mod(istep,nsave) .eq. 0 .or. istep .eq. 1) then
 	      call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	      tt =  MPI_Wtime()
-	      call output
+	      call output !writes density, and velocity field
 	      call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	      t6 = t6 + MPI_Wtime() - tt
 	   end if
 
+C	Compute subgrid scale stress if turbulence is turned on (i.e. ieddy = 1 in io.f)
 	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	   tt = MPI_Wtime()
 	   if ( ieddy .eq. 1 ) call eddy
 	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	   t0 = t0 + MPI_Wtime() - tt
-	   
+	  
+C	Compute  
 	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	   tt = MPI_Wtime()
 	   if ( iscalar .eq. 1 ) call scalar_rhs
 	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	   t5 = t5 + MPI_Wtime() - tt
-	   
+
+C	This setups the source term for u_star, then applies approximate factorization to solve for u_star. The tridiagonal matrix systems are solved with the tridiagonal matrix algorithm	   
 	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	   tt = MPI_Wtime()
 	   call predictor

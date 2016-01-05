@@ -18,9 +18,9 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	newrun    = 1
 	periodic  = 1
 	iscalar   = 1
-	ieddy     = 0
+	ieddy     = 1
 	mg_level  = 5
-	nstep     = 600
+	nstep     = 1200
 	nsave     = 10
 	maxstep   = 10
 
@@ -34,7 +34,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
         slowiter(1) = 0.7D0
 	maxiter(5)  = 30
-        vis         = 0.D0
+        vis         = 1.D-3
         ak          = 0.D0
         g           = 9.81D0
         omg_cyl     = 0
@@ -136,7 +136,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	if (myid .eq. 0) print *, 'Recording to output files ...'
 
-	if (kount.gt.1) then
+	if (kount.gt.1) then !appends to existing file if after first time step
 	   open(50+myid, file='output_S.'//ID, form='unformatted',
      >          status='old',position='append')
 	   open(200+myid, file='output_UVW.'//ID, form='unformatted',

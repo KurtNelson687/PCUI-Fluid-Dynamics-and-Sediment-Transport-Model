@@ -131,12 +131,14 @@ c	   do L = 1, 3
 	   do k = -1, nnk+2
 	   do i = -1, nni+2
 c             Free-slip
-	      u(i,0,k,1) =   u(i,1,k,1)
-	      u(i,0,k,2) = - u(i,1,k,2)
-	      u(i,0,k,3) =   u(i,1,k,3)
+c	      u(i,0,k,1) =   u(i,1,k,1)
+c	      u(i,0,k,2) = - u(i,1,k,2)
+c	      u(i,0,k,3) =   u(i,1,k,3)
 
 c             No-slip
-c	      u(i, 0,k,L) = - u(i,1,k,L) 
+	      u(i, 0,k,1) = - u(i,1,k,1)
+	      u(i, 0,k,2) = - u(i,1,k,2) 
+	      u(i, 0,k,3) = - u(i,1,k,3)
 	   enddo
 	   enddo
 c	   enddo

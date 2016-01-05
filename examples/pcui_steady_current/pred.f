@@ -39,7 +39,7 @@ C......	Take an Euler step on the first step
 	   enddo 
         endif
 
-C......	First put in the part of Adams Bashforth from step n-2
+C......	First put in the part of Adams Bashforth from step n-2 (step 1 in notes)
 
 	do m = 1, 3
 	do k = 0, nnk+1
@@ -51,11 +51,11 @@ C......	First put in the part of Adams Bashforth from step n-2
 	enddo 
 	enddo 
 
-C......	Convective terms (explicit)
+C......	Convective terms (explicit) (step 2 in notes)
 
         call convection
 
-C......	LES self-similarity term
+C......	LES self-similarity term (step 3 in notes)
 
 	do m = 1, 3
 	do k = 0, nnk+1
@@ -67,7 +67,7 @@ C......	LES self-similarity term
 	enddo 
 	enddo 
 
-C......	Cross viscous terms at step n-1 from Crank-Nicolson  
+C......	Cross viscous terms at step n-1 from Crank-Nicolson (step 4 in notes - I think this should be from Adams Bashforth, not Crank-Nicolson) 
 
 	do m = 1, 3
 	do k = 1, nnk
@@ -121,7 +121,7 @@ C......	Coriolis and bouyance force terms
 	do j = 1, nnj
 	do i = 1, nni
 	   temp = 1.D0 / jac(i,j,k)
-	   hb(i,j,k,1) = hb(i,j,k,1) - omg2 * u(i,j,k,3) * temp 
+	   hb(i,j,k,1) = hb(i,j,k,1) - omg2 * u(i,j,k,3) * temp+0.75D-6 !Started with1.5D-6 and halved it each consecutive run 
 	   hb(i,j,k,3) = hb(i,j,k,3) + omg2 * u(i,j,k,1) * temp
 	   hb(i,j,k,2) = hb(i,j,k,2) - g * (  phi(i,j,k)
      <                                      - phi_init(i,j,k) ) * temp
@@ -181,7 +181,7 @@ C......	........................................
 
 	coef = 0.5D0 * dtime
 
-C...... solve for I-direction
+C...... solve for I-direction (This is setting up the approximate factorization in the x direction. See Olivers notes in lecture 11 section four, or Zang's 1994 paper.
 
 	do k = 1, nnk
 
@@ -198,7 +198,7 @@ C...... solve for I-direction
 	do m = 1, 3
 	do j = 1, nnj
 	do i = 1, nni
-	   fx(j,m,i) = su(i,j,k,m)
+	   fx(j,m,i) = su(i,j,k,m) !This is the right hand side for the above ax, bx, cx values for each velocity component
 	enddo
 	enddo
 	enddo
@@ -549,7 +549,7 @@ CBCBCBC	BCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBC
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	subroutine ustar_bc
-
+C All this subroutine does is extropolate from interal values to fill ghost cells.
 	include "size.inc"
 	include "mpif.h"
 	include "mpi.inc"
