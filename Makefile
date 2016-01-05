@@ -33,7 +33,7 @@ stat.o : stat.f $(INCS)
 	 $(COMP) $(FLAG) stat.f 
 
 # main program
-ns.o : ns.f $(INCS)
+ns.o : 	ns.f $(INCS)
 	$(COMP) $(FLAG) ns.f 
 
 # message passing

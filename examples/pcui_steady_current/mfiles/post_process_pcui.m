@@ -92,9 +92,10 @@ for istep = istart:iskip:iend
     title('u','color','w')
     axis([0 params.bx 0 params.by])
     if smooth
-        shading interp
+        shading interp 
     end
-    
+    colorbar    
+  
     subplot(2,2,2)    
     cla    
     h2=pcolor(x,y,v);     
