@@ -8,10 +8,10 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	include "para.inc"
 
 	double precision ta, tt, t0, t1, t2, t3, t4, t5, t6
-
+	real, parameter :: PI=3.1415926535897932
 	call MPI_INIT( ierr ) !initializes the MPI execution environment
 
-	call MPI_Barrier(MPI_COMM_WORLD, ierr) !stops program until all processes have reached this routine. MPI_COMM_WORLD is the type of communication used mpi 
+	call MPI_Barrier(MPI_COMM_WORLD, ierr) !stops program until all processes have reached this routine. MPI_COMM_WORLD is the type of communication used 
 	ta = MPI_Wtime() !Time in seconds since some arbitrary time
 
 C	Time variables used to track how much time each major component of the code is taking
@@ -33,8 +33,14 @@ C	Time variables used to track how much time each major component of the code is
 
 C          if ( mod(istep, nsave) .eq. 0 .and. MYID .EQ. 0 )
 	   
-	   if ( MYID .EQ. 0 )
-     <	      write(*,*) ' istep = ', istep, ' kount  = ', kount
+	   if ( MYID .EQ. 0 ) then
+	      write(*,*) ' istep = ', istep, ' kount  = ', kount
+	   end if
+
+C	Compute pressure gradient from waves if presents
+	   if ( waves .eq. 1 ) then
+	      dpdxWave = waveMag*sin(2*PI*(istep-1)*dtime/Twave)
+	   end if
 
 	   if(mod(istep,nsave) .eq. 0 .or. istep .eq. 1) then
 	      call MPI_Barrier(MPI_COMM_WORLD, ierr)

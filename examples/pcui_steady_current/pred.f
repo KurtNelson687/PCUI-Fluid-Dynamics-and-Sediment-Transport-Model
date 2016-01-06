@@ -121,7 +121,8 @@ C......	Coriolis and bouyance force terms
 	do j = 1, nnj
 	do i = 1, nni
 	   temp = 1.D0 / jac(i,j,k)
-	   hb(i,j,k,1) = hb(i,j,k,1) - omg2 * u(i,j,k,3) * temp+0.75D-6 !Started with1.5D-6 and halved it each consecutive run 
+	   hb(i,j,k,1) = hb(i,j,k,1) - omg2 * u(i,j,k,3) * temp
+     <                              + dpdxSteady+dpdxWave !Started with1.5D-6 and halved it each consecutive run 
 	   hb(i,j,k,3) = hb(i,j,k,3) + omg2 * u(i,j,k,1) * temp
 	   hb(i,j,k,2) = hb(i,j,k,2) - g * (  phi(i,j,k)
      <                                      - phi_init(i,j,k) ) * temp

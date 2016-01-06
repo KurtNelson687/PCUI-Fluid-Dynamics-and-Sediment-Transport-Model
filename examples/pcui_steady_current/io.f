@@ -19,6 +19,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	periodic  = 1
 	iscalar   = 1
 	ieddy     = 1
+	waves     = 1
 	mg_level  = 5
 	nstep     = 1200
 	nsave     = 10
@@ -34,9 +35,12 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
         slowiter(1) = 0.7D0
 	maxiter(5)  = 30
-        vis         = 1.D-3
+        vis         = 1.D-0
         ak          = 0.D0
         g           = 9.81D0
+ 	dpdxSteady  = 1.0D-7 !Magnitude of the constant component of the pressure gradient
+	waveMag     = 1.0D-7 !Magnitude of the osscilatting component of pressure gradient
+	Twave       = 3 !Wave period in seconds
         omg_cyl     = 0
         omg_lid     = 0
         factor      = 1.0e-4
@@ -44,16 +48,15 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         phi2        = 0
         yphi        = 0
         aphi        = 1.
-
 	endif
 
 	call MPI_BCAST(case,        1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(newrun,      1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(periodic,    1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
+	call MPI_BCAST(waves,       1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(iscalar,     1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(ieddy,       1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(mg_level,    1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
-
 	call MPI_BCAST(nstep,       1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(nsave,       1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 
@@ -63,14 +66,18 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
         call MPI_BCAST(dtime,       1,MPI_DOUBLE_PRECISION,0,
      <	                            MPI_COMM_WORLD,ierr)
-
 	call MPI_BCAST(vis,         1,MPI_DOUBLE_PRECISION,0,
      <                              MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(ak,          1,MPI_DOUBLE_PRECISION,0,
      <                              MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(g,           1,MPI_DOUBLE_PRECISION,0,
      <                              MPI_COMM_WORLD,ierr)
-
+	call MPI_BCAST(dpdxSteady,  1,MPI_DOUBLE_PRECISION,0,
+     <                              MPI_COMM_WORLD,ierr)
+	call MPI_BCAST(Twave,       1,MPI_DOUBLE_PRECISION,0,
+     <                              MPI_COMM_WORLD,ierr)
+	call MPI_BCAST(waveMag,    1,MPI_DOUBLE_PRECISION,0,
+     <                              MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(omg_cyl,     1,MPI_DOUBLE_PRECISION,0,
      <                              MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(omg_lid,     1,MPI_DOUBLE_PRECISION,0,
