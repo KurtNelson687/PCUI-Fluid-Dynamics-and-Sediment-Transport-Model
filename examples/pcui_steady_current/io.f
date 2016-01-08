@@ -39,7 +39,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         ak          = 0.D0
         g           = 9.81D0
  	dpdxSteady  = 1.0D-7 !Magnitude of the constant component of the pressure gradient
-	waveMag     = 1.0D-7 !Magnitude of the osscilatting component of pressure gradient
+	waveMag     = 0.0D-7 !Magnitude of the osscilatting component of pressure gradient
 	Twave       = 3 !Wave period in seconds
         omg_cyl     = 0
         omg_lid     = 0

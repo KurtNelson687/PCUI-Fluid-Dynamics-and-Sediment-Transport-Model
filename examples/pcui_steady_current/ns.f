@@ -33,7 +33,7 @@ C	Time variables used to track how much time each major component of the code is
 
 C          if ( mod(istep, nsave) .eq. 0 .and. MYID .EQ. 0 )
 	   
-	   if ( MYID .EQ. 0 ) then
+	   if ( MYID .EQ. 0 .AND. MOD(istep,10) .EQ. 0) then
 	      write(*,*) ' istep = ', istep, ' kount  = ', kount
 	   end if
 
