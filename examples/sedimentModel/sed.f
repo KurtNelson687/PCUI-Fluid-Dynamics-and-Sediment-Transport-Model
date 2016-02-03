@@ -66,10 +66,10 @@ C...... I direction
 	do i = 0, nni
 	if ( uxi(i,j,k) .ge. 0.D0 ) then
 	   delf = Csed(i+1,j,k) - Csed(i-1,j,k)  
-	   if( dabs(delf) .lt. 1.D-5 ) then
-	      cf(i,j,k,1) = 0.125D0
+	   if( dabs(delf) .lt. 1.D-5 ) then !Is this the correct cutoff for sediment?
+	      cf(i,j,k,1) = 0.125D0 !This is just QUICK interpolation
 	   else
-              Csede = ( Csed(i,j,k)-Csed(i-1,j,k) ) / delf
+              Csede = ( Csed(i,j,k)-Csed(i-1,j,k) ) / delf !locally normalized variable
 	      if ( Csede .le. -1.D0 .or. Csede .ge. 1.5D0 ) then
 	         cf(i,j,k,1) = 0.125D0
 	      else
@@ -135,7 +135,7 @@ C...... J direction
 	if ( uej(i,j,k) .ge. 0.D0 ) then
 	   delf = Csed(i,j+1,k) - Csed(i,j-1,k)
 	   if( dabs(delf) .lt. 1.D-5 ) then
-	      cf(i,j,k,2) = 0.125D0
+	      cf(i,j,k,2) = 0.125D0 !This is just quick
 	   else
               Csede = ( Csed(i,j,k) - Csed(i,j-1,k) ) / delf
 	      if ( Csede .le. -1.D0 .or. Csede .ge. 1.5D0 ) then
@@ -284,29 +284,17 @@ C......	Convective terms (explicit)
 	enddo
 	enddo
 
-        debug = maxval(ety)
-	write(*,*) "debug value = ", debug
-	write(*,*) "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
-C...... Add back the settling velocity flux to the contravariant volume flux
-	do k = 0, nnk
-	do j = 0, nnj
-	do i = 0, nni
-	   uej(i,j,k)=uej(i,j,k)+1/jac(i,j,k)*ws*1/yetjface(i,j,k)
-	enddo
-	enddo
-	enddo
-
 C......	LES self-similarity term
 	do k = 1, nnk
 	do j = 1, nnj
 	do i = 1, nni
-	   hbCsed(i,j,k) = hbCsed(i,j,k) + rr(i,j,k,4)
+	   hbCsed(i,j,k) = hbCsed(i,j,k) + rr(i,j,k,4) !I need to change rr for bottom cell
 	enddo
 	enddo
 	enddo
 
 C......	Cross viscous terms at step n-1 from Crank-Nicolson  
-!!!!!!!!!!!!!!!!!!!!!!!!!!! Note: I need to check on what needs to be done for akst for sediment model  !!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!! Note: I need to check on what needs to be done for akst for sediment model !!!!!!!!!!!!!!!!!
 	do k = 1, nnk
 	do j = 1, nnj
 	do i = 1, nni
@@ -351,6 +339,56 @@ C......	Cross viscous terms at step n-1 from Crank-Nicolson
 	enddo
 	enddo
 
+C	debug = yetjface(2,1,2)
+C	write(*,*) 'yetjface(2,1,2) =', debug
+
+
+C	debug = maxval(uej)
+C	write(*,*) 'maxval(uej) =', uej
+C	debug = minval(uej)
+C	write(*,*) 'minval(uej) =', debug !skip here SKIP HERE
+CBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCB
+	if ( n_suth .eq. MPI_PROC_NULL ) then
+	   do i = 1, nni
+	   do k = 1, nnk
+
+C        Add back diffusion, and advection from bottom faces for bottom cells
+
+	   hbCsed(i,1,k) = hbCsed(i,1,k)
+C        Diffussion terms
+     <		 + ( ak + 0.5D0*(akst(i,1,k) + akst(i,0,k)) ) *
+     <		( g23(i,0,k) * ( Csed(i,1,  k+1) - Csed(i,1,  k-1)
+     <		                 + Csed(i,0,k+1) - Csed(i,0,k-1) ) 
+     <		+ g21(i,0,k) * ( Csed(i+1,1,  k) - Csed(i-1,1,  k)
+     <		                 + Csed(i+1,0,k) - Csed(i-1,0,k) ) )
+C        Advection
+C     <		- uej(i,0,k) * Csedf(i,0,k,2)
+C     <		+ Csed(I,1,K) * UEJ(I,0,K)
+C        Add deposition
+C     <		- 1/jac(i,1,k)*ws*1/yetjface(i,1,k)*Csed(i,1,k)
+C        Add erosion
+
+	   enddo
+	   enddo
+	endif
+CBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBC
+C	
+C	if ( n_nrth .eq. MPI_PROC_NULL ) then
+C	   do i = 1, nni
+C	
+C	   enddo
+C	endif
+CBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCB
+
+C...... Add back the settling velocity flux to the contravariant volume flux
+	do k = 0, nnk+1
+	do j = 0, nnj+1
+	do i = 0, nni+1
+	   uej(i,j,k)=uej(i,j,k)+1/jac(i,j,k)*ws*1/yetjface(i,j,k)
+	enddo
+	enddo
+	enddo
+
 C......	Diagonal viscous terms at step n-1 from Crank-Nicolson 
 
 	do k = 1, nnk
@@ -379,7 +417,19 @@ C......	Diagonal viscous terms at step n-1 from Crank-Nicolson
      <		g33(i,  j,  k-1) * ( Csed(i,  j,  k-1) - Csed(i,j,k) ) 
 	enddo
 	enddo 
-	enddo 
+	enddo
+
+CBCBCBCBCBCBCBCBCBCBCB
+	if ( n_suth .eq. MPI_PROC_NULL ) then
+	   do i = 1, nni
+	   do k = 1, nnk
+	   suCsed(i,0,k) = suCsed(i,0,k) 
+     <        - ( ak + 0.5D0*(akst(i,0,k) + akst(i,1,k)) ) *
+     <		g22(i,  0,k  ) * ( Csed(i,0,k  ) - Csed(i,1,k) )  
+	   enddo
+	   enddo
+	endif
+CBCBCBCBCBCBCBCBCBCBCBCB
 
 	do k = 1, nnk
 	do j = 1, nnj
@@ -461,13 +511,13 @@ C...... solve for I-direction
 	      fx(j,nni+1) =  hbCsed(nni+1,j,k)
 	   enddo
 	endif
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!Added by Kurt
+
 	if ( periodic .eq. 1 ) then
 	call trip( ax, bx, cx, fx, nnj, 1, nni, n_west, n_east )
 	else
 	call trid( ax, bx, cx, fx, nnj, 1, nni, n_west, n_east )
 	endif
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 
 !	call trid( ax, bx, cx, fx, nnj, 1, nni, n_west, n_east ) !Commented by Kurt
 
@@ -496,15 +546,21 @@ C...... solve for J-direction
 
 	if ( n_suth .eq. MPI_PROC_NULL ) then
 	   do i = 1, nni
-	      hbCsed(i,0,k)=( g23(i,0,k) * ( Csed(i,0,k+1) - Csed(i,0,k-1)
-     <	                              + Csed(i,1,k+1) - Csed(i,1,k-1) )
-     <	               + g21(i,0,k) * ( Csed(i+1,0,k) - Csed(i-1,0,k)
-     <	                              + Csed(i+1,1,k) - Csed(i-1,1,k) ))
-     <	               / g22(i,0,k)
+C	      hbCsed(i,0,k)=( g23(i,0,k) * ( Csed(i,0,k+1) - Csed(i,0,k-1)
+C     <	                              + Csed(i,1,k+1) - Csed(i,1,k-1) )
+C     <	               + g21(i,0,k) * ( Csed(i+1,0,k) - Csed(i-1,0,k)
+C     <	                              + Csed(i+1,1,k) - Csed(i-1,1,k) ))
+C     <	               / g22(i,0,k)
 	      ay(i,0) =  0.D0
 	      by(i,0) =  1.D0
 	      cy(i,0) = -1.D0
-	      fy(i,0) =  hbCsed(i,0,k)
+C	      fy(i,0) =  hbCsed(i,0,k)
+	      fy(i,0) =  0.D0
+
+	      ay(i,1) =  0.D0
+	      by(i,1) =  1.D0
+	      cy(i,1) =  0.D0
+
 	   enddo
 	endif
 	

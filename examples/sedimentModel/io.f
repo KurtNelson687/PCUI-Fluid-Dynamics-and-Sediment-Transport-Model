@@ -18,13 +18,13 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	case      = 0 !This flag is used to indicate if this is lid driven cavity flow
 	newrun    = 1
 	periodic  = 1
-	iscalar   = 1
+C	iscalar   = 1
 	ieddy     = 0
 	ised      = 1
 	waves     = 0
 	mg_level  = 5
-	nstep     = 600
-	nsave     = 10
+	nstep     = 200
+	nsave     = 2
 	maxstep   = 10
 
 	do i = 1, 5

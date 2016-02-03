@@ -78,7 +78,7 @@ uvw_pcui(:,:,:,3) = w_pcui;
 [m,n,p] = size(x);
 sedRadius = params.bx/5;
 sedx = params.bx/2;
-sedy = params.by/4*3;
+sedy = params.by/4;
 sedz = params.bz/2;
 
 for i=1:m
