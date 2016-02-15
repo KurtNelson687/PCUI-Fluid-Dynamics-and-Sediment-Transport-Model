@@ -107,10 +107,18 @@ C...... lid velocities u_lid and w_lid
 	   uej = 0.D0
 	   uzk = 0.D0
 	
+	   inquire(file='rho_full_from_matlab.'//ID, exist=iostat) 
+	   if (iostat.eqv..true..and.grid_only.ne.1) then
+	      open(700+myid, file = 'rho_full_from_matlab.'//ID,
+     <                       form='unformatted',status='unknown')
+	      read(700+myid) rho
+	      close(700+myid)
+	   end if
+
 	   if ( iscalar .eq. 1 ) then
-	      inquire(file='rho_full_from_matlab.'//ID, exist=iostat) 
+	      inquire(file='phi_full_from_matlab.'//ID, exist=iostat) 
 	      if (iostat.eqv..true..and.grid_only.ne.1) then
-		 open(700+myid, file = 'rho_full_from_matlab.'//ID,
+		 open(700+myid, file = 'phi_full_from_matlab.'//ID,
      <                          form='unformatted',status='unknown')
 		 read(700+myid) phi
 		 close(700+myid)

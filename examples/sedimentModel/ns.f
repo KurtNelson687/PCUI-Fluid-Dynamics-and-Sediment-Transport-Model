@@ -106,6 +106,10 @@ C          Solve for new sediment concentration
 	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	   t8 = t8 + MPI_Wtime() - tt
 	   
+	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
+	   call eqstate
+	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
+	  
 	   kount = kount + 1
 	   time = time + dtime
 

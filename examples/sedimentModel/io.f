@@ -23,8 +23,8 @@ C	iscalar   = 1
 	ised      = 1
 	waves     = 0
 	mg_level  = 5
-	nstep     = 200
-	nsave     = 2
+	nstep     = 2000
+	nsave     = 10
 	maxstep   = 10
 
 	do i = 1, 5
@@ -38,9 +38,10 @@ C	iscalar   = 1
         slowiter(1) = 0.7D0
 	maxiter(5)  = 30
         vis         = 3.0D-1
+	rhoWater    = 1.0D3
         ak          = 0.0D-3
         g           = 9.81D0
- 	dpdxSteady  = 0.D0!1.3D-1 !Magnitude of the constant component of the pressure gradient
+ 	dpdxSteady  = 1.3D-1 !Magnitude of the constant component of the pressure gradient
 	waveMag     = 0.0D-7 !Magnitude of the osscilatting component of pressure gradient
 	Twave       = 1.5 !Wave period in seconds
         omg_cyl     = 0
@@ -52,6 +53,7 @@ C	iscalar   = 1
         aphi        = 1.
 C       Sediment parameters
 	ws          = 2.0D-1
+	rhoSed      = 2650
 	endif
 
 	call MPI_BCAST(case,        1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
@@ -71,6 +73,8 @@ C       Sediment parameters
         call MPI_BCAST(dtime,       1,MPI_DOUBLE_PRECISION,0,
      <	                            MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(vis,         1,MPI_DOUBLE_PRECISION,0,
+     <                              MPI_COMM_WORLD,ierr)
+	call MPI_BCAST(rhoWater,         1,MPI_DOUBLE_PRECISION,0,
      <                              MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(ak,          1,MPI_DOUBLE_PRECISION,0,
      <                              MPI_COMM_WORLD,ierr)
@@ -105,6 +109,8 @@ C       Sediment parameters
 	call MPI_BCAST(aphi,        1,MPI_DOUBLE_PRECISION,0,
      <                              MPI_COMM_WORLD,ierr)
         call MPI_BCAST(ws,          1,MPI_DOUBLE_PRECISION,0,
+     <                              MPI_COMM_WORLD,ierr)
+	call MPI_BCAST(rhoSed,         1,MPI_DOUBLE_PRECISION,0,
      <                              MPI_COMM_WORLD,ierr)
         call MPI_BCAST(ised,        1,MPI_DOUBLE_PRECISION,0,
      <                              MPI_COMM_WORLD,ierr)
@@ -151,22 +157,23 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	if (myid .eq. 0) print *, 'Recording to output files ...'
 
 	if (kount.gt.1) then !appends to existing file if after first time step
-	   open(50+myid, file='output_S.'//ID, form='unformatted',
+	   open(50+myid, file='output_rho.'//ID, form='unformatted',
      >          status='old',position='append')
 	   open(200+myid, file='output_UVW.'//ID, form='unformatted',
      >          status='old',position='append')
-
+	   open(800+myid, file='output_p.'//ID, form='unformatted',
+     >          status='old',position='append')
 	   if (ised .eq. 1) then
-	   write(*,*) "Im in the sediment output part"
 	   open(900+myid, file='output_Csed.'//ID, form='unformatted',
      >          status='old',position='append')
 	   endif
 	else
-	   open(50+myid, file='output_S.'//ID, form='unformatted',
+	   open(50+myid, file='output_rho.'//ID, form='unformatted',
      >          status='unknown')	   
 	   open(200+myid, file='output_UVW.'//ID, form='unformatted',
      >          status='unknown')	
-
+	   open(800+myid, file='output_p.'//ID, form='unformatted',
+     >          status='unknown')	
 	   if (ised .eq. 1) then
 	   open(900+myid, file='output_Csed.'//ID, form='unformatted',
      >          status='unknown')	   
@@ -174,9 +181,11 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	end if
 
 	write(200+myid) u
-	write(50+myid) phi
+	write(50+myid) rho
+	write(800+myid) p
 	write(900+myid) Csed
 	close(unit = 50+myid)
+	close(unit = 800+myid)
 	close(unit = 200+myid)
 	close(unit = 900+myid)
 	return
@@ -346,5 +355,30 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	      close(unit=123)
 	   endif
 
+	return
+	end
+
+
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+
+	subroutine eqstate
+
+	include "size.inc"
+	include "para.inc"
+	include "ns.inc"
+	include "sed.inc"
+
+	integer i, j, k
+	
+
+	do k = 1, nnk
+	do j = 1, nnj
+	do i = 1, nni
+	   rho(i,j,k) = rhoWater+(1-rhoWater/rhoSed)*Csed(i,j,K)
+	enddo
+	enddo
+	enddo
+
+	
 	return
 	end

@@ -124,8 +124,8 @@ C......	Coriolis and bouyance force terms
 	   hb(i,j,k,1) = hb(i,j,k,1) - omg2 * u(i,j,k,3) * temp
      <                              + dpdxSteady*temp+dpdxWave*temp !Started with1.5D-6 and halved it each consecutive run 
 	   hb(i,j,k,3) = hb(i,j,k,3) + omg2 * u(i,j,k,1) * temp
-	   hb(i,j,k,2) = hb(i,j,k,2) - g * (  phi(i,j,k)
-     <                                      - rho_init(i,j,k) ) * temp
+	   hb(i,j,k,2) = hb(i,j,k,2) - g * (  rho(i,j,k)
+     <                                      - rhoWater)/rhoWater * temp
 	enddo
 	enddo
 	enddo
@@ -364,7 +364,7 @@ CBCBCBC	BCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBC
 
 	   do i = 1, nni
 	      ay(i,nnj+1) = 1.D0
-	      by(i,nnj+1) = -1.D0
+	      by(i,nnj+1) = 1.D0
 	      cy(i,nnj+1) = 0.D0
 	   enddo
 

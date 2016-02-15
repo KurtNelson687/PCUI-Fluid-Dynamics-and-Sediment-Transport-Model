@@ -339,14 +339,6 @@ C......	Cross viscous terms at step n-1 from Crank-Nicolson
 	enddo
 	enddo
 
-C	debug = yetjface(2,1,2)
-C	write(*,*) 'yetjface(2,1,2) =', debug
-
-
-C	debug = maxval(uej)
-C	write(*,*) 'maxval(uej) =', uej
-C	debug = minval(uej)
-C	write(*,*) 'minval(uej) =', debug !skip here SKIP HERE
 CBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCB
 	if ( n_suth .eq. MPI_PROC_NULL ) then
 	   do i = 1, nni
@@ -372,12 +364,23 @@ C        Add erosion
 	   enddo
 	endif
 CBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBC
-C	
-C	if ( n_nrth .eq. MPI_PROC_NULL ) then
-C	   do i = 1, nni
-C	
-C	   enddo
-C	endif
+	
+	if ( n_nrth .eq. MPI_PROC_NULL ) then
+	   do i = 1, nni
+	   do k = 1, nnk
+	   hbCsed(i,nnj,k) = hbCsed(i,nnj,k)
+C        Diffussion terms
+	   
+     <        - ( ak + 0.5D0*(akst(i,nnj,k) + akst(i,nnj+1,k)) ) *
+     <		( g23(i,nnj,  k) * ( Csed(i,nnj,  k+1) - Csed(i,nnj,  k-1)
+     <		                 + Csed(i,nnj+1,k+1) - Csed(i,nnj+1,k-1) )
+     <		+ g21(i,nnj,  k) * ( Csed(i+1,nnj,  k) - Csed(i-1,nnj,  k)
+     <		                 + Csed(i+1,nnj+1,k) - Csed(i-1,nnj+1,k) ) ) 
+C	Advection term
+     <		+ uej(i,nnj  ,k) * Csedf(i,nnj,  k,2)
+	   enddo
+	   enddo
+	endif
 CBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCB
 
 C...... Add back the settling velocity flux to the contravariant volume flux
@@ -423,9 +426,22 @@ CBCBCBCBCBCBCBCBCBCBCB
 	if ( n_suth .eq. MPI_PROC_NULL ) then
 	   do i = 1, nni
 	   do k = 1, nnk
-	   suCsed(i,0,k) = suCsed(i,0,k) 
+	   suCsed(i,1,k) = suCsed(i,1,k) 
      <        - ( ak + 0.5D0*(akst(i,0,k) + akst(i,1,k)) ) *
      <		g22(i,  0,k  ) * ( Csed(i,0,k  ) - Csed(i,1,k) )  
+	   enddo
+	   enddo
+	endif
+CBCBCBCBCBCBCBCBCBCBCBCB
+
+
+CBCBCBCBCBCBCBCBCBCBCB
+	if ( n_nrth .eq. MPI_PROC_NULL ) then
+	   do i = 1, nni
+	   do k = 1, nnk
+	   suCsed(i,nnj,k) = suCsed(i,nnj,k) 
+     <        - ( ak + 0.5D0*(akst(i,nnj,k) + akst(i,nnj+1,k)) ) *
+     <		g22(i,  nnj,k  ) * ( Csed(i,nnj+1,k  ) - Csed(i,nnj,k) )  
 	   enddo
 	   enddo
 	endif
@@ -566,17 +582,23 @@ C	      fy(i,0) =  hbCsed(i,0,k)
 	
 	if ( n_nrth .eq. MPI_PROC_NULL ) then
 	   do i = 1, nni
-	      hbCsed(i,nnj+1,k)=( g23(i,nnj,k) 
-     <	                   * ( Csed(i,nnj,  k+1) - Csed(i,nnj,  k-1)
-     <	                     + Csed(i,nnj+1,k+1) - Csed(i,nnj+1,k-1) )
-     <                    + g21(i,nnj,k) 
-     <	                   * ( Csed(i+1,nnj,  k) - Csed(i-1,nnj,  k)
-     <	                     + Csed(i+1,nnj+1,k) - Csed(i-1,nnj+1,k) ) )
-     <	                  / g22(i,nnj,k)
+C	      hbCsed(i,nnj+1,k)=( g23(i,nnj,k) 
+C     <	                   * ( Csed(i,nnj,  k+1) - Csed(i,nnj,  k-1)
+C     <	                     + Csed(i,nnj+1,k+1) - Csed(i,nnj+1,k-1) )
+C     <                    + g21(i,nnj,k) 
+C     <	                   * ( Csed(i+1,nnj,  k) - Csed(i-1,nnj,  k)
+C     <	                     + Csed(i+1,nnj+1,k) - Csed(i-1,nnj+1,k) ) )
+C     <	                  / g22(i,nnj,k)
 	      ay(i,nnj+1) =  1.D0
 	      by(i,nnj+1) = -1.D0
 	      cy(i,nnj+1) =  0.D0
-	      fy(i,nnj+1) =  hbCsed(i,nnj+1,k)
+	      fy(i,nnj+1) =  0.D0
+C	      fy(i,nnj+1) =  hbCsed(i,nnj+1,k)
+
+	      ay(i,nnj) =  0.D0
+	      by(i,nnj) =  1.D0
+	      cy(i,nnj) =  0.D0
+
 	   enddo
 	endif
 	
