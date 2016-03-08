@@ -334,7 +334,7 @@ C	2
      <	     max(dabs(ermin), dabs(ermax)) .lt. ter(L) .and. 
      <	     resid/bbsum .lt. factor ) then
 	   if ( MYID .EQ. 0 ) 
-     <	      write(*,*) ' Total V-cycle # ', n, resid
+     <	      write(*,*) ' Total V-cycle # ', n, resid/bbsum
 	   return
 	endif
 

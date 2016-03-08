@@ -14,18 +14,18 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	if ( MYID .eq. 0 ) then
 
-	dtime     = 1.0D-2
+	dtime     = 5.0D-3
 	case      = 0 !This flag is used to indicate if this is lid driven cavity flow
 	newrun    = 1
 	periodic  = 1
-C	iscalar   = 1
+	iscalar   = 0
 	ieddy     = 0
 	ised      = 1
 	waves     = 0
 	mg_level  = 5
-	nstep     = 2000
-	nsave     = 10
-	maxstep   = 10
+	nstep     = 2500
+	nsave     = 50
+	maxstep   = 50
 
 	do i = 1, 5
            iterchk(i)  = 2
@@ -46,13 +46,13 @@ C	iscalar   = 1
 	Twave       = 1.5 !Wave period in seconds
         omg_cyl     = 0
         omg_lid     = 0
-        factor      = 1.0e-4
+        factor      = 1.0e-6
         phi1        = 0
         phi2        = 0
         yphi        = 0
         aphi        = 1.
 C       Sediment parameters
-	ws          = 2.0D-1
+	ws          = 4.0D-3
 	rhoSed      = 2650
 	endif
 

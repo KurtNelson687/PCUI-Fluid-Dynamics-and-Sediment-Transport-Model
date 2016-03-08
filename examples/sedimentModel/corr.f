@@ -102,7 +102,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	
 	integer i, j, k, L
 
-	if ( n_nrth .eq. MPI_PROC_NULL ) then
+	if (n_nrth .eq. MPI_PROC_NULL ) then
 	   do k = -1, nnk+2
 	   do i = -1, nni+2
 c             Free-slip
@@ -110,10 +110,10 @@ c             Free-slip
 	      u(i,nnj+1,k,2) = - u(i,nnj,k,2)
 	      u(i,nnj+1,k,3) =   u(i,nnj,k,3)
 
-c             No-slip if u_lid = 0, otherwise u at wall = u_lid
-c	      u(i,nnj+1,k,1) = 2.D0 * u_lid(i,k) - u(i,nnj,k,1)
-c	      u(i,nnj+1,k,2) =                   - u(i,nnj,k,2)
-c	      u(i,nnj+1,k,3) = 2.D0 * w_lid(i,k) - u(i,nnj,k,3)
+c             No-slip
+C	      u(i,nnj+1,k,1) = -  u(i,nnj,k,1)
+C	      u(i,nnj+1,k,2) = - u(i,nnj,k,2)
+C	      u(i,nnj+1,k,3) = -  u(i,nnj,k,3)
 	   enddo
 	   enddo
 	   do L = 1, 3

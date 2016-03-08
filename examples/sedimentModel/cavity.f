@@ -12,7 +12,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	integer i, j, k
 
 C	These are setting the size of the domain. The streching is done assuming length 1 then scaled by these
-	bx = 1.D0 !note: bx and several other varibles in the start of this subroutine are common mapped
+	bx = 0.5D0 !note: bx and several other varibles in the start of this subroutine are common mapped
 	by = 1.D0
 	bz = 0.5D0
 
