@@ -198,6 +198,7 @@ CBCBCBC	BCBCBCBCBCBCBCBCBCBC
 	   b(i,j,k) = temp * ( ( uxi(i,j,k) - uxi(i-1,j,k) )
      <	                     + ( uej(i,j,k) - uej(i,j-1,k) )
      <	                     + ( uzk(i,j,k) - uzk(i,j,k-1) ) )
+	!note: YiJu adds a settling term here?
 	enddo
 	enddo
 	enddo

@@ -107,7 +107,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	   do i = -1, nni+2
 c             Free-slip
 	      u(i,nnj+1,k,1) =   u(i,nnj,k,1)
-	      u(i,nnj+1,k,2) = - u(i,nnj,k,2)
+	      u(i,nnj+1,k,2) =  -u(i,nnj,k,2)
 	      u(i,nnj+1,k,3) =   u(i,nnj,k,3)
 
 c             No-slip

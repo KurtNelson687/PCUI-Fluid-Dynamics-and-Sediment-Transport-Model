@@ -1,4 +1,4 @@
-ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	subroutine trid( a, b, c, f, n, L, m, nbrlower, nbrupper )
 
@@ -7,11 +7,11 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	include "mpi.inc" 
 
 	integer n, L, m
-	double precision, dimension(n,  0:m+1) :: a, b, c
-	double precision, dimension(n,L,0:m+1) :: f
+	double precision a(n,  0:m+1), b(n,  0:m+1), c(n,  0:m+1)
+	double precision f(n,L,0:m+1)
 	integer nbrlower, nbrupper
 
-	double precision, dimension(n,L+1) :: rmsg, smsg
+	double precision rmsg(n,L+1), smsg(n,L+1)
 	integer status(MPI_STATUS_SIZE), req
 	integer i, K, j
 	
@@ -36,9 +36,9 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	   do i = 1, n
 	      c(i,0) = c(i,0) / b(i,0)
            enddo
+	   
 	endif	
 
-C       Zeroing all below diagonal entries and making diagonal equal to 1 - see www3.ul.ie/wlee/ms6021_thomas.pdf
         do j = 1, m
 	do i = 1, n
 	   b(i,j) = 1.D0 / ( b(i,j) - a(i,j) * c(i,j-1) )
@@ -54,7 +54,6 @@ C       Zeroing all below diagonal entries and making diagonal equal to 1 - see 
 	enddo
 	enddo
 
-C      Sending value to procesor above or computing last row in matrix if no processor above
 	if ( nbrupper .ne. MPI_PROC_NULL ) then
 	   do K = 1, L
 	   do i = 1, n
@@ -76,7 +75,6 @@ C      Sending value to procesor above or computing last row in matrix if no pro
 	   enddo
 	endif
 
-C     Receiving upper most value of f if thre is a processor above
 	if ( nbrupper .ne. MPI_PROC_NULL ) then
 	   call MPI_IRECV( rmsg(1,1), n*L, MPI_DOUBLE_PRECISION,  
      <	                   nbrupper, 1, comm3d, req, ierr )
@@ -88,16 +86,15 @@ C     Receiving upper most value of f if thre is a processor above
 	   enddo
 	endif	
 
-C       Solving the system with backwards substitution
         do j = m, 1, -1
 	do K = 1, L
 	do i = 1, n
+	   
 	   f(i,K,j) = f(i,K,j) - c(i,j) * f(i,K,j+1)
 	enddo
 	enddo
 	enddo
 
-C       Sending solution for lowest element if there is a processor above, otherwise computing it
 	if ( nbrlower .ne. MPI_PROC_NULL ) then
 	   do K = 1, L
 	   do i = 1, n
@@ -106,12 +103,12 @@ C       Sending solution for lowest element if there is a processor above, other
 	   enddo
 	   call MPI_ISEND( smsg(1,1), n*L, MPI_DOUBLE_PRECISION, 
      <	                   nbrlower, 1, comm3d, req, ierr )
-
 	   call MPI_WAIT( req, status, ierr )
 	else
 	   do K = 1, L
 	   do i = 1, n
 	      f(i,K,0) = f(i,K,0) - c(i,0) * f(i,K,1)
+	      
 	   enddo
 	   enddo
 	endif
@@ -128,12 +125,12 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	include "mpi.inc" 
 
 	integer n, L, m
-	double precision, dimension(n,    0:m+1) :: a, b, c
-	double precision, dimension(n,L,  0:m+1) :: f
-	double precision, dimension(n,L+1,0:m+1) :: g
+	double precision a(n,    0:m+1), b(n,    0:m+1), c(n,    0:m+1)
+	double precision f(n,L,  0:m+1)
+	double precision g(n,L+1,0:m+1)
 	integer nbrlower, nbrupper, nbrl, nbru
 
-	double precision, dimension(n,L+1) :: rmsg, smsg
+	double precision rmsg(n,L+1), smsg(n,L+1)
 	integer status(MPI_STATUS_SIZE), req
 	integer i, K, j
 
@@ -200,7 +197,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	   enddo
 	   enddo
 	endif
-	   
+      	   
 	if ( nbrlower .gt. myid ) then
 	   call MPI_IRECV( rmsg(1,1), n*(L+1), MPI_DOUBLE_PRECISION,  
      <	                   nbrlower, 0, comm3d, req, ierr )
@@ -256,12 +253,11 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	return
 	end
 
-
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 
 
-c..............This function was written by YiJu Chou....................
+
 c.......This function solve the system matrix as same as "trid" but instead
 c       of solving three direction (L = 3) as "trid", this solves for
 c       the spcified directions L1~L2. 
@@ -380,9 +376,6 @@ c       the spcified directions L1~L2.
       end
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-
-
-
 
 
 

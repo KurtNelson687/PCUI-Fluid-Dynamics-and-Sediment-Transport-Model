@@ -8,9 +8,9 @@ C...... nk/pz must be dividable by 16
 	integer, parameter :: py = 1
 	integer, parameter :: pz = 1 
 
-	integer, parameter :: ni = 128 !This was 128
-	integer, parameter :: nj = 128 
-	integer, parameter :: nk = 128
+	integer, parameter :: ni = 16 !This was 128
+	integer, parameter :: nj = 16 
+	integer, parameter :: nk = 16
 
 	integer, parameter :: ni1 = ni / 2
 	integer, parameter :: nj1 = nj / 2

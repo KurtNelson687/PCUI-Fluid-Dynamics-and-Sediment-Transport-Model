@@ -14,7 +14,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	if ( MYID .eq. 0 ) then
 
-	dtime     = 1.0D-3
+	dtime     = 1.0D-2
 	case      = 0 !This flag is used to indicate if this is lid driven cavity flow
 	newrun    = 1
 	periodic  = 1
@@ -23,9 +23,9 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	ised      = 1
 	waves     = 0
 	mg_level  = 5
-	nstep     = 10000
-	nsave     = 100
-	maxstep   = 50
+	nstep     = 4000
+	nsave     = 50
+	maxstep   = 120
 
 	do i = 1, 5
            iterchk(i)  = 2
@@ -37,16 +37,16 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
         slowiter(1) = 0.7D0
 	maxiter(5)  = 30
-        vis         = 1.0D-6
+        vis         = 3.0D-1
 	rhoWater    = 1.0D3
         ak          = 0.0D-3
         g           = 9.81D0
- 	dpdxSteady  = 1.58D-1 !Magnitude of the constant component of the pressure gradient
+ 	dpdxSteady  = 0.158D0 !Magnitude of the constant component of the pressure gradient
 	waveMag     = 0.0D-7 !Magnitude of the osscilatting component of pressure gradient
 	Twave       = 1.5 !Wave period in seconds
         omg_cyl     = 0
         omg_lid     = 0
-        factor      = 1.0e-6
+        factor      = 1.0e-3
         phi1        = 0
         phi2        = 0
         yphi        = 0
@@ -54,6 +54,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 C       Sediment parameters
 	ws          = 4.0D-3
 	rhoSed      = 2650
+	write(*,*) 'dpdx = ', dpdxSteady
 	endif
 
 	call MPI_BCAST(case,        1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
