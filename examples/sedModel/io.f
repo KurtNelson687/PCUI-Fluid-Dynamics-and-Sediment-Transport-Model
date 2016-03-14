@@ -23,9 +23,9 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	ised      = 1
 	waves     = 0
 	mg_level  = 5
-	nstep     = 4000
-	nsave     = 50
-	maxstep   = 120
+	nstep     = 60000
+	nsave     = 1000
+	maxstep   = 50
 
 	do i = 1, 5
            iterchk(i)  = 2
@@ -36,7 +36,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         enddo
 
         slowiter(1) = 0.7D0
-	maxiter(5)  = 30
+	maxiter(5)  = 50
         vis         = 3.0D-1
 	rhoWater    = 1.0D3
         ak          = 0.0D-3

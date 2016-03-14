@@ -114,11 +114,12 @@ C          Solve for new sediment concentration
 	   time = time + dtime
 
 	   call cfl_check
-
-c     call MPI_Barrier(MPI_COMM_WORLD, ierr)
-c     call output_continue_run
-c     call MPI_Barrier(MPI_COMM_WORLD, ierr)
-
+ 
+	   if(mod(istep,nsave) .eq. 0) then
+           call MPI_Barrier(MPI_COMM_WORLD, ierr)
+           call output_continue_run
+           call MPI_Barrier(MPI_COMM_WORLD, ierr)
+           endif
 	enddo
 
 	call MPI_Barrier(MPI_COMM_WORLD, ierr)
