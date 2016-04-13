@@ -14,17 +14,17 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	if ( MYID .eq. 0 ) then
 
-	dtime     = 1.0D-2
+	dtime     = 5.0D-3
 	case      = 0 !This flag is used to indicate if this is lid driven cavity flow
-	newrun    = 1
+	newrun    = 0
 	periodic  = 1
 	iscalar   = 0
 	ieddy     = 1
 	ised      = 1
 	waves     = 0
 	mg_level  = 5
-	nstep     = 60000
-	nsave     = 1000
+	nstep     = 36000
+	nsave     = 200
 	maxstep   = 50
 
 	do i = 1, 5
@@ -37,7 +37,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
         slowiter(1) = 0.7D0
 	maxiter(5)  = 50
-        vis         = 3.0D-1
+        vis         = 1.0D-6
 	rhoWater    = 1.0D3
         ak          = 0.0D-3
         g           = 9.81D0
@@ -46,7 +46,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	Twave       = 1.5 !Wave period in seconds
         omg_cyl     = 0
         omg_lid     = 0
-        factor      = 1.0e-3
+        factor      = 1.0e-6
         phi1        = 0
         phi2        = 0
         yphi        = 0
@@ -229,7 +229,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	   read(10+myid) jac
 	endif
 
-	if ( ised .eq. 1 ) read(10+myid) Csed
+	!if ( ised .eq. 1 ) read(10+myid) Csed
 
 	close(10+myid)
 
@@ -265,7 +265,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	write(10+myid) uzk
 	write(10+myid) p
 
-	if ( iscalar .eq. 1 ) write(50+myid) phi
+	if ( iscalar .eq. 1 ) write(10+myid) phi
 
 	if ( ieddy .gt. 0 ) then
 	   write(10+myid) vst
@@ -274,7 +274,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	   write(10+myid) jac
 	endif
 	
-	if (ised .eq. 1 ) write(50+myid) Csed
+	if (ised .eq. 1 ) write(10+myid) Csed
 	
 	close(10+myid)
 
