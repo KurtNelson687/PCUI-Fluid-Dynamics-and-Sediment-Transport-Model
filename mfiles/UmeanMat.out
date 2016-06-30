@@ -1,0 +1,86 @@
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2014 The MathWorks, Inc.
+                   R2014b (8.4.0.150421) 64-bit (glnxa64)
+                             September 15, 2014
+
+[Warning: Directory permission denied:
+/p/home/hurley/COPASI/pHtools/pHtools_release] 
+[Warning: Directory permission denied:
+/p/home/hurley/COPASI/pHtools/pHtools_release/lpregtools] 
+[Warning: Directory permission denied:
+/p/home/hurley/COPASI/pHtools/pHtools_release/pHtools] 
+[Warning: Directory permission denied:
+/p/home/hurley/COPASI/pHtools/pHtools_release/pHtools/databases] 
+[Warning: Directory permission denied:
+/p/home/hurley/COPASI/pHtools/pHtools_release/simplextools] 
+ 
+To get started, type one of these: helpwin, helpdesk, or demo.
+For product information, visit www.mathworks.com.
+ 
+>> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> 
+ans =
+
+i have x,y,z data
+
+>> >> >> >> >> >> >> >> >> >> 
+istep =
+
+     1
+
+
+istep =
+
+     2
+
+
+istep =
+
+     3
+
+
+istep =
+
+     4
+
+
+istep =
+
+     5
+
+
+istep =
+
+     6
+
+
+istep =
+
+     7
+
+
+istep =
+
+     8
+
+
+istep =
+
+     9
+
+
+istep =
+
+    10
+
+
+istep =
+
+    11
+
+
+istep =
+
+    12
+
+>> >> >> >> >> 

@@ -1,0 +1,52 @@
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2014 The MathWorks, Inc.
+                   R2014b (8.4.0.150421) 64-bit (glnxa64)
+                             September 15, 2014
+
+[Warning: Directory permission denied:
+/p/home/hurley/COPASI/pHtools/pHtools_release] 
+[Warning: Directory permission denied:
+/p/home/hurley/COPASI/pHtools/pHtools_release/lpregtools] 
+[Warning: Directory permission denied:
+/p/home/hurley/COPASI/pHtools/pHtools_release/pHtools] 
+[Warning: Directory permission denied:
+/p/home/hurley/COPASI/pHtools/pHtools_release/pHtools/databases] 
+[Warning: Directory permission denied:
+/p/home/hurley/COPASI/pHtools/pHtools_release/simplextools] 
+ 
+To get started, type one of these: helpwin, helpdesk, or demo.
+For product information, visit www.mathworks.com.
+ 
+>> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> 
+params = 
+
+                     dt: 1.0000e-03
+    molecular_viscosity: 1.0000e-06
+         eddy_viscosity: 0
+                 nsteps: 60000
+                  nsave: 1000
+                rho_sed: 2650
+               rho_knot: 1000
+             dpdxSteady: 0.2441
+               wallUnit: 1.0000e-04
+           numWallUnits: 1.2000
+               maxRatio: 8.2000
+                     ni: 768
+                     nj: 128
+                     nk: 320
+                     px: 48
+                     py: 1
+                     pz: 10
+
+>> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> 
+u_star =
+
+    0.0050
+
+>> >> >> >> >> 
+max_u_log =
+
+    0.1031
+
+>> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> 
