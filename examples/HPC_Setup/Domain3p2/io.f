@@ -306,6 +306,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	include "metric.inc"
 	include "eddy.inc"
 	include "sed.inc"
+	include "padjust.inc"
 
 	character*4 :: ID
 
@@ -323,7 +324,8 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	read(200+myid) uzk
 	read(200+myid) p
 	read(200+myid) rho
-	
+	write(200+myid) steadyPall
+
 	if ( iscalar .eq. 1 ) read(200+myid) phi
 
 	if ( ieddy .gt. 0 ) then
@@ -352,6 +354,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	include "metric.inc"
 	include "eddy.inc"
 	include "sed.inc"
+	include "padjust.inc"
 
 	character*4 :: ID
 
@@ -369,6 +372,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	write(200+myid) uzk
 	write(200+myid) p
 	write(200+myid) rho
+	write(200+myid) steadyPall
 
 	if ( iscalar .eq. 1 ) write(200+myid) phi
 

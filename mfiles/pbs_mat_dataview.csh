@@ -4,13 +4,12 @@
 #  Total cores requested = <number of nodes> X <MPI procs/node>
 #PBS -l select=1:ncpus=32:mpiprocs=1
 # Specify how MPI processes are distributed on nodes
-#PBS -l place=scatter
 #PBS -l application=matlab
 #  Request job name
 #PBS -N viewC3_1
 #  Request PBS job queue for job
-##PBS -q background
-#PBS -q standard
+#PBS -q background
+##PBS -q standard
 ##PBS -q debug
 #  Specify keep stdout/stderr files from job
 #PBS -k eo
@@ -27,14 +26,14 @@
 ## End of preamble, beginning of shell script ##
 set JOBID=`echo $PBS_JOBID | cut -f1 -d.`
 echo job $JOBID starting at `date` on `hostname`
-cd $PBS_O_WORKDIR
+cd /u/knelson3/repository/pcui-3d/mfiles
 echo starting in `pwd`
 
 set outfile=output.txt
 set outdir=$PBS_O_WORKDIR
 set indir=`pwd`
 
-set infile=~/mfiles/velDataView.m
+set infile=~/repository/pcui-3d/mfiles/velDataView.m
 
 ls -l
 

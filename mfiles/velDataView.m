@@ -22,13 +22,13 @@ skip_vector = 8;
 
 
 iskip = 1;
-istart =  9;
-iend = 10;%floor(params.nsteps/params.nsave)
+istart =  16;
+iend = 16;%floor(params.nsteps/params.nsave)
 
 %%%%%% Testing Simulations
 
 %working_folder = '/p/work1/knelson3/Wave4_2_smallresid';
-working_folder = '/p/work1/knelson3/ChannelFlow3_1';
+working_folder = '/work/knelson3/ChannelFlow3_1p2e';
 
 fname_xyz = 'xyz';
 fname_rho = 'output_rho';

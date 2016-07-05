@@ -10,7 +10,7 @@ OBCAS =nsst.o mp.o io.o stat.o\
        init.o conv.o pred.o corr.o trid.o scal.o\
        pres.o smad.o resd.o fctr.o exch.o eddy.o
 
-OBJG = grid_init.o mp.o io.o cavity.o
+OBJG = grid_init.o mp.o io.o cavity.o post.o
 
 INCS = size.inc mpi.inc para.inc \
        ns.inc metric.inc stat.inc eddy.inc \

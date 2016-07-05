@@ -11,7 +11,7 @@
 
 clear all; close all; clc;
 %working_folder = '/p/work1/knelson3/Waves1_1';
-working_folder = '/p/work1/knelson3/ChannelFlow3_1';
+working_folder = '/work/knelson3/ChannelFlow4_1p2';
 
 sedConcentration = 0; %sediment concentration in mg/L
 
