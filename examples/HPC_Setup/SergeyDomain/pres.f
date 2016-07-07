@@ -212,7 +212,7 @@ CBCBCBC	BCBCBCBCBCBCBCBCBCBC
 	do n = 1, maxstep
 
 	if ( mod(istep,nsave) .eq. 0 .and. MYID .eq. 0 ) then
-	   write(*,*) ' V-cycle # ', n, resid/bbsum 
+	   write(*,*) ' V-cycle # ', n
 	endif
 
 	if ( mg_level .ge. 2 ) then

@@ -9,7 +9,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	integer j
 	
 	do j = 1, nnj
-	    steadyPall(j) = 0.00
+	    steadyPall(j) = 0.1292
 	enddo
 	
 	return
