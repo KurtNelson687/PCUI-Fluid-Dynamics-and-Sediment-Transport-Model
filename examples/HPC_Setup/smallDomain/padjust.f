@@ -9,7 +9,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	integer j
 	
 	do j = 1, nnj
-	    steadyPall(j) = 0.00
+	    steadyPall(j) = 0
 	enddo
 	
 	return
@@ -38,7 +38,7 @@ C	    else
 C	        steadyPall(j) = dpdxSteady
 C	    endif
 
-	    steadyPall(j) = steadyPall(j)+5*dtime*(Ubulk-uDepth)
+	    steadyPall(j) = steadyPall(j)+dtime*5*(Ubulk-uDepth)
 	enddo
 	return
 	end
