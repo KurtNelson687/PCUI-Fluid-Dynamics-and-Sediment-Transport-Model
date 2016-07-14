@@ -6,7 +6,7 @@
 # Specify how MPI processes are distributed on nodes
 #PBS -l application=matlab
 #  Request job name
-#PBS -N viewC3_1
+#PBS -N viewS_1
 #  Request PBS job queue for job
 #PBS -q background
 ##PBS -q standard
@@ -16,7 +16,7 @@
 #  Indicate required  matlab licenses
 #PBS -l MATLAB=1
 #  Email
-##PBS -m abe -M knelson3@stanford.edu 
+#PBS -m abe -M knelson3@stanford.edu 
 # Indicate Project ID
 #PBS -A ONRDC27755267
 #  Request environment variables be exported from script

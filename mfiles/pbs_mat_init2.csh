@@ -8,9 +8,9 @@
 #  Request job name
 #PBS -N init_pcui2
 #  Request PBS job queue for job
-##PBS -q background
+#PBS -q background
 ##PBS -q standard
-#PBS -q debug
+##PBS -q debug
 #  Specify keep stdout/stderr files from job
 #PBS -k eo
 #  Indicate required  matlab licenses

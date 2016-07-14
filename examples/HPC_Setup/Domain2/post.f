@@ -1,5 +1,38 @@
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+
+	subroutine depthAverage(inArray, outValue)
+C       This subroutine depth averages an array that has been horizontally averaged
+	include "size.inc"
+	include "mpif.h"
+	include "mpi.inc"
+	include "metric.inc"
+	include "cavity.inc"
+	double precision, intent(in) :: inArray(1:nnj)
+	double precision, intent(out) :: outValue
+	double precision H, mySum
+	double precision integrationArray(1:nnj)
+	integer j
+	
+	
+	H = yAll(nj)+(yAll(nj)-yAll(nj-1))/2
+	do j = 1, nnj
+	    integrationArray(j) = 1/H*inArray(j)*0.5*
+     <         (xp(1,j+1,1,2)-xp(1,j-1,1,2))
+	enddo
+	
+	mySum = sum(integrationArray)
+
+	call MPI_REDUCE(mySum, outValue, 1, MPI_DOUBLE_PRECISION,
+     <               MPI_SUM, 0, vert_comm, ierr)
+	call MPI_BCAST(outValue,1,MPI_DOUBLE_PRECISION,0,vert_comm,ierr)
+	return
+	end
+	
+
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 
 	subroutine horizontalAverage(inArray, outArray, numGhost)
+
 C       This subroutine horizontally Averages an array. It is written for cartesian grids with uniform hosizontal spacing
 
 	include "size.inc"
@@ -23,9 +56,9 @@ C       This subroutine horizontally Averages an array. It is written for cartes
 	call MPI_BCAST(outArray,nnj,MPI_DOUBLE_PRECISION,0,hor_comm,ierr)
 	return
 	end
-	
 
 
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 
 	subroutine get_pertVel(u, uMean, vMean, wMean, velPrimes)
 C       This subroutine routine computes velociy purturbations
@@ -53,6 +86,7 @@ C       This subroutine routine computes velociy purturbations
 	return
 	end
 
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	subroutine get_turbIntensity(velPrimes, uTurb, vTurb, wTurb)
 C       This subroutine routine computes mean turbulent intensity profiles
@@ -91,7 +125,7 @@ C       This subroutine routine computes mean turbulent intensity profiles
 	return
 	end
 
-
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	subroutine get_reynoldsStress(velPrimes, uvPrime, uwPrime, vwPrime)
 C       This subroutine routine computes velociy purturbations

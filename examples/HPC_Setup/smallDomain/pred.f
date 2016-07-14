@@ -19,6 +19,8 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	double precision, dimension(nni,3,0:nnj+1) :: fy
 	double precision, dimension(nni,  0:nnk+1) :: az, bz, cz
 	double precision, dimension(nni,3,0:nnk+1) :: fz
+	double precision, dimension(nni,  0:nnj+1) :: fyV
+
 
 	integer i, j, k, m, L
 	double precision coef, temp, dpdxi, dpdet, dpdzt
@@ -432,7 +434,7 @@ C...... solve for J-direction (only obtain the vertical component)
 
 	do j = 1, nnj
 	do i = 1, nni
-	   fy(i,2,j) = su(i,j,k,2)
+	   fyV(i,j) = su(i,j,k,2)
 	   
 	enddo
 	enddo
@@ -454,20 +456,11 @@ CBCBCBC	BCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBC
 	      dpdzt = p(i,0,k+1) - p(i,0,k-1)
      <		    + p(i,1,k+1) - p(i,1,k-1)
 
-	      fy(i,1,0) =  2.D0 * dtime * jac(i,1,k)  * 
-     <          ( 0.125D0 * (xix(i-1,1,k)+xix(i,1,k)) * dpdxi
-     <          +                         etx(i,0,k)  * dpdet
-     <          + 0.125D0 * (ztx(i,1,k-1)+ztx(i,1,k)) * dpdzt  )
 
-	      fy(i,2,0) =  2.D0 * dtime * jac(i,1,k)  * 
+	      fyV(i,0) =  2.D0 * dtime * jac(i,1,k)  * 
      <          ( 0.125D0 * (xiy(i-1,1,k)+xiy(i,1,k)) * dpdxi
      <          +                         ety(i,0,k)  * dpdet
      <          + 0.125D0 * (zty(i,1,k-1)+zty(i,1,k)) * dpdzt  )
-	      
-	      fy(i,3,0) =  2.D0 * dtime * jac(i,1,k)  * 
-     <          ( 0.125D0 * (xiz(i-1,1,k)+xiz(i,1,k)) * dpdxi
-     <          +                         etz(i,0,k)  * dpdet
-     <          + 0.125D0 * (ztz(i,1,k-1)+ztz(i,1,k)) * dpdzt  )
 
 	   enddo
 
@@ -493,21 +486,10 @@ CBCBCBC	BCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBC
 	      dpdzt = p(i,nnj  ,k+1) - p(i,nnj  ,k-1)
      <		    + p(i,nnj+1,k+1) - p(i,nnj+1,k-1)
 
-	      fy(i,1,nnj+1) = 2.D0 * dtime * jac(i,nnj,k)  * 
-     <          (  0.125D0 * (xix(i-1,nnj,k)+xix(i,nnj,k)) * dpdxi
-     <           +                           etx(i,nnj,k)  * dpdet
-     <           + 0.125D0 * (ztx(i,nnj,k-1)+ztx(i,nnj,k)) * dpdzt  )
-
-	      fy(i,2,nnj+1) = 2.D0 * dtime * jac(i,nnj,k)  * 
+	      fyV(i,nnj+1) = 2.D0 * dtime * jac(i,nnj,k)  * 
      <          (  0.125D0 * (xiy(i-1,nnj,k)+xiy(i,nnj,k)) * dpdxi
      <           +                           ety(i,nnj,k)  * dpdet
      <           + 0.125D0 * (zty(i,nnj,k-1)+zty(i,nnj,k)) * dpdzt  )
-
-	      fy(i,3,nnj+1) = 2.D0 * dtime * jac(i,nnj,k)  * 
-     <          (  0.125D0 * (xiz(i-1,nnj,k)+xiz(i,nnj,k)) * dpdxi
-     <           +                           etz(i,nnj,k)  * dpdet
-     <           + 0.125D0 * (ztz(i,nnj,k-1)+ztz(i,nnj,k)) * dpdzt  )
-
 	   enddo
 
 CBCBCBC	BCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBC
@@ -515,11 +497,14 @@ CBCBCBC	BCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBC
 	endif
 	
 	
-        call trid1( ay, by, cy, fy, nni, 2, 2,nnj, n_suth, n_nrth ) !This was written by YiJu	
+
+
+	call trid( ay, by, cy, fyV, nni, 1, nnj, n_suth, n_nrth )
+C        call trid1( ay, by, cy, fy, nni, 2, 2,nnj, n_suth, n_nrth ) !This was written by YiJu - I think it has bugs (Kurt Nelson 7/13/2016)	
 c.....so, here we only obtain the result for the second (jth) component
 	do j = 1, nnj
 	do i = 1, nni
-	   su(i,j,k,2) = fy(i,2,j) 
+	   su(i,j,k,2) = fyV(i,j) 
 	enddo
 	enddo
 

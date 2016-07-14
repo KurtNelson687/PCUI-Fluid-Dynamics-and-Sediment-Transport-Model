@@ -11,7 +11,7 @@
 
 clear all; close all; clc;
 %working_folder = '/p/work1/knelson3/Waves1_1';
-working_folder = '/work/knelson3/ChannelFlow4_1p2';
+working_folder = '/work/knelson3/Domain2_lessproc';
 
 sedConcentration = 0; %sediment concentration in mg/L
 
@@ -117,7 +117,8 @@ clear rho_full_pcui rho_init_pcui Csed_init_pcui x z
 %..........................................................................
 %Initialize PCUI velocity
 %..........................................................................
-u_star = sqrt(params.dpdxSteady*(y(1,end,1)+(y(1,end,1)-y(1,end-1,1))/2)/params.rho_knot)
+lasty = y(1,end-2,1)
+u_star = sqrt(params.dpdxSteady*(y(1,end-2,1)+(y(1,end-2,1)-y(1,end-3,1))/2)/params.rho_knot)
 zo = params.molecular_viscosity/(9*u_star);
 u_log = zeros(size(y));
 for i=1:m

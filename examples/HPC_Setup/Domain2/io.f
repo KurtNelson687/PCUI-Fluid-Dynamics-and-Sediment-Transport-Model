@@ -306,6 +306,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	include "metric.inc"
 	include "eddy.inc"
 	include "sed.inc"
+	include "padjust.inc"
 
 	character*4 :: ID
 
@@ -323,7 +324,8 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	read(200+myid) uzk
 	read(200+myid) p
 	read(200+myid) rho
-	
+	write(200+myid) steadyPall
+
 	if ( iscalar .eq. 1 ) read(200+myid) phi
 
 	if ( ieddy .gt. 0 ) then
@@ -352,6 +354,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	include "metric.inc"
 	include "eddy.inc"
 	include "sed.inc"
+	include "padjust.inc"
 
 	character*4 :: ID
 
@@ -369,6 +372,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	write(200+myid) uzk
 	write(200+myid) p
 	write(200+myid) rho
+	write(200+myid) steadyPall
 
 	if ( iscalar .eq. 1 ) write(200+myid) phi
 
@@ -423,12 +427,14 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	double precision, dimension(1:nnj) ::  uMean, vMean, wMean,
      <     uTurb, vTurb, wTurb, uvRey, uwRey, vwRey, vstMean, rruMean
 	double precision velPrimes(1:nni, 1:nnj, 1:nnk,3)
+	double precision uDepth 
 
 	call horizontalAverage(u(:,:,:,1), uMean, 2)
 	call horizontalAverage(u(:,:,:,2), vMean, 2)
 	call horizontalAverage(u(:,:,:,3), wMean, 2)
 	call horizontalAverage(rr(:,:,:,1), rruMean, 1)
 	call horizontalAverage(vst, vstMean, 1)
+	call depthAverage(uMean, uDepth)
 
 	call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	call get_pertVel(u, uMean, vMean, wMean, velPrimes)
@@ -482,6 +488,10 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	     write(50+myid) vstMean
 	     close(unit = 50+myid)
 
+	     open(50+myid, file='outputpVal_udepth.'//ID, form='unformatted',
+     >          status='old',position='append')
+	     write(50+myid) uDepth
+	     close(unit = 50+myid)
 
 	   else
 
@@ -523,6 +533,11 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	     open(50+myid, file='outputp_vstMean.'//ID, form='unformatted',
      >          status='unknown')
 	     write(50+myid) vstMean
+	     close(unit = 50+myid)
+
+	     open(50+myid, file='outputpVal_udepth.'//ID, form='unformatted',
+     >          status='unknown')
+	     write(50+myid) uDepth
 	     close(unit = 50+myid)
 
 	   endif

@@ -102,6 +102,7 @@ C...... lid velocities u_lid and w_lid
 	      close(700+myid)
 	   end if
 	   call u_bc
+	   Call u_exchange
 
 	   uxi = 0.D0
 	   uej = 0.D0
