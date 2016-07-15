@@ -11,9 +11,10 @@
 
 clear all; close all; clc;
 %working_folder = '/p/work1/knelson3/Waves1_1';
-working_folder = '/work/knelson3/Domain2_lessproc';
+working_folder = '/work/knelson3/Domain2/W1';
 
 sedConcentration = 0; %sediment concentration in mg/L
+Ub = 0.4576; %bottom orbital velocity
 
 % These are the output files with the filenames stripped out of extensions
 % (extensions are chosen automatically based on number of processors).
@@ -133,19 +134,16 @@ for i=1:m
     end
 end
 
-max_u_log = max(max(max(u_log)))
-a = -3/100*max(max(max(u_log)));
-b = 3/100*max(max(max(u_log)));
 
-uvw_pcui(:,:,:,1) = u_log +(b-a).*rand(size(y))+a;
+max_u_log = Ub;%Use this line for wave init 
+%max_u_log = max(max(max(u_log)))
+a = -3/100*max_u_log;
+b = 3/100*max_u_log;
+
+
+uvw_pcui(:,:,:,1) = (b-a).*rand(size(y))+a;
+%uvw_pcui(:,:,:,1) = u_log +(b-a).*rand(size(y))+a;
 uvw_pcui(:,:,:,2) = (b-a).*rand(size(y))+a;
 uvw_pcui(:,:,:,3) = (b-a).*rand(size(y))+a;
 
-
-%a = -3/100*.0009;
-%b = 3/100*.0009;
-
-%uvw_pcui(:,:,:,1) = (b-a).*rand(size(y))+a;
-%uvw_pcui(:,:,:,2) = (b-a).*rand(size(y))+a;
-%uvw_pcui(:,:,:,3) = (b-a).*rand(size(y))+a;
 write_binary_file_pcui(working_folder, fname_UVW_to_PCUI, params, uvw_pcui);

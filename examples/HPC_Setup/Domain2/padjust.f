@@ -8,10 +8,15 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	integer j
 	
-	do j = 1, nnj
-	    steadyPall(j) = 0.00
-	enddo
-	
+	if ( waves .eq. 1 ) then
+	   do j = 1, nnj
+	       steadyPall(j) = waveMag
+	   enddo
+	else
+	   do j = 1, nnj
+	       steadyPall(j) = 0.00
+	   enddo
+	endif
 	return
 	end
 
@@ -27,19 +32,28 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	double precision uMean(1:nnj)
 	double precision uDepth
 	integer j
-	
+	real, parameter :: PI=3.1415926535897932
+
 	call horizontalAverage(u(:,:,:,1), uMean, 2)
 	call depthAverage(uMean, uDepth)
 
-	do j = 1, nnj
-C	    if (uMean(j)/uTheo(j)>1.02) then
-C	        steadyPall(j) = 0
-C	    else
-C	        steadyPall(j) = dpdxSteady
-C	    endif
+	if ( waves .eq. 1 ) then
+	   do j = 1,nnj
+	       steadyPall(j)= waveMag*cos(2*PI*kount*dtime/Twave)
+     <          +dpdxSteady
+	   enddo
+	   else
+	      do j = 1, nnj
+C	         if (uMean(j)/uTheo(j)>1.02) then
+C	            steadyPall(j) = 0
+C	         else
+C	             steadyPall(j) = dpdxSteady
+C	         endif
 
-	    steadyPall(j) = steadyPall(j)+5*dtime*(Ubulk-uDepth)
-	enddo
+	       steadyPall(j) = steadyPall(j)+5*dtime*(Ubulk-uDepth)
+	      enddo
+	endif
+
 	return
 	end
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc

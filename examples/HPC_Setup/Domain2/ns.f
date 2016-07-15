@@ -9,7 +9,6 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	include "sed.inc"
 
 	double precision ta, tt, t0, t1, t2, t3, t4, t5, t6, t7, t8
-	real, parameter :: PI=3.1415926535897932
 	call MPI_INIT( ierr ) !initializes the MPI execution environment
 
 	call MPI_Barrier(MPI_COMM_WORLD, ierr) !stops program until all processes have reached this routine. MPI_COMM_WORLD is the type of communication used 
@@ -41,11 +40,6 @@ C          if ( mod(istep, nsave) .eq. 0 .and. MYID .EQ. 0 )
 	   
 	   if ( MYID .EQ. 0 .AND. MOD(istep,10) .EQ. 0) then
 	      write(*,*) ' istep = ', istep, ' kount  = ', kount
-	   end if
-
-C	Compute pressure gradient from waves if presents
-	   if ( waves .eq. 1 ) then
-	      dpdxWave = waveMag*sin(2*PI*(istep-1)*dtime/Twave)
 	   end if
 
 	   if(mod(istep,nsave) .eq. 0 .or. istep .eq. 1) then

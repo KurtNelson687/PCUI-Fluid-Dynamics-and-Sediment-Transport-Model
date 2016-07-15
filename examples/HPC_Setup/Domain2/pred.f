@@ -125,7 +125,7 @@ C......	Coriolis and bouyance force terms
 	do i = 1, nni
 	   temp = 1.D0 / jac(i,j,k)
 	   hb(i,j,k,1) = hb(i,j,k,1) - omg2 * u(i,j,k,3) * temp
-     <              + steadyPall(j)*temp/rhoWater+dpdxWave*temp/rhoWater !Started with1.5D-6 and halved it each consecutive run 
+     <              + steadyPall(j)*temp/rhoWater !Started with1.5D-6 and halved it each consecutive run 
 	   hb(i,j,k,3) = hb(i,j,k,3) + omg2 * u(i,j,k,1) * temp
 	   hb(i,j,k,2) = hb(i,j,k,2)  - g * (  rho(i,j,k)
      <                                      - rhoWater)/rhoWater * temp
