@@ -50,7 +50,7 @@ C	         else
 C	             steadyPall(j) = dpdxSteady
 C	         endif
 
-	       steadyPall(j) = steadyPall(j)+5*dtime*(Ubulk-uDepth)
+	       steadyPall(j) = steadyPall(j)+driveFac*dtime*(Ubulk-uDepth)
 	      enddo
 	endif
 

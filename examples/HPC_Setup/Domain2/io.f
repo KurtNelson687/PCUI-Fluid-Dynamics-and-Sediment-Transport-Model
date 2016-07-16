@@ -97,6 +97,9 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	    case ('dpdxSteady')
 	      read(buffer, *, iostat=ios) dpdxSteady
 	      write(*,*) 'dpdxSteady = ', dpdxSteady
+	    case ('driveFac')
+	      read(buffer, *, iostat=ios) driveFac
+	      write(*,*) 'driveFac = ', driveFac
 	    case ('waveMag')
 	      read(buffer, *, iostat=ios) waveMag
 	      write(*,*) 'waveMag  = ', waveMag
@@ -168,6 +171,8 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	call MPI_BCAST(g,           1,MPI_DOUBLE_PRECISION,0,
      <                              MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(dpdxSteady,  1,MPI_DOUBLE_PRECISION,0,
+     <                              MPI_COMM_WORLD,ierr)
+	call MPI_BCAST(driveFac,  1,MPI_DOUBLE_PRECISION,0,
      <                              MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(Twave,       1,MPI_DOUBLE_PRECISION,0,
      <                              MPI_COMM_WORLD,ierr)

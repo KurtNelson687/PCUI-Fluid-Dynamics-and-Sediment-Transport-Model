@@ -1,33 +1,43 @@
 
                             < M A T L A B (R) >
-                  Copyright 1984-2015 The MathWorks, Inc.
-                   R2015a (8.5.0.197613) 64-bit (glnxa64)
-                             February 12, 2015
+                  Copyright 1984-2014 The MathWorks, Inc.
+                   R2014b (8.4.0.150421) 64-bit (glnxa64)
+                             September 15, 2014
 
+[Warning: Directory permission denied:
+/p/home/hurley/COPASI/pHtools/pHtools_release] 
+[Warning: Directory permission denied:
+/p/home/hurley/COPASI/pHtools/pHtools_release/lpregtools] 
+[Warning: Directory permission denied:
+/p/home/hurley/COPASI/pHtools/pHtools_release/pHtools] 
+[Warning: Directory permission denied:
+/p/home/hurley/COPASI/pHtools/pHtools_release/pHtools/databases] 
+[Warning: Directory permission denied:
+/p/home/hurley/COPASI/pHtools/pHtools_release/simplextools] 
  
 To get started, type one of these: helpwin, helpdesk, or demo.
 For product information, visit www.mathworks.com.
  
->> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> 
+>> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> 
 params = 
 
                      dt: 1.0000e-03
     molecular_viscosity: 1.0000e-06
          eddy_viscosity: 0
-                 nsteps: 90000
-                  nsave: 1000
+                 nsteps: 30000
+                  nsave: 250
                 rho_sed: 2650
                rho_knot: 1000
-             dpdxSteady: 0.2441
+             dpdxSteady: 0
                wallUnit: 1.0000e-04
            numWallUnits: 1.2000
                maxRatio: 8.2000
                      ni: 768
                      nj: 128
                      nk: 320
-                     px: 12
+                     px: 24
                      py: 2
-                     pz: 5
+                     pz: 10
 
 >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> 
 lasty =
@@ -37,11 +47,6 @@ lasty =
 >> 
 u_star =
 
-    0.0050
+     0
 
->> >> >> >> >> 
-max_u_log =
-
-    0.1019
-
->> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> 
+>> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> 
