@@ -329,7 +329,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	read(200+myid) uzk
 	read(200+myid) p
 	read(200+myid) rho
-	write(200+myid) steadyPall
+	read(200+myid) steadyPall
 
 	if ( iscalar .eq. 1 ) read(200+myid) phi
 
@@ -449,6 +449,35 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	call get_reynoldsStress(velPrimes, uvRey, uwRey, vwRey)
 
 	write(ID, fmt='(I3)') 100+vert_id
+
+
+	if (myid .eq. 0) then
+	   if (istep .gt.1) then !appends to existing file - use this if you want continue run to create new files
+	     open(50+myid, file='outputp_time.'//ID, form='unformatted',
+     >          status='old',position='append')
+	     write(50+myid) time
+	     close(unit = 50+myid)
+
+	     open(50+myid, file='outputpVal_udepth.'//ID, form='unformatted',
+     >          status='old',position='append')
+	     write(50+myid) uDepth
+	     close(unit = 50+myid)
+
+	   else
+
+	     open(50+myid, file='outputp_time.'//ID, form='unformatted',
+     >          status='unknown')
+	     write(50+myid) time
+	     close(unit = 50+myid)
+
+	     open(50+myid, file='outputpVal_udepth.'//ID, form='unformatted',
+     >          status='unknown')
+	     write(50+myid) uDepth
+	     close(unit = 50+myid)
+
+	   endif
+	endif
+
 	
 	if (hor_id .eq. 0) then
 
@@ -493,11 +522,6 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	     write(50+myid) vstMean
 	     close(unit = 50+myid)
 
-	     open(50+myid, file='outputpVal_udepth.'//ID, form='unformatted',
-     >          status='old',position='append')
-	     write(50+myid) uDepth
-	     close(unit = 50+myid)
-
 	   else
 
 	     open(50+myid, file='outputp_umean.'//ID, form='unformatted',
@@ -538,11 +562,6 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	     open(50+myid, file='outputp_vstMean.'//ID, form='unformatted',
      >          status='unknown')
 	     write(50+myid) vstMean
-	     close(unit = 50+myid)
-
-	     open(50+myid, file='outputpVal_udepth.'//ID, form='unformatted',
-     >          status='unknown')
-	     write(50+myid) uDepth
 	     close(unit = 50+myid)
 
 	   endif

@@ -108,16 +108,15 @@ C          Solve for new sediment concentration
 	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	   call eqstate
 	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
-	
-	  if ( pAdjust .eq. 1 ) then
-	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
-	   call adjustPressure
-	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
-	  end if
-
 	  
 	   kount = kount + 1
 	   time = time + dtime
+
+	   if ( pAdjust .eq. 1 ) then
+	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
+	   call adjustPressure
+	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
+	   end if
 
 	   call cfl_check
  

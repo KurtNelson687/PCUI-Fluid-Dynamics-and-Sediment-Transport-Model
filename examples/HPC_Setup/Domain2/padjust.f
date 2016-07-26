@@ -39,7 +39,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	if ( waves .eq. 1 ) then
 	   do j = 1,nnj
-	       steadyPall(j)= waveMag*cos(2*PI*kount*dtime/Twave)
+	       steadyPall(j)= waveMag*cos(2*PI*time/Twave)
      <          +dpdxSteady
 	   enddo
 	   else
