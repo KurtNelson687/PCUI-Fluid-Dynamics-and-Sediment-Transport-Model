@@ -29,7 +29,6 @@ C	Time variables used to track how much time each major component of the code is
 	call mpi_initial !this sets up the partitioning and creates a map for the processors.
 	call grid !This sets up the grid and calculates all the grid variables needed including the inverse Jacobian and the  mesh skewness tensor.
 	call output_xyz !This writes the x, y, and z coordinates of the created grid.
-	call init_pSteady !initialize steady pressure gradient
 	call initial !This initializes velocities, density field, and turbulence properties
 	call getUtheo !This computes the steady state profile from the constant pressure gardient
 	call output_Utheo !Outputs the theoretical log profile

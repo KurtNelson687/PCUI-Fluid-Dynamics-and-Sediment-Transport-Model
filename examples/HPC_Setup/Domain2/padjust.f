@@ -14,7 +14,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	   enddo
 	else
 	   do j = 1, nnj
-	       steadyPall(j) = 0.00
+	       steadyPall(j) = dpdxSteady
 	   enddo
 	endif
 	return
