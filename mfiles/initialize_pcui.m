@@ -11,10 +11,10 @@
 
 clear all; close all; clc;
 %working_folder = '/p/work1/knelson3/Waves1_1';
-working_folder = '/work/knelson3/Domain2/W1';
+working_folder = '/work/knelson3/Domain4/T40_R1000_1';
 
 sedConcentration = 0; %sediment concentration in mg/L
-Ub = 0.4576; %bottom orbital velocity
+Ub = 0.1; %bottom orbital velocity
 
 % These are the output files with the filenames stripped out of extensions
 % (extensions are chosen automatically based on number of processors).
@@ -137,8 +137,8 @@ end
 
 max_u_log = Ub;%Use this line for wave init 
 %max_u_log = max(max(max(u_log)))
-a = -3/100*max_u_log;
-b = 3/100*max_u_log;
+a = -40/100*max_u_log;
+b = 40/100*max_u_log;
 
 
 uvw_pcui(:,:,:,1) = (b-a).*rand(size(y))+a;

@@ -1,19 +1,9 @@
 
                             < M A T L A B (R) >
-                  Copyright 1984-2014 The MathWorks, Inc.
-                   R2014b (8.4.0.150421) 64-bit (glnxa64)
-                             September 15, 2014
+                  Copyright 1984-2015 The MathWorks, Inc.
+                   R2015a (8.5.0.197613) 64-bit (glnxa64)
+                             February 12, 2015
 
-[Warning: Directory permission denied:
-/p/home/hurley/COPASI/pHtools/pHtools_release] 
-[Warning: Directory permission denied:
-/p/home/hurley/COPASI/pHtools/pHtools_release/lpregtools] 
-[Warning: Directory permission denied:
-/p/home/hurley/COPASI/pHtools/pHtools_release/pHtools] 
-[Warning: Directory permission denied:
-/p/home/hurley/COPASI/pHtools/pHtools_release/pHtools/databases] 
-[Warning: Directory permission denied:
-/p/home/hurley/COPASI/pHtools/pHtools_release/simplextools] 
  
 To get started, type one of these: helpwin, helpdesk, or demo.
 For product information, visit www.mathworks.com.
@@ -21,28 +11,28 @@ For product information, visit www.mathworks.com.
 >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> 
 params = 
 
-                     dt: 1.0000e-03
+                     dt: 4.1667
     molecular_viscosity: 1.0000e-06
          eddy_viscosity: 0
-                 nsteps: 30000
-                  nsave: 250
+                 nsteps: 384000
+                  nsave: 4000
                 rho_sed: 2650
                rho_knot: 1000
              dpdxSteady: 0
                wallUnit: 1.0000e-04
-           numWallUnits: 1.2000
-               maxRatio: 8.2000
+           numWallUnits: 0.3000
+               maxRatio: 32.8000
                      ni: 768
-                     nj: 128
+                     nj: 144
                      nk: 320
                      px: 24
-                     py: 2
+                     py: 3
                      pz: 10
 
 >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> 
 lasty =
 
-    0.1003
+    0.0995
 
 >> 
 u_star =

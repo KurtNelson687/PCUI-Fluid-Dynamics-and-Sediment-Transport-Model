@@ -1,6 +1,6 @@
 #!/bin/csh
 #  Request maximum wallclock time for job
-#PBS -l walltime=0:10:00
+#PBS -l walltime=0:15:00
 #  Total cores requested = <number of nodes> X <MPI procs/node>
 #PBS -l select=1:ncpus=32:mpiprocs=1
 # Specify how MPI processes are distributed on nodes
