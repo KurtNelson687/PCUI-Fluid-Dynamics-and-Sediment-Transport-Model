@@ -41,7 +41,7 @@ C          if ( mod(istep, nsave) .eq. 0 .and. MYID .EQ. 0 )
 	      write(*,*) ' istep = ', istep, ' kount  = ', kount
 	   end if
 
-	   if(mod(istep,nsave) .eq. 0 .or. istep .eq. 1) then
+	   if(mod(istep,nsave) .eq. 1 .or. istep .eq. 1) then
 	      call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	      tt =  MPI_Wtime()
 	      call output !writes density, and velocity field

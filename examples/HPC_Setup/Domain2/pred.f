@@ -500,8 +500,7 @@ CBCBCBC	BCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBC
 
 
 	call trid( ay, by, cy, fyV, nni, 1, nnj, n_suth, n_nrth )
-C        call trid1( ay, by, cy, fy, nni, 2, 2,nnj, n_suth, n_nrth ) !This was written by YiJu - I think it has bugs (Kurt Nelson 7/13/2016)	
-c.....so, here we only obtain the result for the second (jth) component
+c.....update only the vertical (jth) component - the horizontal components were updated in the prior step
 	do j = 1, nnj
 	do i = 1, nni
 	   su(i,j,k,2) = fyV(i,j) 
