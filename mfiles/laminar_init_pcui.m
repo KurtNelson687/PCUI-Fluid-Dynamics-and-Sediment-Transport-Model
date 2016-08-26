@@ -11,7 +11,8 @@
 
 clear all; close all; clc;
 %working_folder = '/p/work1/knelson3/Waves1_1';
-working_folder = '/p/work1/knelson3/Domain2/L1';
+%working_folder = '/p/work1/knelson3/Domain2/L1';
+working_folder = '/work/knelson3/Moin_small2_1';
 
 sedConcentration = 0; %sediment concentration in mg/L
 
@@ -118,7 +119,7 @@ clear rho_full_pcui rho_init_pcui Csed_init_pcui x z
 %..........................................................................
 %Initialize PCUI velocity
 %..........................................................................
-dpdx_laminar = 0.0265
+dpdx_laminar = 560
 H = y(1,end,1)+0.5*(y(1,end,1)-y(1,end-1,1))
 
 

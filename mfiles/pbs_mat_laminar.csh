@@ -1,12 +1,12 @@
 #!/bin/csh
 #  Request maximum wallclock time for job
-#PBS -l walltime=00:2:00
+#PBS -l walltime=0:10:00
 #  Total cores requested = <number of nodes> X <MPI procs/node>
 #PBS -l select=1:ncpus=32:mpiprocs=1
 # Specify how MPI processes are distributed on nodes
 #PBS -l application=matlab
 #  Request job name
-#PBS -N Moin2
+#PBS -N init_pcui2
 #  Request PBS job queue for job
 #PBS -q background
 ##PBS -q standard
@@ -16,7 +16,7 @@
 #  Indicate required  matlab licenses
 #PBS -l MATLAB=1
 #  Email
-#PBS -m abe -M knelson3@stanford.edu 
+##PBS -m abe -M knelson3@stanford.edu 
 # Indicate Project ID
 #PBS -A ONRDC27755267
 #  Request environment variables be exported from script
@@ -26,14 +26,14 @@
 ## End of preamble, beginning of shell script ##
 set JOBID=`echo $PBS_JOBID | cut -f1 -d.`
 echo job $JOBID starting at `date` on `hostname`
-cd /u/knelson3/repository/pcui-3d/mfiles
+cd $PBS_O_WORKDIR
 echo starting in `pwd`
 
-set outfile=output.txt
+set outfile=init.out
 set outdir=$PBS_O_WORKDIR
 set indir=`pwd`
 
-set infile=~/repository/pcui-3d/mfiles/velDataView.m
+set infile=laminar_init_pcui.m
 
 ls -l
 

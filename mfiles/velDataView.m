@@ -22,13 +22,13 @@ skip_vector = 8;
 
 
 iskip = 1;
-istart =  1;
-iend = 9;%floor(params.nsteps/params.nsave)
+istart =  37;
+iend = 37;%floor(params.nsteps/params.nsave)
 
 %%%%%% Testing Simulations
 
 %working_folder = '/p/work1/knelson3/Wave4_2_smallresid';
-working_folder = '/work/knelson3/Domain2';
+working_folder = '/work/knelson3/Moin_small2_3plog4';
 %working_folder = '/work/knelson3/small_1';
 
 fname_xyz = 'xyz';
