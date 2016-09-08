@@ -29,6 +29,7 @@ C	Time variables used to track how much time each major component of the code is
 	call mpi_initial !this sets up the partitioning and creates a map for the processors.
 	call grid !This sets up the grid and calculates all the grid variables needed including the inverse Jacobian and the  mesh skewness tensor.
 	call output_xyz !This writes the x, y, and z coordinates of the created grid.
+C	call init_pSteady !initialize steady pressure gradient
 	call initial !This initializes velocities, density field, and turbulence properties
 	call getUtheo !This computes the steady state profile from the constant pressure gardient
 	call output_Utheo !Outputs the theoretical log profile
@@ -41,7 +42,13 @@ C          if ( mod(istep, nsave) .eq. 0 .and. MYID .EQ. 0 )
 	      write(*,*) ' istep = ', istep, ' kount  = ', kount
 	   end if
 
-	   if(mod(istep,nsave) .eq. 1 .or. istep .eq. 1) then
+	   if ( pAdjust .eq. 1 ) then
+	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
+	   call adjustPressure
+	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
+	   end if
+
+	   if(mod(istep,nsave) .eq. 0 .or. istep .eq. 1) then
 	      call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	      tt =  MPI_Wtime()
 	      call output !writes density, and velocity field
@@ -110,12 +117,6 @@ C          Solve for new sediment concentration
 	  
 	   kount = kount + 1
 	   time = time + dtime
-
-	   if ( pAdjust .eq. 1 ) then
-	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
-	   call adjustPressure
-	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
-	   end if
 
 	   call cfl_check
  

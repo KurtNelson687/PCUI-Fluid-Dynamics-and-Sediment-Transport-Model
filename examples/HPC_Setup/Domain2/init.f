@@ -10,7 +10,6 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	include "metric.inc"
 	include "eddy.inc"
 	include "sed.inc"
-	include "padjust.inc"
 
 	integer :: i, j, k
 	logical :: iostat
@@ -140,7 +139,6 @@ C...... lid velocities u_lid and w_lid
 	   end if
 
 
-	call init_pSteady !initialize steady pressure gradient
 C...... lid velocities u_lid and w_lid
 
 	else

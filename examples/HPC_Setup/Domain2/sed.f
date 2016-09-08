@@ -354,16 +354,12 @@ C        Diffussion terms
      <		+ g21(i,0,k) * ( Csed(i+1,1,  k) - Csed(i-1,1,  k)
      <		                 + Csed(i+1,0,k) - Csed(i-1,0,k) ) )
 C        Advection
-     <		- uej(i,0,k) * Csedf(i,0,k,2)
-     <		+ Csed(I,1,K) * UEJ(I,0,K)
+C     <		- uej(i,0,k) * Csedf(i,0,k,2)
+C     <		+ Csed(I,1,K) * UEJ(I,0,K)
 C        Add deposition
-     <		- 1/jac(i,1,k)*ws*1/yetjface(i,1,k)*Csed(i,1,k)
+C     <		- 1/jac(i,1,k)*ws*1/yetjface(i,1,k)*Csed(i,1,k)
 C        Add erosion
-        
-	if (tau
-	   hbCsed(i,1,k) = hbCsed(i,1,k)
-     <		+ 1/jac(i,1,k)*ws*1/yetjface(i,1,k)*Csed(i,1,k)
-        endif
+
 	   enddo
 	   enddo
 	endif

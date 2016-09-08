@@ -125,7 +125,7 @@ C......	Coriolis and bouyance force terms
 	do i = 1, nni
 	   temp = 1.D0 / jac(i,j,k)
 	   hb(i,j,k,1) = hb(i,j,k,1) - omg2 * u(i,j,k,3) * temp
-     <              + steadyPall(j)*temp/rhoWater !Started with1.5D-6 and halved it each consecutive run 
+C     <              + steadyPall(j)*temp/rhoWater !Started with1.5D-6 and halved it each consecutive run 
 	   hb(i,j,k,3) = hb(i,j,k,3) + omg2 * u(i,j,k,1) * temp
 	   hb(i,j,k,2) = hb(i,j,k,2)  - g * (  rho(i,j,k)
      <                                      - rhoWater)/rhoWater * temp
@@ -168,6 +168,17 @@ C......	Diagonal viscous terms at step n-1 from Crank-Nicolson
 	enddo
 	enddo 
 	enddo 
+
+C....... Add driving pressure gradient explicitly
+	do k = 1, nnk
+	do j = 1, nnj
+	do i = 1, nni
+	   temp = 1.D0 / jac(i,j,k)
+	   su(i,j,k,1) = su(i,j,k,1)  
+     <              + steadyPall(j)*temp/rhoWater
+	enddo
+	enddo
+	enddo
 
 C......	Multiply dt
 
@@ -500,7 +511,8 @@ CBCBCBC	BCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBC
 
 
 	call trid( ay, by, cy, fyV, nni, 1, nnj, n_suth, n_nrth )
-c.....update only the vertical (jth) component - the horizontal components were updated in the prior step
+C        call trid1( ay, by, cy, fy, nni, 2, 2,nnj, n_suth, n_nrth ) !This was written by YiJu - I think it has bugs (Kurt Nelson 7/13/2016)	
+c.....so, here we only obtain the result for the second (jth) component
 	do j = 1, nnj
 	do i = 1, nni
 	   su(i,j,k,2) = fyV(i,j) 
