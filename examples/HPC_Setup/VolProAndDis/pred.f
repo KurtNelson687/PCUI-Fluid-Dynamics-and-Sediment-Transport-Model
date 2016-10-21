@@ -89,7 +89,7 @@ C......	Cross viscous terms at step n-1 from Crank-Nicolson (step 4 in notes - I
 	do j = 1, nnj
 	do i = 1, nni
 
-	   DisNew(i,j,k,m) = DisNew(i,j,k,m)+
+	   DisNew(i,j,k,m) =
      <         ( vis + 0.5D0*(vst(i,j,k)+vst(i+1,j,k)) ) *
      <		( g12(i,  j,k) * ( u(i,  j+1,k,m) - u(i,  j-1,k,m) 
      <		                 + u(i+1,j+1,k,m) - u(i+1,j-1,k,m) )

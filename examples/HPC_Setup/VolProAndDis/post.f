@@ -73,7 +73,8 @@ C       This subroutine routine computes velociy purturbations
 
 	double precision, intent(in) :: u(-1:nni+2,-1:nnj+2,-1:nnk+2,3),
      <        uMean(0:nnj+1), vMean(0:nnj+1), wMean(0:nnj+1)
-	double precision, intent(out) :: velPrimes(0:nni+1, 0:nnj+1, 0:nnk+1,3)
+	double precision, intent(out) :: 
+     <      velPrimes(0:nni+1, 0:nnj+1, 0:nnk+1,3)
 	
 	integer i, j, k
 	
@@ -147,9 +148,12 @@ C       This subroutine routine computes velociy purturbations
 	do i = 1, nni
 	   do j = 1, nnj
 	      do k = 1, nnk
-	      reynoldsStresses(i,j,k,1) = velPrimes(i,j,k,1)*velPrimes(i,j,k,2)
-	      reynoldsStresses(i,j,k,2) = velPrimes(i,j,k,1)*velPrimes(i,j,k,3)
-	      reynoldsStresses(i,j,k,3) = velPrimes(i,j,k,3)*velPrimes(i,j,k,2)
+	      reynoldsStresses(i,j,k,1) = 
+     <           velPrimes(i,j,k,1)*velPrimes(i,j,k,2)
+	      reynoldsStresses(i,j,k,2) = 
+     <           velPrimes(i,j,k,1)*velPrimes(i,j,k,3)
+	      reynoldsStresses(i,j,k,3) = 
+     <           velPrimes(i,j,k,3)*velPrimes(i,j,k,2)
 	      enddo
 	   enddo
 	enddo
@@ -173,8 +177,10 @@ C       This subroutine routine computes velociy purturbations
 
 	include "size.inc"
 
-	double precision, intent(in) :: input(-1:nni+2,-1:nnj+2,-1:nnk+2,3)
-	double precision, intent(out) :: output(-1:nni+2,-1:nnj+2,-1:nnk+2)
+	double precision, intent(in) ::
+     <       input(-1:nni+2,-1:nnj+2,-1:nnk+2,3)
+	double precision, intent(out) ::
+     <       output(-1:nni+2,-1:nnj+2,-1:nnk+2)
 	integer i, j, k
 	
 	do i = -1, nni+2
@@ -260,7 +266,8 @@ C       This subroutine horizontally Averages an array. It is written for cartes
      <               MPI_SUM, 0, hor_comm, ierr)
 	
 	outArray = outArray/(px*pz)
-	call MPI_BCAST(outArray,nnj+2,MPI_DOUBLE_PRECISION,0,hor_comm,ierr)
+	call MPI_BCAST(outArray,nnj+2,
+     <      MPI_DOUBLE_PRECISION,0,hor_comm,ierr)
 	return
 	end
 
@@ -294,13 +301,13 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 	
 	if (myid .eq. 0) then
 	   if (istep .gt.1) then !appends to existing file - use this if you want continue run to create new files
-	     open(50+myid, file='outputpVal_udepth.'//ID, form='unformatted',
-     >          status='old',position='append')
+	     open(50+myid, file='outputpVal_udepth.'//ID,
+     >         form='unformatted',status='old',position='append')
 	     write(50+myid) uDepth
 	     close(unit = 50+myid)
 	   else
-	     open(50+myid, file='outputpVal_udepth.'//ID, form='unformatted',
-     >          status='unknown')
+	     open(50+myid, file='outputpVal_udepth.'//ID, 
+     >          form='unformatted',status='unknown')
 	     write(50+myid) uDepth
 	     close(unit = 50+myid)
 	   endif
@@ -535,24 +542,24 @@ CCCCCCCCCCCCC Add u^(n+1) parts to Dissipation calculation
 	if ( MYID .eq. 0 ) then
 
 	   if (istep .gt.1) then !appends to existing file - use this if you want continue run to create new files
-	     open(50+myid, file='outputpval_DisDepth.100', form='unformatted',
-     >          status='old',position='append')
+	     open(50+myid, file='outputpval_DisDepth.100',
+     >          form='unformatted',status='old',position='append')
 	     write(50+myid) DisDepth
 	     close(unit = 50+myid)
 
-	     open(50+myid, file='outputpval_ProDepth.100', form='unformatted',
-     >          status='old',position='append')
+	     open(50+myid, file='outputpval_ProDepth.100', 
+     >          form='unformatted', status='old',position='append')
 	     write(50+myid) ProDepth
 	     close(unit = 50+myid)
 
 	   else
-	     open(50+myid, file='outputpval_DisDepth.100', form='unformatted',
-     >          status='unknown')
+	     open(50+myid, file='outputpval_DisDepth.100',
+     >          form='unformatted',status='unknown')
 	     write(50+myid) DisDepth
 	     close(unit = 50+myid)
 
-	     open(50+myid, file='outputpval_ProDepth.100', form='unformatted',
-     >          status='unknown')
+	     open(50+myid, file='outputpval_ProDepth.100', 
+     >          form='unformatted',status='unknown')
 	     write(50+myid) ProDepth
 	     close(unit = 50+myid)
 

@@ -148,7 +148,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	endif
 
-	call MPI_BCAST(runCase,        1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
+	call MPI_BCAST(runCase,     1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(newrun,      1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(periodic,    1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(pAdjust,     1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
@@ -303,8 +303,8 @@ C	   close(unit = 50+myid)
 	   close(unit = 800+myid)
 
 	   if (ised .eq. 1) then
-	        open(900+myid, file='output_Csed.'//ID, form='unformatted',
-     >               status='unknown')	 
+	        open(900+myid, file='output_Csed.'//ID, 
+     >         form='unformatted',status='unknown') 
 	        write(900+myid) Csed
 	        close(unit = 900+myid)
 	   endif   
@@ -491,13 +491,13 @@ C	call horizontalAverage(vst, vstMean, 1)
 	     write(50+myid) time
 	     close(unit = 50+myid)
 	     
-	open(50+myid, file='outputpVal_kineticdepth.'//ID, form='unformatted',
-     >          status='old',position='append')
+	open(50+myid, file='outputpVal_kineticdepth.'//ID, 
+     >    form='unformatted',status='old',position='append')
 	     write(50+myid) kineticDepth
 	     close(unit = 50+myid)
 
-	     open(50+myid, file='outputpVal_drive.'//ID, form='unformatted',
-     >          status='old',position='append')
+	     open(50+myid, file='outputpVal_drive.'//ID,
+     >   form='unformatted', status='old',position='append')
 	     write(50+myid) drive
 	     close(unit = 50+myid)
 	   else
@@ -507,13 +507,13 @@ C	call horizontalAverage(vst, vstMean, 1)
 	     write(50+myid) time
 	     close(unit = 50+myid)
 
-	open(50+myid, file='outputpVal_kineticdepth.'//ID, form='unformatted',
-     >          status='unknown')
+	    open(50+myid, file='outputpVal_kineticdepth.'//ID,
+     >           form='unformatted', status='unknown')
 	     write(50+myid) kineticDepth
 	     close(unit = 50+myid)
 	     
-	     open(50+myid, file='outputpVal_drive.'//ID, form='unformatted',
-     >          status='unknown')
+	     open(50+myid, file='outputpVal_drive.'//ID, 
+     >            form='unformatted', status='unknown')
 	     write(50+myid) drive
 	     close(unit = 50+myid)
 
@@ -523,8 +523,8 @@ C	call horizontalAverage(vst, vstMean, 1)
 	
 	if (hor_id .eq. 0) then
 	   if (istep .gt.1) then !appends to existing file - use this if you want continue run to create new files
-	     open(50+myid, file='outputp_dissmean.'//ID, form='unformatted',
-     >          status='old',position='append')
+	     open(50+myid, file='outputp_dissmean.'//ID, 
+     >          form='unformatted', status='old',position='append')
 	     write(50+myid) dissipationMean
 	     close(unit = 50+myid)
 
@@ -574,8 +574,8 @@ C	     write(50+myid) vstMean
 C	     close(unit = 50+myid)
 
 	   else
-	     open(50+myid, file='outputp_dissmean.'//ID, form='unformatted',
-     >          status='unknown')
+	     open(50+myid, file='outputp_dissmean.'//ID, 
+     >          form='unformatted',status='unknown')
 	     write(50+myid) dissipationMean
 	     close(unit = 50+myid)
 
