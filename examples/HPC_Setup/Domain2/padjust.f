@@ -14,7 +14,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	   enddo
 	else
 	   do j = 1, nnj
-	       steadyPall(j) = dpdxLaminar
+	       steadyPall(j) = dpdxSteady
 	   enddo
 	endif
 	return
@@ -46,48 +46,8 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
      <          +dpdxSteady
 	   enddo
 	 else
-	  do i = 1,nni
-	   do j = 1,nnj
-	    do k = 1,nnk
-	       vertStress(i,j,k)=vis*rhoWater
-     <           /(0.5*(xp(i,j+1,k,2)-xp(i,j-1,k,2)))*(
-     <           (u(i,j+1,k,1)-u(i,j,k,1))/(xp(i,j+1,k,2)-xp(i,j,k,2)) 
-     <          -(u(i,j,k,1)-u(i,j-1,k,1))/(xp(i,j,k,2)-xp(i,j-1,k,2))) 
-	    enddo
-	   enddo
-	  enddo
-
-	   call horizontalAverage(vertStress, vertStressHor, 2)
-	   call depthAverage(vertStressHor,vertStressMean)
-	   dpdxSource = -dpdxSteady-vertStressMean
-
-	if(mod(istep,nsave) .eq. 0 .or. istep .eq. 1) then
-	if (myid .eq. 0) then
-	   write(ID, fmt='(I3)') 100+vert_id
-	   if (istep .gt.1) then !appends to existing file - use this if you want continue run to create new files
-	     open(50+myid, file='outputpVal_Source.'//ID, form='unformatted',
-     >          status='old',position='append')
-	     write(50+myid) dpdxSource
-	     close(unit = 50+myid)
-	   else
-	     open(50+myid, file='outputpVal_Source.'//ID, form='unformatted',
-     >          status='unknown')
-	     write(50+myid) dpdxSource
-	     close(unit = 50+myid)
-	   endif
-	endif
-	endif
-
 	   do j = 1, nnj
-C	     if (uMean(j)/uTheo(j)>1.02) then
-C	         steadyPall(j) = 0
-C	      else
-C	         steadyPall(j) = dpdxSteady
-C            endif
-
-C This is what Ive been using
-C	       steadyPall(j) = steadyPall(j)+driveFac*dtime*(Ubulk-uDepth)
-	  steadyPall(j) = dpdxSteady+dpdxSource+rhoWater/dtime*(Ubulk-uDepth)
+	         steadyPall(j) = 1/dtime*(Ubulk-uDepth)
 	   enddo
 	endif
 
@@ -121,5 +81,58 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	       uTheo(j) = u_fric/karman*LOG(yAll(jj0+j)/zo) 
 	   endif
 	enddo
+	return
+	end
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+
+	subroutine adjust_u
+
+	include "size.inc"
+	include "mpif.h"
+	include "para.inc"
+	include "ns.inc"
+	include "padjust.inc"
+	include "mpi.inc"
+	include "metric.inc"
+
+	integer i, j, k
+
+
+
+	do k = 1, nnk
+	do j = 1, nnj
+	do i = 1, nni
+	   u(i,j,k,1) = u(i,j,k,1)+dtime*steadyPall(j)
+	enddo
+	enddo
+	enddo
+
+
+	return
+	end
+
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+
+	subroutine adjust_uxi
+
+	include "size.inc"
+	include "mpif.h"
+	include "para.inc"
+	include "ns.inc"
+	include "padjust.inc"
+	include "mpi.inc"
+	include "metric.inc"
+
+	integer i, j, k
+
+	do k = 1, nnk
+	do j = 1, nnj
+	do i = ius, iue
+	   uxi(i,j,k) = uxi(i,j,k) + dtime*xix(i,j,k)*steadyPall(j)
+
+	enddo
+	enddo
+	enddo
+	
 	return
 	end

@@ -52,11 +52,23 @@ C......	First put in the part of Adams Bashforth from step n-2 (step 1 in notes)
 	enddo
 	enddo
 	enddo 
-	enddo 
+	enddo
 
 C......	Convective terms (explicit) (step 2 in notes)
 
         call convection
+
+C...... Put convection term Cn in Pro
+
+	do m = 1, 3
+	do k = 1, nnk
+	do j = 1, nnj
+	do i = 1, nni
+           ConNew(i,j,k,m) =  hb(i,j,k,m)
+	enddo
+	enddo
+	enddo 
+	enddo
 
 C......	LES self-similarity term (step 3 in notes)
 
@@ -77,8 +89,8 @@ C......	Cross viscous terms at step n-1 from Crank-Nicolson (step 4 in notes - I
 	do j = 1, nnj
 	do i = 1, nni
 
-	   hb(i,j,k,m) = hb(i,j,k,m) 
-     <        + ( vis + 0.5D0*(vst(i,j,k)+vst(i+1,j,k)) ) *
+	   DisNew(i,j,k,m) =
+     <         ( vis + 0.5D0*(vst(i,j,k)+vst(i+1,j,k)) ) *
      <		( g12(i,  j,k) * ( u(i,  j+1,k,m) - u(i,  j-1,k,m) 
      <		                 + u(i+1,j+1,k,m) - u(i+1,j-1,k,m) )
      <		+ g13(i,  j,k) * ( u(i,  j,k+1,m) - u(i,  j,k-1,m)
@@ -89,8 +101,8 @@ C......	Cross viscous terms at step n-1 from Crank-Nicolson (step 4 in notes - I
      <		+ g13(i-1,j,k) * ( u(i,  j,k+1,m) - u(i,  j,k-1,m)
      <		                 + u(i-1,j,k+1,m) - u(i-1,j,k-1,m) ) )
 
-	   hb(i,j,k,m) = hb(i,j,k,m) 
-     <        + ( vis + 0.5D0*(vst(i,j,k)+vst(i,j+1,k)) ) *
+	   DisNew(i,j,k,m) = DisNew(i,j,k,m)+
+     <         ( vis + 0.5D0*(vst(i,j,k)+vst(i,j+1,k)) ) *
      <		( g23(i,j,  k) * ( u(i,j,  k+1,m) - u(i,j,  k-1,m)
      <		                 + u(i,j+1,k+1,m) - u(i,j+1,k-1,m) )
      <		+ g21(i,j,  k) * ( u(i+1,j,  k,m) - u(i-1,j,  k,m)
@@ -101,8 +113,8 @@ C......	Cross viscous terms at step n-1 from Crank-Nicolson (step 4 in notes - I
      <		+ g21(i,j-1,k) * ( u(i+1,j,  k,m) - u(i-1,j,  k,m)
      <		                 + u(i+1,j-1,k,m) - u(i-1,j-1,k,m) ) )
 
-	   hb(i,j,k,m) = hb(i,j,k,m)  
-     <        + ( vis + 0.5D0*(vst(i,j,k)+vst(i,j,k+1)) ) *
+	   DisNew(i,j,k,m) = DisNew(i,j,k,m)+
+     <         ( vis + 0.5D0*(vst(i,j,k)+vst(i,j,k+1)) ) *
      <		( g31(i,j,k  ) * ( u(i+1,j,k,  m) - u(i-1,j,k,  m)
      <		                 + u(i+1,j,k+1,m) - u(i-1,j,k+1,m) )
      <		+ g32(i,j,k  ) * ( u(i,j+1,k,  m) - u(i,j-1,k,  m)
@@ -113,10 +125,12 @@ C......	Cross viscous terms at step n-1 from Crank-Nicolson (step 4 in notes - I
      <		+ g32(i,j,k-1) * ( u(i,j+1,k,  m) - u(i,j-1,k,  m)
      <		                 + u(i,j+1,k-1,m) - u(i,j-1,k-1,m) ) )
 
+	   hb(i,j,k,m) = hb(i,j,k,m)+DisNew(i,j,k,m) 
 	enddo
 	enddo
 	enddo
 	enddo
+
 
 C......	Coriolis and bouyance force terms
 
@@ -151,8 +165,8 @@ C......	Diagonal viscous terms at step n-1 from Crank-Nicolson
 	do k = 1, nnk
 	do j = 1, nnj
 	do i = 1, nni
-	   su(i,j,k,m) = su(i,j,k,m)  
-     <        + ( vis + 0.5D0*(vst(i,j,k) + vst(i+1,j,k)) ) * 
+	su(i,j,k,m) = su(i,j,k,m)+ 
+     <         ( vis + 0.5D0*(vst(i,j,k) + vst(i+1,j,k)) ) * 
      <		g11(i,  j,  k  ) * ( u(i+1,j,  k,  m) - u(i,j,k,m) )  
      <        + ( vis + 0.5D0*(vst(i,j,k) + vst(i-1,j,k)) ) * 
      <		g11(i-1,j,  k  ) * ( u(i-1,j,  k,  m) - u(i,j,k,m) ) 
@@ -164,10 +178,13 @@ C......	Diagonal viscous terms at step n-1 from Crank-Nicolson
      <		g33(i,  j,  k  ) * ( u(i,  j,  k+1,m) - u(i,j,k,m) )  
      <        + ( vis + 0.5D0*(vst(i,j,k) + vst(i,j,k-1)) ) * 
      <		g33(i,  j,  k-1) * ( u(i,  j,  k-1,m) - u(i,j,k,m) )  
+
 	enddo
 	enddo
 	enddo 
 	enddo 
+
+C        call ProdPut
 
 C....... Add driving pressure gradient explicitly
 C	do k = 1, nnk

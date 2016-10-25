@@ -45,6 +45,9 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	enddo
 	enddo
 
+
+	call adjustPressure
+	call adjust_u
 	call u_bc
 	call u_exchange
 
@@ -60,6 +63,8 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	enddo
 	enddo
 	enddo
+
+	call adjust_uxi
 
 	do k = 1, nnk
 	do j = jus, jue

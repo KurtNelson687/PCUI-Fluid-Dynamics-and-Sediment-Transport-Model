@@ -7,6 +7,6 @@
 	double precision, dimension(nj) ::
      <		dyAll, yAll
 	common/mapping/
-     <		bx, by, bz, dm, cm, am, bm,
+     <		bx, by, bz, dm, cm, am, bm,dyAll,
      <		stretchx, stretchy, stretchz, yAll
 

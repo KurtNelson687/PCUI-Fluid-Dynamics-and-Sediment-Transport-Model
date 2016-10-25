@@ -33,6 +33,7 @@ C	call init_pSteady !initialize steady pressure gradient
 	call getUtheo !This computes the steady state profile from the constant pressure gardient
 	call initial !This initializes velocities, density field, and turbulence properties
 	call output_Utheo !Outputs the theoretical log profile
+	call computeMeanAndPrimes
 
 	do istep = 1, nstep !time stepping of simulation
 	   if ( MYID .EQ. 0 .AND. MOD(istep,10) .EQ. 0) then
@@ -113,6 +114,12 @@ C          Solve for new sediment concentration
 	   if ( ised .eq. 1 ) call Csed_solve
 	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	   t8 = t8 + MPI_Wtime() - tt
+
+	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
+	   tt =  MPI_Wtime()
+	   call getProAndDis
+	   t6 = t6 + MPI_Wtime() - tt
+	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	   
 	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	   call eqstate

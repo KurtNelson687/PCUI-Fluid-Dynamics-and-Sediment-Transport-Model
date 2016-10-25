@@ -148,7 +148,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	endif
 
-	call MPI_BCAST(runCase,        1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
+	call MPI_BCAST(runCase,     1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(newrun,      1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(periodic,    1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(pAdjust,     1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
@@ -226,7 +226,12 @@ C	This subroutine is simply writing the x,y, and z coordinates from each process
 
 	character*4 ID 
 
+	if (100+myid .gt. 999) then
+	write(ID, fmt='(I4)') 100+myid
+	else
 	write(ID, fmt='(I3)') 100+myid
+	endif
+	
 	open(500+myid,file='xyz.'//ID,form='unformatted',status='unknown')
 	write(500+myid) xp
         close(unit = 500+myid)
@@ -249,7 +254,11 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	
 	character*4 :: ID
 
+	if (100+myid .gt. 999) then
+	write(ID, fmt='(I4)') 100+myid
+	else
 	write(ID, fmt='(I3)') 100+myid
+	endif
 
 	if (myid .eq. 0) print *, 'Recording to output files ...'
 
@@ -294,8 +303,8 @@ C	   close(unit = 50+myid)
 	   close(unit = 800+myid)
 
 	   if (ised .eq. 1) then
-	        open(900+myid, file='output_Csed.'//ID, form='unformatted',
-     >               status='unknown')	 
+	        open(900+myid, file='output_Csed.'//ID, 
+     >         form='unformatted',status='unknown') 
 	        write(900+myid) Csed
 	        close(unit = 900+myid)
 	   endif   
@@ -320,7 +329,11 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	character*4 :: ID
 
+	if (100+myid .gt. 999) then
+	write(ID, fmt='(I4)') 100+myid
+	else
 	write(ID, fmt='(I3)') 100+myid
+	endif
 	
 	open(200+myid, file='continue_run.'//ID, form='unformatted',
      >          status='old')	   
@@ -366,7 +379,14 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	include "sed.inc"
 	include "padjust.inc"
 
+
 	character*4 :: ID
+
+	if (100+myid .gt. 999) then
+	write(ID, fmt='(I4)') 100+myid
+	else
+	write(ID, fmt='(I3)') 100+myid
+	endif
 
 	write(ID, fmt='(I3)') 100+myid
 
@@ -409,7 +429,11 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	
 	character*4 :: ID
 
+	if (100+vert_id .gt. 999) then
+	write(ID, fmt='(I4)') 100+vert_id
+	else
 	write(ID, fmt='(I3)') 100+vert_id
+	endif
 
 	if (myid .eq. 0) print *, 'writing log law to files ...'
 	
@@ -434,36 +458,30 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	include "para.inc"
 	include "eddy.inc"
 	character*4 :: ID
-	double precision, dimension(0:nnj+1) :: uMean, vMean, wMean
 	double precision, dimension(1:nnj) ::
      <     uTurb, vTurb, wTurb,uvRey, uwRey, vwRey, vstMean, rruMean,
      <     kineticMean, dissipationMean
-	double precision velPrimes(0:nni+1, 0:nnj+1, 0:nnk+1,3)
-	double precision uDepth, kineticDepth, drive 
+	double precision kineticDepth, drive 
 	double precision, dimension(-1:nni+2,-1:nnj+2,-1:nnk+2) :: 
      <     kinetic
 
-	call getMeanVelPro(u(:,:,:,1), uMean)
-	call getMeanVelPro(u(:,:,:,2), vMean)
-	call getMeanVelPro(u(:,:,:,3), wMean)
 C	call horizontalAverage(rr(:,:,:,1), rruMean, 1)
 C	call horizontalAverage(vst, vstMean, 1)
-	call depthAverage(uMean(1:nnj), uDepth)
-
-	call MPI_Barrier(MPI_COMM_WORLD, ierr)
-	call get_pertVel(u, uMean,vMean,wMean, velPrimes)
-	call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	
-	call get_turbIntensity(velPrimes, uTurb, vTurb, wTurb)
-	call get_reynoldsStress(velPrimes, uvRey, uwRey, vwRey)
+	call get_turbIntensity(uTurb, vTurb, wTurb)
+	call get_reynoldsStress(uvRey, uwRey, vwRey)
 	call compute_totalkinetic(u,kinetic)
 	call horizontalAverage(kinetic, kineticMean, 2)
 	call depthAverage(kineticMean, kineticDepth)
 
-	call compute_dissipation(velPrimes,dissipationMean)
+	call compute_dissipation(dissipationMean)
 
 	drive = steadyPall(1) 
+	if (100+vert_id .gt. 999) then
+	write(ID, fmt='(I4)') 100+vert_id
+	else
 	write(ID, fmt='(I3)') 100+vert_id
+	endif
 
 
 	if (myid .eq. 0) then
@@ -472,19 +490,14 @@ C	call horizontalAverage(vst, vstMean, 1)
      >          status='old',position='append')
 	     write(50+myid) time
 	     close(unit = 50+myid)
-
-	     open(50+myid, file='outputpVal_udepth.'//ID, form='unformatted',
-     >          status='old',position='append')
-	     write(50+myid) uDepth
-	     close(unit = 50+myid)
 	     
-	open(50+myid, file='outputpVal_kineticdepth.'//ID, form='unformatted',
-     >          status='old',position='append')
+	open(50+myid, file='outputpVal_kineticdepth.'//ID, 
+     >    form='unformatted',status='old',position='append')
 	     write(50+myid) kineticDepth
 	     close(unit = 50+myid)
 
-	     open(50+myid, file='outputpVal_drive.'//ID, form='unformatted',
-     >          status='old',position='append')
+	     open(50+myid, file='outputpVal_drive.'//ID,
+     >   form='unformatted', status='old',position='append')
 	     write(50+myid) drive
 	     close(unit = 50+myid)
 	   else
@@ -494,18 +507,13 @@ C	call horizontalAverage(vst, vstMean, 1)
 	     write(50+myid) time
 	     close(unit = 50+myid)
 
-	     open(50+myid, file='outputpVal_udepth.'//ID, form='unformatted',
-     >          status='unknown')
-	     write(50+myid) uDepth
-	     close(unit = 50+myid)
-
-	open(50+myid, file='outputpVal_kineticdepth.'//ID, form='unformatted',
-     >          status='unknown')
+	    open(50+myid, file='outputpVal_kineticdepth.'//ID,
+     >           form='unformatted', status='unknown')
 	     write(50+myid) kineticDepth
 	     close(unit = 50+myid)
 	     
-	     open(50+myid, file='outputpVal_drive.'//ID, form='unformatted',
-     >          status='unknown')
+	     open(50+myid, file='outputpVal_drive.'//ID, 
+     >            form='unformatted', status='unknown')
 	     write(50+myid) drive
 	     close(unit = 50+myid)
 
@@ -514,25 +522,9 @@ C	call horizontalAverage(vst, vstMean, 1)
 
 	
 	if (hor_id .eq. 0) then
-
 	   if (istep .gt.1) then !appends to existing file - use this if you want continue run to create new files
-	     open(50+myid, file='outputp_umean.'//ID, form='unformatted',
-     >          status='old',position='append')
-	     write(50+myid) uMean(1:nnj)
-	     close(unit = 50+myid)
-
-	     open(50+myid, file='outputp_vmean.'//ID, form='unformatted',
-     >          status='old',position='append')
-	     write(50+myid) vMean(1:nnj)
-	     close(unit = 50+myid)
-
-	     open(50+myid, file='outputp_wmean.'//ID, form='unformatted',
-     >          status='old',position='append')
-	     write(50+myid) wMean(1:nnj)
-	     close(unit = 50+myid)
-
-	     open(50+myid, file='outputp_dissmean.'//ID, form='unformatted',
-     >          status='old',position='append')
+	     open(50+myid, file='outputp_dissmean.'//ID, 
+     >          form='unformatted', status='old',position='append')
 	     write(50+myid) dissipationMean
 	     close(unit = 50+myid)
 
@@ -582,24 +574,8 @@ C	     write(50+myid) vstMean
 C	     close(unit = 50+myid)
 
 	   else
-
-	     open(50+myid, file='outputp_umean.'//ID, form='unformatted',
-     >          status='unknown')
-	     write(50+myid) uMean(1:nnj)
-	     close(unit = 50+myid)
-
-	     open(50+myid, file='outputp_vmean.'//ID, form='unformatted',
-     >          status='unknown')
-	     write(50+myid) vMean(1:nnj)
-	     close(unit = 50+myid)
-
-	     open(50+myid, file='outputp_wmean.'//ID, form='unformatted',
-     >          status='unknown')
-	     write(50+myid) wMean(1:nnj)
-	     close(unit = 50+myid)
-
-	     open(50+myid, file='outputp_dissmean.'//ID, form='unformatted',
-     >          status='unknown')
+	     open(50+myid, file='outputp_dissmean.'//ID, 
+     >          form='unformatted',status='unknown')
 	     write(50+myid) dissipationMean
 	     close(unit = 50+myid)
 
