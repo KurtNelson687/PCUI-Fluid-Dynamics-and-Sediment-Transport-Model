@@ -371,7 +371,8 @@ C       This subroutine Saves Cn and puts it into the Production matrix for comp
 	double precision ProDepth, DisDepth
 	double precision, dimension(1:nni,1:nnj,1:nnk,1:3) ::
      <     OldPrimes
-
+	double precision, dimension(1:nni,1:nnj,1:nnk) ::
+     <     Produc, Dissip
 
 CCCCCCCCCCCCC Add u^n parts to production and dissipation calculation
 
