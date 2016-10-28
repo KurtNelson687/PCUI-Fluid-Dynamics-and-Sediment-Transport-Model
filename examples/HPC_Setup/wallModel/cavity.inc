@@ -9,5 +9,5 @@
 	common/mapping/
      <		bx, by, bz, dm, cm, am, bm,
      <		stretchx, stretchy, stretchz, yAll,
-     <          domainVol   
+     <          domainVol, dyAll
 

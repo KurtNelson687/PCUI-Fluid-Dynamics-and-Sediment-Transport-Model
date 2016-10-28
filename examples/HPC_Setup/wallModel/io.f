@@ -154,12 +154,12 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	endif
 
-	call MPI_BCAST(runCase,        1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
+	call MPI_BCAST(runCase,     1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(newrun,      1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(periodic,    1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(pAdjust,     1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(waves,       1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
-	call MPI_BCAST(wallModel,       1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
+	call MPI_BCAST(wallModel,   1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(iscalar,     1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(ieddy,       1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(mg_level,    1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
@@ -236,7 +236,8 @@ C	This subroutine is simply writing the x,y, and z coordinates from each process
 	character*4 ID 
 
 	write(ID, fmt='(I3)') 100+myid
-	open(500+myid,file='xyz.'//ID,form='unformatted',status='unknown')
+	open(500+myid,file='xyz.'//ID,
+     <   form='unformatted',status='unknown')
 	write(500+myid) xp
         close(unit = 500+myid)
 	
@@ -280,7 +281,7 @@ C	   close(unit = 50+myid)
 	   close(unit = 800+myid)
 
 	   if (ised .eq. 1) then
-	       open(900+myid, file='output_Csed.'//ID, form='unformatted',
+	  open(900+myid, file='output_Csed.'//ID, form='unformatted',
      >             status='old',position='append')
 	       write(900+myid) Csed
 	       close(unit = 900+myid)
@@ -303,7 +304,7 @@ C	   close(unit = 50+myid)
 	   close(unit = 800+myid)
 
 	   if (ised .eq. 1) then
-	        open(900+myid, file='output_Csed.'//ID, form='unformatted',
+	  open(900+myid, file='output_Csed.'//ID, form='unformatted',
      >               status='unknown')	 
 	        write(900+myid) Csed
 	        close(unit = 900+myid)
@@ -379,8 +380,8 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	write(ID, fmt='(I3)') 100+myid
 
-	open(200+myid, file='continue_run.'//ID, form='unformatted',
-     >          status='unknown')	 
+	open(200+myid, file='continue_run.'//ID,
+     >      form='unformatted', status='unknown')	 
 
 	write(200+myid) kount
 	write(200+myid) vis, ak
@@ -448,7 +449,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
      <     uTurb, vTurb, wTurb,uvRey, uwRey, vwRey, vstMean, rruMean,
      <     kineticMean, dissipationMean
 	double precision velPrimes(0:nni+1, 0:nnj+1, 0:nnk+1,3)
-	double precision uDepth, kineticDepth, drive, uVolume 
+	double precision uDepth, kineticDepth, drive 
 	double precision, dimension(-1:nni+2,-1:nnj+2,-1:nnk+2) :: 
      <     kinetic
 
@@ -457,22 +458,21 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	call getMeanVelPro(u(:,:,:,3), wMean)
 C	call horizontalAverage(rr(:,:,:,1), rruMean, 1)
 C	call horizontalAverage(vst, vstMean, 1)
-	call depthAverage(uMean(1:nnj), uDepth)
+C	call depthAverage(uMean(1:nnj), uDepth)
+	call volumeAve(u(:,:,:,1), uDepth,2)
 
-	call MPI_Barrier(MPI_COMM_WORLD, ierr)
-	call get_pertVel(u, uMean,vMean,wMean, velPrimes)
-	call MPI_Barrier(MPI_COMM_WORLD, ierr)
+C	call MPI_Barrier(MPI_COMM_WORLD, ierr)
+C	call get_pertVel(u, uMean,vMean,wMean, velPrimes)
+C	call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	
-	call get_turbIntensity(velPrimes, uTurb, vTurb, wTurb)
-	call get_reynoldsStress(velPrimes, uvRey, uwRey, vwRey)
+C	call get_turbIntensity(velPrimes, uTurb, vTurb, wTurb)
+C	call get_reynoldsStress(velPrimes, uvRey, uwRey, vwRey)
 	call compute_totalkinetic(u,kinetic)
-	call horizontalAverage(kinetic, kineticMean, 2)
-	call depthAverage(kineticMean, kineticDepth)
+	call volumeAve(kinetic, kineticDepth,2)
 
-	call compute_dissipation(velPrimes,dissipationMean)
-	call volumeAve(u(:,:,:,1),uVolume,2)
+C	call compute_dissipation(velPrimes,dissipationMean)
 
-	drive = steadyPall(1) 
+C	drive = steadyPall(1) 
 	write(ID, fmt='(I3)') 100+vert_id
 
 
@@ -483,41 +483,41 @@ C	call horizontalAverage(vst, vstMean, 1)
 	     write(50+myid) time
 	     close(unit = 50+myid)
 
-	     open(50+myid, file='outputpVal_udepth.'//ID, form='unformatted',
+	 open(50+myid, file='outputpVal_udepth.'//ID, form='unformatted',
      >          status='old',position='append')
 	     write(50+myid) uDepth
 	     close(unit = 50+myid)
 	     
-	open(50+myid, file='outputpVal_kineticdepth.'//ID, form='unformatted',
-     >          status='old',position='append')
+	open(50+myid, file='outputpVal_kineticdepth.'//ID,
+     >       form='unformatted', status='old',position='append')
 	     write(50+myid) kineticDepth
 	     close(unit = 50+myid)
 
-	     open(50+myid, file='outputpVal_drive.'//ID, form='unformatted',
-     >          status='old',position='append')
-	     write(50+myid) drive
-	     close(unit = 50+myid)
+C	open(50+myid, file='outputpVal_drive.'//ID, form='unformatted',
+C     >          status='old',position='append')
+C	     write(50+myid) drive
+C	     close(unit = 50+myid)
 	   else
 
-	     open(50+myid, file='outputp_time.'//ID, form='unformatted',
+	open(50+myid, file='outputp_time.'//ID, form='unformatted',
      >          status='unknown')
 	     write(50+myid) time
 	     close(unit = 50+myid)
 
-	     open(50+myid, file='outputpVal_udepth.'//ID, form='unformatted',
+	open(50+myid, file='outputpVal_udepth.'//ID, form='unformatted',
      >          status='unknown')
 	     write(50+myid) uDepth
 	     close(unit = 50+myid)
 
-	open(50+myid, file='outputpVal_kineticdepth.'//ID, form='unformatted',
-     >          status='unknown')
+	open(50+myid, file='outputpVal_kineticdepth.'//ID,
+     >        form='unformatted', status='unknown')
 	     write(50+myid) kineticDepth
 	     close(unit = 50+myid)
 	     
-	     open(50+myid, file='outputpVal_drive.'//ID, form='unformatted',
-     >          status='unknown')
-	     write(50+myid) drive
-	     close(unit = 50+myid)
+C	 open(50+myid, file='outputpVal_drive.'//ID, form='unformatted',
+C     >          status='unknown')
+C	     write(50+myid) drive
+C	     close(unit = 50+myid)
 
 	   endif
 	endif
@@ -541,56 +541,6 @@ C	call horizontalAverage(vst, vstMean, 1)
 	     write(50+myid) wMean(1:nnj)
 	     close(unit = 50+myid)
 
-	     open(50+myid, file='outputp_dissmean.'//ID, form='unformatted',
-     >          status='old',position='append')
-	     write(50+myid) dissipationMean
-	     close(unit = 50+myid)
-
-C	     open(50+myid, file='outputp_dpdx.'//ID, form='unformatted',
-C     >          status='old',position='append')
-C	     write(50+myid) steadyPall
-C	     close(unit = 50+myid)
-
-	     open(50+myid, file='outputp_uTurb.'//ID, form='unformatted',
-     >          status='old',position='append')
-	     write(50+myid) uTurb
-	     close(unit = 50+myid)
-
-	     open(50+myid, file='outputp_vTurb.'//ID, form='unformatted',
-     >          status='old',position='append')
-	     write(50+myid) vTurb
-	     close(unit = 50+myid)
-
-	     open(50+myid, file='outputp_wTurb.'//ID, form='unformatted',
-     >          status='old',position='append')
-	     write(50+myid) wTurb
-	     close(unit = 50+myid)
-
-	     open(50+myid, file='outputp_uvRey.'//ID, form='unformatted',
-     >          status='old',position='append')
-	     write(50+myid) uvRey
-	     close(unit = 50+myid)
-
-	     open(50+myid, file='outputp_uwRey.'//ID, form='unformatted',
-     >          status='old',position='append')
-	     write(50+myid) uwRey
-	     close(unit = 50+myid)
-
-	     open(50+myid, file='outputp_vwRey.'//ID, form='unformatted',
-     >          status='old',position='append')
-	     write(50+myid) vwRey
-	     close(unit = 50+myid)
-
-C	     open(50+myid, file='outputp_rruMean.'//ID, form='unformatted',
-C     >          status='old',position='append')
-C	     write(50+myid) rruMean
-C	     close(unit = 50+myid)
-
-C	     open(50+myid, file='outputp_vstMean.'//ID, form='unformatted',
-C     >          status='old',position='append')
-C	     write(50+myid) vstMean
-C	     close(unit = 50+myid)
-
 	   else
 
 	     open(50+myid, file='outputp_umean.'//ID, form='unformatted',
@@ -607,56 +557,6 @@ C	     close(unit = 50+myid)
      >          status='unknown')
 	     write(50+myid) wMean(1:nnj)
 	     close(unit = 50+myid)
-
-	     open(50+myid, file='outputp_dissmean.'//ID, form='unformatted',
-     >          status='unknown')
-	     write(50+myid) dissipationMean
-	     close(unit = 50+myid)
-
-C	     open(50+myid, file='outputp_dpdx.'//ID, form='unformatted',
-C     >          status='unknown')
-C	     write(50+myid) steadyPall
-C	     close(unit = 50+myid)
-
-	     open(50+myid, file='outputp_uTurb.'//ID, form='unformatted',
-     >          status='unknown')
-	     write(50+myid) uTurb
-	     close(unit = 50+myid)
-
-	     open(50+myid, file='outputp_vTurb.'//ID, form='unformatted',
-     >          status='unknown')
-	     write(50+myid) vTurb
-	     close(unit = 50+myid)
-
-	     open(50+myid, file='outputp_wTurb.'//ID, form='unformatted',
-     >          status='unknown')
-	     write(50+myid) wTurb
-	     close(unit = 50+myid)
-
-	     open(50+myid, file='outputp_uvRey.'//ID, form='unformatted',
-     >          status='unknown')
-	     write(50+myid) uvRey
-	     close(unit = 50+myid)
-
-	     open(50+myid, file='outputp_uwRey.'//ID, form='unformatted',
-     >          status='unknown')
-	     write(50+myid) uwRey
-	     close(unit = 50+myid)
-
-	     open(50+myid, file='outputp_vwRey.'//ID, form='unformatted',
-     >          status='unknown')
-	     write(50+myid) vwRey
-	     close(unit = 50+myid)
-
-C	     open(50+myid, file='outputp_rruMean.'//ID, form='unformatted',
-C     >          status='unknown')
-C	     write(50+myid) rruMean
-C	     close(unit = 50+myid)
-
-C	     open(50+myid, file='outputp_vstMean.'//ID, form='unformatted',
-C     >          status='unknown')
-C	     write(50+myid) vstMean
-C	     close(unit = 50+myid)
 
 	   endif
 	endif

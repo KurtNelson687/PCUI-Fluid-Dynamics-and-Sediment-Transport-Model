@@ -11,11 +11,14 @@ C       This subroutine depth averages an array that has been horizontally avera
 	double precision, intent(out) :: outValue
 	double precision H, mySum
 	double precision integrationArray(1:nnj)
-	integer j
+	integer j, jj0
+
 	
+	jj0 = npy * nnj
 	
 	H = yAll(nj)+(yAll(nj)-yAll(nj-1))/2
 	do j = 1, nnj
+C	    integrationArray(j) = 1/H*inArray(j)*dyAll(jj0+j)
 	    integrationArray(j) = 1/H*inArray(j)*0.5*
      <         (xp(1,j+1,1,2)-xp(1,j-1,1,2))
 	enddo
@@ -46,6 +49,8 @@ C       This subroutine volume averagesover the entire domain
      <                1-numGhost:nnj+numGhost,1-numGhost:nnk+numGhost)
 	double precision myIntegration
 	integer i,j,k
+
+	myIntegration=0.D0
 	
 	do i = 1, nni 
 	   do j = 1, nnj 
@@ -58,7 +63,8 @@ C       This subroutine volume averagesover the entire domain
 	
 	call MPI_REDUCE(myIntegration, outValue, 1, MPI_DOUBLE_PRECISION,
      <               MPI_SUM, 0, MPI_COMM_WORLD, ierr)
-	call MPI_BCAST(outValue,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+	call MPI_BCAST(outValue,1,MPI_DOUBLE_PRECISION,
+     <       0,MPI_COMM_WORLD,ierr)
 	return
 	end
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
@@ -75,8 +81,9 @@ C       This subroutine sums over the domain
 
 	double precision, intent(out) :: outValue
 	integer, intent(in) :: numGhost 
-	double precision, intent(in) :: inArray(1-numGhost:nni+numGhost,
-     <                1-numGhost:nnj+numGhost,1-numGhost:nnk+numGhost)
+	double precision, intent(in) ::
+     <                 inArray(1-numGhost:nni+numGhost,
+     <       1-numGhost:nnj+numGhost,1-numGhost:nnk+numGhost)
 	double precision mySum
 	integer i,j,k
 
@@ -91,7 +98,8 @@ C       This subroutine sums over the domain
 	
 	call MPI_REDUCE(mySum, outValue, 1, MPI_DOUBLE_PRECISION,
      <               MPI_SUM, 0, MPI_COMM_WORLD, ierr)
-	call MPI_BCAST(outValue,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+	call MPI_BCAST(outValue,1,MPI_DOUBLE_PRECISION,
+     <         0,MPI_COMM_WORLD,ierr)
 	return
 	end
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
@@ -133,7 +141,8 @@ C       This subroutine routine computes velociy purturbations
 
 	double precision, intent(in) :: u(-1:nni+2,-1:nnj+2,-1:nnk+2,3),
      <        uMean(0:nnj+1), vMean(0:nnj+1), wMean(0:nnj+1)
-	double precision, intent(out) :: velPrimes(0:nni+1, 0:nnj+1, 0:nnk+1,3)
+	double precision, intent(out) :: 
+     <        velPrimes(0:nni+1, 0:nnj+1, 0:nnk+1,3)
 	
 	integer i, j, k
 	
@@ -152,14 +161,15 @@ C       This subroutine routine computes velociy purturbations
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
-	subroutine get_turbIntensity(velPrimes, uTurb, vTurb, wTurb)
+	subroutine get_turbIntensity(velPrimes,uTurb, vTurb, wTurb)
 C       This subroutine routine computes mean turbulent intensity profiles
 
 	include "size.inc"
 	include "mpif.h"
 	include "mpi.inc"
 
-	double precision, intent(in) :: velPrimes(0:nni+1, 0:nnj+1, 0:nnk+1,3)
+	double precision, intent(in) ::
+     <         velPrimes(0:nni+1, 0:nnj+1, 0:nnk+1,3)
 	double precision, intent(out) :: uTurb(1:nnj), vTurb(1:nnj),
      <      wTurb(1:nnj)
 	double precision velPrimesS(1:nni, 1:nnj, 1:nnk,3)
@@ -191,14 +201,16 @@ C       This subroutine routine computes mean turbulent intensity profiles
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
-	subroutine get_reynoldsStress(velPrimes, uvPrime, uwPrime, vwPrime)
+	subroutine get_reynoldsStress(velPrimes,
+     <          uvPrime, uwPrime, vwPrime)
 C       This subroutine routine computes velociy purturbations
 
 	include "size.inc"
 	include "mpif.h"
 	include "mpi.inc"
 
-	double precision, intent(in) :: velPrimes(0:nni+1, 0:nnj+1, 0:nnk+1,3)
+	double precision, intent(in) ::
+     <       velPrimes(0:nni+1, 0:nnj+1, 0:nnk+1,3)
 	double precision, intent(out) :: uvPrime(1:nnj), uwPrime(1:nnj),
      <      vwPrime(1:nnj)
 	double precision reynoldsStresses(1:nni, 1:nnj, 1:nnk,3)
@@ -207,9 +219,12 @@ C       This subroutine routine computes velociy purturbations
 	do i = 1, nni
 	   do j = 1, nnj
 	      do k = 1, nnk
-	      reynoldsStresses(i,j,k,1) = velPrimes(i,j,k,1)*velPrimes(i,j,k,2)
-	      reynoldsStresses(i,j,k,2) = velPrimes(i,j,k,1)*velPrimes(i,j,k,3)
-	      reynoldsStresses(i,j,k,3) = velPrimes(i,j,k,3)*velPrimes(i,j,k,2)
+	      reynoldsStresses(i,j,k,1) =
+     <     velPrimes(i,j,k,1)*velPrimes(i,j,k,2)
+	      reynoldsStresses(i,j,k,2) =
+     <     velPrimes(i,j,k,1)*velPrimes(i,j,k,3)
+	      reynoldsStresses(i,j,k,3) = 
+     <     velPrimes(i,j,k,3)*velPrimes(i,j,k,2)
 	      enddo
 	   enddo
 	enddo
@@ -233,8 +248,10 @@ C       This subroutine routine computes velociy purturbations
 
 	include "size.inc"
 
-	double precision, intent(in) :: input(-1:nni+2,-1:nnj+2,-1:nnk+2,3)
-	double precision, intent(out) :: output(-1:nni+2,-1:nnj+2,-1:nnk+2)
+	double precision, intent(in) :: 
+     <       input(-1:nni+2,-1:nnj+2,-1:nnk+2,3)
+	double precision, intent(out) ::
+     <        output(-1:nni+2,-1:nnj+2,-1:nnk+2)
 	integer i, j, k
 	
 	do i = -1, nni+2
@@ -259,7 +276,8 @@ C       This subroutine routine computes a mean dissipation profile
 	include "mpi.inc"
 	include "para.inc"
 	include "metric.inc"
-	double precision, intent(in) :: velPrimes(0:nni+1, 0:nnj+1, 0:nnk+1,3)
+	double precision, intent(in) ::
+     <         velPrimes(0:nni+1, 0:nnj+1, 0:nnk+1,3)
 	double precision, intent(out) :: dissipationMean(1:nnj)
 	double precision dissipationAll(1:nni, 1:nnj, 1:nnk)
 	integer i, j, k
@@ -320,7 +338,8 @@ C       This subroutine horizontally Averages an array. It is written for cartes
      <               MPI_SUM, 0, hor_comm, ierr)
 	
 	outArray = outArray/(px*pz)
-	call MPI_BCAST(outArray,nnj+2,MPI_DOUBLE_PRECISION,0,hor_comm,ierr)
+	call MPI_BCAST(outArray,nnj+2,MPI_DOUBLE_PRECISION,
+     <         0,hor_comm,ierr)
 	return
 	end
 

@@ -1,4 +1,4 @@
-COMP = ftn
+COMP = mpif90
 FLAG = -c -w -O3
 
 OBCA = ns.o mp.o io.o \

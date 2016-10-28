@@ -11,13 +11,11 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	integer i, j, k 
 
-	wallUnit = 1.0D-4
-	maxRatio = 8.2
-	numWallUnits = 1.2
 	stretchFactor = 5.0D-2
 	dx = 2.0D0/128
 	dz = 1.0D0/64
 	dy = dx
+	dyMin = 4.5D-3 
 
 C	streching flags	
 	stretchx = 0
@@ -27,8 +25,7 @@ C	streching flags
 	bx = ni*dx
 	if(stretchy .eq. 1) then
 	   by =1
-	call ycoordStretch(wallUnit, maxRatio,numWallUnits,
-     <      stretchFactor, dx, dy)
+	call ycoordStretch(dyMin,stretchFactor, dx)
 	else
 	   by = nj*dy
 	endif
@@ -88,8 +85,7 @@ C	These are parameters for streching
 	end
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-	subroutine ycoordStretch(wallUnit, maxRatio,numWallUnits,
-     <      stretchFactor, dx, dy)
+	subroutine ycoordStretch(dyMin,stretchFactor, dx)
 
 	include "size.inc"
 	include "mpif.h"
@@ -99,7 +95,6 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	integer i, j, k 
 
-	dyMin = 4.5D-3 
 	stopStretch =floor(log(dx/dyMin)/log(1+stretchFactor)+1)
 	do j = 1,nj
 	   if (j .eq. 1) then
