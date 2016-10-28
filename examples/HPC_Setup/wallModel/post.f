@@ -51,7 +51,7 @@ C       This subroutine volume averagesover the entire domain
 	   do j = 1, nnj 
 	      do k = 1, nnk
 	        myIntegration = myIntegration
-     <                 +inArray(i,j,k)*jac(i,j,k)/domainVol
+     <                 +inArray(i,j,k)/jac(i,j,k)/domainVol
 	      enddo
 	    enddo
 	enddo
@@ -64,7 +64,7 @@ C       This subroutine volume averagesover the entire domain
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 
 
-	subroutine domainSum(inArray, outValue,numGhost)
+	subroutine getDomainVol(inArray, outValue,numGhost)
 C       This subroutine sums over the domain
 	include "size.inc"
 	include "mpif.h"
@@ -84,7 +84,7 @@ C       This subroutine sums over the domain
 	do i = 1, nni 
 	   do j = 1, nnj 
 	      do k = 1, nnk
-	        mySum = mySum+inArray(i,j,k)
+	        mySum = mySum+1/inArray(i,j,k)
 	      enddo
 	    enddo
 	enddo

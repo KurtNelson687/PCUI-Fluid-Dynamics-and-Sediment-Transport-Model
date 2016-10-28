@@ -79,7 +79,7 @@ C	These are parameters for streching
      <          p11, p12, p13, p21, p22, p23, p31, p32, p33, pcc,
      <          r11, r12, r13, r21, r22, r23, r31, r32, r33, rcc)
 
-	call domainSum(jac,domainVol,2)
+	call getDomainVol(jac,domainVol,2)
 	if(myid .eq. 0) then
 	write(*,*) "domainVol = ", domainVol
 	endif

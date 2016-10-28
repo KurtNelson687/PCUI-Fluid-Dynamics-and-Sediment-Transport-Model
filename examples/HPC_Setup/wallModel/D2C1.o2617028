@@ -1,0 +1,119 @@
+/var/spool/pbs/mom_priv/prologue: line 64: output.graphic=/p/work1/SLB.out: No such file or directory
+cray-mpich/7.1.0(30):ERROR:150: Module 'cray-mpich/7.1.0' conflicts with the currently loaded module(s) 'cray-mpich/7.2.4'
+cray-mpich/7.1.0(30):ERROR:102: Tcl command execution failed: conflict cray-mpich
+
+JOBID,PBS_JOBID=2617028,2617028.excalibur-wlm1
+LOGNAME,PBS_O_LOGNAME=knelson3,knelson3
+**** NSLOTS=32
+MPI job 2617028 starting at Thu Oct 27 23:49:32 EDT 2016 on batch25
+starting in /p/home/knelson3
+exechost is nid02396
+total 27596
+-rw-r----- 1 knelson3 2775G267    3557 Oct 27 20:46 mp.f
+-rw-r----- 1 knelson3 2775G267    3735 Oct 27 20:46 init.f
+-rw-r----- 1 knelson3 2775G267    4626 Oct 27 20:46 indexx.f
+-rw-r----- 1 knelson3 2775G267     349 Oct 27 20:46 grid_init.f
+-rw-r----- 1 knelson3 2775G267    7345 Oct 27 20:46 fctr.f
+-rw-r----- 1 knelson3 2775G267   23148 Oct 27 20:46 exch.f
+-rw-r----- 1 knelson3 2775G267    2627 Oct 27 20:46 energy_serial.f
+-rw-r----- 1 knelson3 2775G267   11143 Oct 27 20:46 energy.f
+-rw-r----- 1 knelson3 2775G267   31309 Oct 27 20:46 eddy.f
+-rw-r----- 1 knelson3 2775G267    6042 Oct 27 20:46 corr.f
+-rw-r----- 1 knelson3 2775G267    5772 Oct 27 20:46 conv.f
+-rw-r----- 1 knelson3 2775G267    8807 Oct 27 20:46 trid.f
+-rw-r----- 1 knelson3 2775G267    1626 Oct 27 20:46 stat.f
+-rw-r----- 1 knelson3 2775G267   33180 Oct 27 20:46 smad.f
+-rw-r----- 1 knelson3 2775G267   25274 Oct 27 20:46 sed.f
+-rw-r----- 1 knelson3 2775G267   22011 Oct 27 20:46 scal.f
+-rw-r----- 1 knelson3 2775G267    7764 Oct 27 20:46 resd.f
+-rw-r----- 1 knelson3 2775G267    8521 Oct 27 20:46 pres.f
+-rw-r----- 1 knelson3 2775G267   21353 Oct 27 20:46 pred.f
+-rw-r----- 1 knelson3 2775G267     860 Oct 27 20:46 post_old.f
+-rw-r----- 1 knelson3 2775G267       0 Oct 27 20:46 para.f
+-rw-r----- 1 knelson3 2775G267    2810 Oct 27 20:46 nsst.f
+-rw-r----- 1 knelson3 2775G267    1651 Oct 27 20:46 metric.inc
+-rw-r----- 1 knelson3 2775G267     191 Oct 27 20:46 eddy.inc
+-rw-r----- 1 knelson3 2775G267     225 Oct 27 20:46 stat.inc
+-rw-r----- 1 knelson3 2775G267     267 Oct 27 20:46 sed.inc
+-rw-r----- 1 knelson3 2775G267     472 Oct 27 20:46 ns.inc
+-rw-r----- 1 knelson3 2775G267     480 Oct 27 20:46 mpi.inc
+-rw-r----- 1 knelson3 2775G267    2461 Oct 27 20:47 makefile
+-rw-r----- 1 knelson3 2775G267    1263 Oct 27 20:47 pbs_init.csh
+-rw-r----- 1 knelson3 2775G267    5385 Oct 27 20:50 ns.f
+-rwxr----- 1 knelson3 2775G267    2622 Oct 27 20:59 padjust.f
+-rw-r----- 1 knelson3 2775G267     691 Oct 27 20:59 pcuiRunParams.txt
+-rw-r----- 1 knelson3 2775G267     122 Oct 27 21:02 padjust.inc
+-rw-r----- 1 knelson3 2775G267    1007 Oct 27 21:45 para.inc
+-rw-r----- 1 knelson3 2775G267   23659 Oct 27 21:55 io.f
+-rw-r----- 1 knelson3 2775G267     402 Oct 27 22:16 cavity.inc
+-rw-r----- 1 knelson3 2775G267    1353 Oct 27 22:57 size.inc
+-rwxr----- 1 knelson3 2775G267 9059002 Oct 27 22:59 cavity
+-rw-r----- 1 knelson3 2775G267    1988 Oct 27 23:18 pbs_pcui.csh
+-rw-r----- 1 knelson3 2775G267    1932 Oct 27 23:41 pbs_grid.csh
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 fort.226
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 fort.225
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 fort.224
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 fort.223
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 fort.222
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 fort.221
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 fort.220
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 fort.219
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 fort.218
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 fort.217
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 fort.216
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 fort.215
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 fort.214
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 fort.213
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 fort.212
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 fort.211
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 fort.210
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 fort.209
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 fort.208
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 fort.207
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 fort.206
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 fort.205
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 fort.204
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 fort.203
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 fort.202
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 fort.201
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 fort.200
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 xyz.126
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 xyz.125
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 xyz.124
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 xyz.123
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 xyz.122
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 xyz.121
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 xyz.120
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 xyz.119
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 xyz.118
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 xyz.117
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 xyz.116
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 xyz.115
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 xyz.114
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 xyz.113
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 xyz.112
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 xyz.111
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 xyz.110
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 xyz.109
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 xyz.108
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 xyz.107
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 xyz.106
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 xyz.105
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 xyz.104
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 xyz.103
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 xyz.102
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 xyz.101
+-rw-r----- 1 knelson3 2775G267  192008 Oct 27 23:42 xyz.100
+-rw-r----- 1 knelson3 2775G267    1736 Oct 27 23:42 grid_stat.out
+-rw------- 1 knelson3 2775G267    3647 Oct 27 23:42 D2C1.o2616893
+-rw-r----- 1 knelson3 2775G267   10027 Oct 27 23:48 post.f
+-rw-r----- 1 knelson3 2775G267   21332 Oct 27 23:48 cavity.f
+-rw-r----- 1 knelson3 2775G267    5752 Oct 27 23:48 mp.o
+-rw-r----- 1 knelson3 2775G267    3376 Oct 27 23:48 grid_init.o
+-rw-r----- 1 knelson3 2775G267  106536 Oct 27 23:48 io.o
+-rw-r----- 1 knelson3 2775G267   79520 Oct 27 23:48 cavity.o
+-rw-r----- 1 knelson3 2775G267   31544 Oct 27 23:48 post.o
+-rwxr----- 1 knelson3 2775G267 8129188 Oct 27 23:48 grid
+Working on batch25 ....
+Permission denied (publickey,keyboard-interactive).
+MPI program ended with status 0 on Thu Oct 27 23:49:37 EDT 2016
