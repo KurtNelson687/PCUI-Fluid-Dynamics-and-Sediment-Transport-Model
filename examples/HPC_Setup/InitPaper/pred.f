@@ -311,13 +311,11 @@ CBCBCBC	BCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBC
 
 	endif
 	
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!Added by Kurt
 	if ( periodic .eq. 1 ) then
 	call trip( ax, bx, cx, fx, nnj, 3, nni, n_west, n_east )
 	else 
 	call trid( ax, bx, cx, fx, nnj, 3, nni, n_west, n_east )
 	endif
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !	call trid( ax, bx, cx, fx, nnj, 3, nni, n_west, n_east ) !Commented by Kurt
 
 	do m = 1, 3
@@ -330,7 +328,7 @@ CBCBCBC	BCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBC
 
 	enddo
 
-C...... solve for J-direction
+C...... solve for J-direction (only values for components 1 and 3 are saved)
 
 	do k = 1, nnk
 
@@ -528,7 +526,7 @@ CBCBCBC	BCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBC
 
 
 	call trid( ay, by, cy, fyV, nni, 1, nnj, n_suth, n_nrth )
-C        call trid1( ay, by, cy, fy, nni, 2, 2,nnj, n_suth, n_nrth ) !This was written by YiJu - I think it has bugs (Kurt Nelson 7/13/2016)	
+C        call trid1( ay, by, cy, fy, nni, 2, 2,nnj, n_suth, n_nrth ) !trid1 has a bug related to the MPI - fix if you want to use (Kurt Nelson 7/13/2016)	
 c.....so, here we only obtain the result for the second (jth) component
 	do j = 1, nnj
 	do i = 1, nni
