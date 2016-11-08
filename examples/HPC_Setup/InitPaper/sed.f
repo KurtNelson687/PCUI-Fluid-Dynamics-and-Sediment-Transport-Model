@@ -685,7 +685,7 @@ C...... Change information at boundaries
 	call Csed_exchange
 
 C...... Calculate energy
-      call energy
+C      call energy
 
 	return
 	end
