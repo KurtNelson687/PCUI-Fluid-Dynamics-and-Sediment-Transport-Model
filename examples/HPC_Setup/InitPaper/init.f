@@ -144,6 +144,16 @@ C...... lid velocities u_lid and w_lid
 	else
 
 	   call input_continue_run
+           
+	   if(ised .eq. 1) then
+           do k = -1, nnk+2
+           do j = -1, nnj+2
+           do i = -1, nni+2
+              Csed(i,j,k) = 0.2D0
+	   enddo
+	   enddo
+	   enddo 
+	   endif
 
 	endif
 

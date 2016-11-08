@@ -52,6 +52,9 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	    case ('ised')
 	      read(buffer, *, iostat=ios) ised
 	      write(*,*) 'ised  = ', ised
+	    case ('iTKE')
+	      read(buffer, *, iostat=ios) iTKE
+	      write(*,*) 'iTKE  = ', iTKE
 	    case ('waves')
 	      read(buffer, *, iostat=ios) waves
 	      write(*,*) 'waves  = ', waves
@@ -210,6 +213,8 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	call MPI_BCAST(rhoSed,         1,MPI_DOUBLE_PRECISION,0,
      <                              MPI_COMM_WORLD,ierr)
         call MPI_BCAST(ised,        1,MPI_DOUBLE_PRECISION,0,
+     <                              MPI_COMM_WORLD,ierr)
+        call MPI_BCAST(iTKE,        1,MPI_DOUBLE_PRECISION,0,
      <                              MPI_COMM_WORLD,ierr)
 	omg2 = omg_cyl * 2.D0
 	return
@@ -460,20 +465,23 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	character*4 :: ID
 	double precision, dimension(1:nnj) ::
      <     uTurb, vTurb, wTurb,uvRey, uwRey, vwRey, vstMean, rruMean,
-     <     kineticMean, dissipationMean
+     <     kineticMean, dissipationMean, sedMean
 	double precision kineticDepth, drive 
 	double precision, dimension(-1:nni+2,-1:nnj+2,-1:nnk+2) :: 
      <     kinetic
 
 C	call horizontalAverage(rr(:,:,:,1), rruMean, 1)
 C	call horizontalAverage(vst, vstMean, 1)
-	
+
+	if(iTKE .ne.1) then
+	call computeMeanAndPrimes
+	endif
 	call get_turbIntensity(uTurb, vTurb, wTurb)
 	call get_reynoldsStress(uvRey, uwRey, vwRey)
 	call compute_totalkinetic(u,kinetic)
 	call horizontalAverage(kinetic, kineticMean, 2)
 	call depthAverage(kineticMean, kineticDepth)
-
+	call horizontalAverage(Csed, sedMean, 2)
 	call compute_dissipation(dissipationMean)
 
 	drive = steadyPall(1) 
@@ -573,6 +581,13 @@ C     >          status='old',position='append')
 C	     write(50+myid) vstMean
 C	     close(unit = 50+myid)
 
+	     if(ised .eq. 1) then
+	     open(50+myid, file='outputp_cSed.'//ID, form='unformatted',
+     >          status='old',position='append')
+	     write(50+myid) sedMean
+	     close(unit = 50+myid)
+	     endif
+
 	   else
 	     open(50+myid, file='outputp_dissmean.'//ID, 
      >          form='unformatted',status='unknown')
@@ -623,6 +638,13 @@ C	     open(50+myid, file='outputp_vstMean.'//ID, form='unformatted',
 C     >          status='unknown')
 C	     write(50+myid) vstMean
 C	     close(unit = 50+myid)
+	     
+	     if(ised .eq. 1) then
+	     open(50+myid, file='outputp_cSed.'//ID, form='unformatted',
+     >          status='unknown')
+	     write(50+myid) sedMean
+	     close(unit = 50+myid)
+	     endif
 
 	   endif
 	endif

@@ -1,5 +1,5 @@
 	integer runCase, newrun, periodic, iscalar, ieddy, mg_level
-	integer ised
+	integer ised, iTKE
 	integer waves, pAdjust
 	integer nstep, nsave, istep, kount, nunit, grid_only
 	integer maxstep, iterchk(5), maxiter(5)
@@ -7,7 +7,7 @@
      <		runCase, newrun, periodic, iscalar, ieddy, mg_level,
      <		istep, nstep, nsave, kount, nunit,
      <		maxstep, iterchk, maxiter, grid_only,
-     <		waves, ised, pAdjust
+     <		waves, ised, pAdjust, iTKE
 
 	double precision time, dtime, vis, ak, g
 	double precision rhoWater

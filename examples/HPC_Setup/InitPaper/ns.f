@@ -114,13 +114,15 @@ C          Solve for new sediment concentration
 	   if ( ised .eq. 1 ) call Csed_solve
 	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	   t8 = t8 + MPI_Wtime() - tt
-
+	   
+	   if (iTKE .eq. 1) then
 	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	   tt =  MPI_Wtime()
 	   call getProAndDis
 	   t6 = t6 + MPI_Wtime() - tt
 	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
-	   
+	   endif
+
 	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	   call eqstate
 	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
