@@ -363,7 +363,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	   read(200+myid) jac
 	endif
 
-	if ( ised .eq. 1 ) read(200+myid) Csed
+C	if ( ised .eq. 1 ) read(200+myid) Csed
 
 	close(200+myid)
 
@@ -462,6 +462,8 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	include "padjust.inc"
 	include "para.inc"
 	include "eddy.inc"
+	include "sed.inc"
+	
 	character*4 :: ID
 	double precision, dimension(1:nnj) ::
      <     uTurb, vTurb, wTurb,uvRey, uwRey, vwRey, vstMean, rruMean,
