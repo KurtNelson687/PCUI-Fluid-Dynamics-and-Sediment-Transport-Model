@@ -184,18 +184,20 @@ C......	Diagonal viscous terms at step n-1 from Crank-Nicolson
 	enddo 
 	enddo 
 
-C        call ProdPut
 
 C....... Add driving pressure gradient explicitly
-C	do k = 1, nnk
-C	do j = 1, nnj
-C	do i = 1, nni
-C	   temp = 1.D0 / jac(i,j,k)
-C	   su(i,j,k,1) = su(i,j,k,1)  
-C     <              + steadyPall(j)*temp/rhoWater
-C	enddo
-C	enddo
-C	enddo
+
+	if ( pAdjust .eq. 0 ) then
+	do k = 1, nnk
+	do j = 1, nnj
+	do i = 1, nni
+	   temp = 1.D0 / jac(i,j,k)
+	   su(i,j,k,1) = su(i,j,k,1)  
+     <              + steadyPall(j)*temp/rhoWater
+	enddo
+	enddo
+	enddo
+	endif
 
 C......	Multiply dt
 

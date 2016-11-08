@@ -45,9 +45,10 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	enddo
 	enddo
 
-
-	call adjustPressure
+	if (pAdjust .eq. 1) then
+	call adjustS
 	call adjust_u
+	endif
 	call u_bc
 	call u_exchange
 
@@ -64,7 +65,10 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	enddo
 	enddo
 
+
+	if (pAdjust .eq. 1) then
 	call adjust_uxi
+	endif
 
 	do k = 1, nnk
 	do j = jus, jue

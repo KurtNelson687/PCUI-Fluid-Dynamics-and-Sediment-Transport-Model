@@ -40,11 +40,11 @@ C	call init_pSteady !initialize steady pressure gradient
 	      write(*,*) ' istep = ', istep, ' kount  = ', kount
 	   end if
 
-C	   if ( pAdjust .eq. 1 ) then
-C	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
-C	   call adjustPressure
-C	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
-C	   end if
+	   if ( pAdjust .eq. 0 ) then
+	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
+	   call adjustPressure
+	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
+	   end if
 
 
 	   call MPI_Barrier(MPI_COMM_WORLD, ierr)

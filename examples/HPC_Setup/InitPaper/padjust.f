@@ -30,12 +30,10 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	include "mpi.inc"
 	include "metric.inc"
 
-	double precision, dimension(1:nnj) :: uMean,vertStressHor
-	double precision uDepth, vertStressMean, dpdxSource
-	double precision vertStress(-1:nni+2,-1:nnj+2,-1:nnk+2)
+	double precision, dimension(1:nnj) :: uMean
+	double precision uDepth, vertStressMean
 	integer i, j, k
 	real, parameter :: PI=3.1415926535897932
-	character*4 :: ID
 
 	call horizontalAverage(u(:,:,:,1), uMean, 2)
 	call depthAverage(uMean, uDepth)
@@ -47,12 +45,38 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	   enddo
 	 else
 	   do j = 1, nnj
-	         steadyPall(j) = 1/dtime*(Ubulk-uDepth)
+	         steadyPall(j) = dpdxSteady
 	   enddo
 	endif
 
 	return
 	end
+
+
+
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+	subroutine adjustS
+
+	include "size.inc"
+	include "para.inc"
+	include "ns.inc"
+	include "padjust.inc"
+	include "mpi.inc"
+	include "metric.inc"
+
+	double precision, dimension(1:nnj) :: uMean
+	double precision uDepth
+	integer i, j, k
+
+	call horizontalAverage(u(:,:,:,1), uMean, 2)
+	call depthAverage(uMean, uDepth)
+
+	do j = 1, nnj
+	         steadyPall(j) = 1/dtime*(Ubulk-uDepth)
+	enddo
+	return
+	end
+
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	subroutine getUtheo
