@@ -457,10 +457,11 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	include "padjust.inc"
 	include "para.inc"
 	include "eddy.inc"
+	include "sed.inc"
 	character*4 :: ID
 	double precision, dimension(1:nnj) ::
      <     uTurb, vTurb, wTurb,uvRey, uwRey, vwRey, vstMean, rruMean,
-     <     kineticMean, dissipationMean
+     <     kineticMean, dissipationMean, sedMean
 	double precision kineticDepth, drive 
 	double precision, dimension(-1:nni+2,-1:nnj+2,-1:nnk+2) :: 
      <     kinetic
@@ -473,7 +474,7 @@ C	call horizontalAverage(vst, vstMean, 1)
 	call compute_totalkinetic(u,kinetic)
 	call horizontalAverage(kinetic, kineticMean, 2)
 	call depthAverage(kineticMean, kineticDepth)
-
+	call horizontalAverage(Csed, sedMean, 2)
 	call compute_dissipation(dissipationMean)
 
 	drive = steadyPall(1) 
@@ -573,6 +574,11 @@ C     >          status='old',position='append')
 C	     write(50+myid) vstMean
 C	     close(unit = 50+myid)
 
+	     open(50+myid, file='outputp_cSed.'//ID, form='unformatted',
+     >          status='old',position='append')
+	     write(50+myid) sedMean
+	     close(unit = 50+myid)
+
 	   else
 	     open(50+myid, file='outputp_dissmean.'//ID, 
      >          form='unformatted',status='unknown')
@@ -623,6 +629,11 @@ C	     open(50+myid, file='outputp_vstMean.'//ID, form='unformatted',
 C     >          status='unknown')
 C	     write(50+myid) vstMean
 C	     close(unit = 50+myid)
+	     
+	     open(50+myid, file='outputp_cSed.'//ID, form='unformatted',
+     >          status='unknown')
+	     write(50+myid) sedMean
+	     close(unit = 50+myid)
 
 	   endif
 	endif

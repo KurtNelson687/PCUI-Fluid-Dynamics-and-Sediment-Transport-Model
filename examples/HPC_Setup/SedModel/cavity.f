@@ -21,7 +21,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 C	streching flags	
 	stretchx = 0
-	stretchy = 0
+	stretchy = 1
 	stretchz = 0
 
 	bx = ni*dx
