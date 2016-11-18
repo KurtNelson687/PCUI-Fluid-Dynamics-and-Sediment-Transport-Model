@@ -11,22 +11,13 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	integer i, j, k 
 
-
-	wallUnit = 2.0D-4
-	numWallUnits = 0.2D0
-	stretchFactor = 10.0D-2
-	dx = wallUnit*20
-	dz = wallUnit*11
+	wallUnit = 1.0D-4
+	maxRatio = 8.2
+	numWallUnits = 1.2
+	stretchFactor = 5.0D-2
+	dx = wallUnit*numWallUnits*maxRatio
+	dz = wallUnit*numWallUnits*maxRatio
 	dy = dx
-
-C For domain in InitPaper
-C	wallUnit = 1.0D-4
-C	maxRatio = 8.2
-C	numWallUnits = 1.2
-C	stretchFactor = 5.0D-2
-C	dx = wallUnit*numWallUnits*maxRatio
-C	dz = wallUnit*numWallUnits*maxRatio
-C	dy = dx
 
 C	streching flags	
 	stretchx = 0
@@ -40,7 +31,6 @@ C	streching flags
      <      stretchFactor, dx, dy)
 	else
 	   by = nj*dy
-	   dyAll = dy
 	endif
 	bz = nk*dz
 
