@@ -139,6 +139,18 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	    case ('rhoSed')
 	      read(buffer, *, iostat=ios) rhoSed
 	      write(*,*) 'rhoSed  = ', rhoSed
+	    case ('dryBulk')
+	      read(buffer, *, iostat=ios) dryBulk
+	      write(*,*) 'dryBulk  = ', dryBulk
+	    case ('tauCrit')
+	      read(buffer, *, iostat=ios) tauCrit
+	      write(*,*) 'tauCrit  = ', tauCrit
+	    case ('Ased')
+	      read(buffer, *, iostat=ios) Ased
+	      write(*,*) 'Ased  = ', Ased
+	    case ('nsed')
+	      read(buffer, *, iostat=ios) nsed
+	      write(*,*) 'nsed  = ', nsed
 	    case ('pAdjust')
 	      read(buffer, *, iostat=ios) pAdjust
 	      write(*,*) 'pAdjust  = ', pAdjust
@@ -211,6 +223,14 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         call MPI_BCAST(ws,          1,MPI_DOUBLE_PRECISION,0,
      <                              MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(rhoSed,         1,MPI_DOUBLE_PRECISION,0,
+     <                              MPI_COMM_WORLD,ierr)
+	call MPI_BCAST(dryBulk,         1,MPI_DOUBLE_PRECISION,0,
+     <                              MPI_COMM_WORLD,ierr)
+	call MPI_BCAST(tauCrit,         1,MPI_DOUBLE_PRECISION,0,
+     <                              MPI_COMM_WORLD,ierr)
+	call MPI_BCAST(Ased,         1,MPI_DOUBLE_PRECISION,0,
+     <                              MPI_COMM_WORLD,ierr)
+	call MPI_BCAST(nsed,         1,MPI_DOUBLE_PRECISION,0,
      <                              MPI_COMM_WORLD,ierr)
         call MPI_BCAST(ised,        1,MPI_DOUBLE_PRECISION,0,
      <                              MPI_COMM_WORLD,ierr)
@@ -366,7 +386,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 C	if ( ised .eq. 1 ) read(200+myid) Csed
 
 	close(200+myid)
-
+	ak = 1D-6
 	return
 	end
 

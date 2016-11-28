@@ -353,10 +353,8 @@ C        Diffussion terms
      <		                 + Csed(i,0,k+1) - Csed(i,0,k-1) ) 
      <		+ g21(i,0,k) * ( Csed(i+1,1,  k) - Csed(i-1,1,  k)
      <		                 + Csed(i+1,0,k) - Csed(i-1,0,k) ) )
-C        Advection
      <		- uej(i,0,k) * Csedf(i,0,k,2)
 C        Add deposition
-C     <		- 1/jac(i,1,k)*ws*1/yetjface(i,1,k)*Csed(i,1,k)
 C        Add erosion
 
 	   enddo
@@ -386,7 +384,8 @@ C...... Add back the settling velocity flux to the contravariant volume flux
 	do k = 0, nnk+1
 	do j = 0, nnj+1
 	do i = 0, nni+1
-	   uej(i,j,k)=uej(i,j,k)+1/jac(i,j,k)*ws*1/yetjface(i,j,k)
+	   uej(i,j,k)=uej(i,j,k)+ws*ety(i,j,k)
+
 	enddo
 	enddo
 	enddo
@@ -400,7 +399,7 @@ C......	Diagonal viscous terms at step n-1 from Crank-Nicolson
 	enddo
 	enddo 
 	enddo 
-
+	
 	do k = 1, nnk
 	do j = 1, nnj
 	do i = 1, nni
@@ -566,15 +565,16 @@ C     <	                              + Csed(i,1,k+1) - Csed(i,1,k-1) )
 C     <	               + g21(i,0,k) * ( Csed(i+1,0,k) - Csed(i-1,0,k)
 C     <	                              + Csed(i+1,1,k) - Csed(i-1,1,k) ))
 C     <	               / g22(i,0,k)
+C	      fy(i,0) =  hbCsed(i,0,k)
 	      ay(i,0) =  0.D0
 	      by(i,0) =  1.D0
 	      cy(i,0) = -1.D0
-C	      fy(i,0) =  hbCsed(i,0,k)
 	      fy(i,0) =  0.D0
 
 	      ay(i,1) =  0.D0
-	      by(i,1) =  1.D0
-	      cy(i,1) =  0.D0
+	      cy(i,1) = -( ak + 0.5D0*(akst(i,1,k) + akst(i,2,k)) ) * 
+     <               coef * jac(i,1,k) * g22(i,1,k)
+	      by(i,1) = 1.D0 - cy(i,1)
 
 	   enddo
 	endif
@@ -588,15 +588,16 @@ C     <                    + g21(i,nnj,k)
 C     <	                   * ( Csed(i+1,nnj,  k) - Csed(i-1,nnj,  k)
 C     <	                     + Csed(i+1,nnj+1,k) - Csed(i-1,nnj+1,k) ) )
 C     <	                  / g22(i,nnj,k)
+C	      fy(i,nnj+1) =  hbCsed(i,nnj+1,k)
 	      ay(i,nnj+1) =  1.D0
 	      by(i,nnj+1) = -1.D0
 	      cy(i,nnj+1) =  0.D0
 	      fy(i,nnj+1) =  0.D0
-C	      fy(i,nnj+1) =  hbCsed(i,nnj+1,k)
 
-	      ay(i,nnj) =  0.D0
-	      by(i,nnj) =  1.D0
+	      ay(i,nnj) = -( ak + 0.5D0*(akst(i,nnj,k) + akst(i,nnj-1,k)) ) * 
+     <               coef * jac(i,nnj,k) * g22(i,nnj-1,k)
 	      cy(i,nnj) =  0.D0
+	      by(i,nnj) = 1.D0 - ay(i,nnj)
 
 	   enddo
 	endif

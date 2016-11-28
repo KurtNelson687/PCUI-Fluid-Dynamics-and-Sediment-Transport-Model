@@ -294,15 +294,7 @@ C...... J-face
 	enddo
 	enddo
 	enddo
-
 	
-	do k =  0, kk+1
-	do j =  0, jj+1
-	do i =  0, ii+1
-	   yetjface(i,j,k) = (y(i,j+1,k)-y(i,j,k))
-	enddo
-	enddo
-	enddo
 
 C...... K-face
 	

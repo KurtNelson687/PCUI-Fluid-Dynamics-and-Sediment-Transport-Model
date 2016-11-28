@@ -1,11 +1,8 @@
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-	double precision, dimension(0:nni+1, 0:nnj+1, 0:nnk+1) :: 
-     <		yetjface
 	double precision, dimension(-1:nni+2, -1:nnj+2, -1:nnk+2) ::
      <		jac, xix, xiy, xiz, etx, ety, etz, ztx, zty, ztz
 	common/met/
      <		jac, xix, xiy, xiz, etx, ety, etz, ztx, zty, ztz,
-     <          yetjface
 	double precision, dimension(-1:nni+2, -1:nnj+2, -1:nnk+2) ::
      <		g11, g12, g13, g21, g22, g23, g31, g32, g33, gcc
 	common/ggg/
