@@ -16,11 +16,12 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	
 	double precision, dimension(0:nni+1,0:nnj+1,0:nnk+1,1:3) :: 
      <		cf, Csedf
-
+	double precision  deposition(nni,nnk), erosion(nni,nnk)
 	integer i, j, k
 
 	double precision Csedmin, Csedmax, pmin, pmax, debug
-	
+
+	call getBedFluxes(deposition, erosion)
         coef = 1.5d0
 
 C......	Take an Euler step on the first step
@@ -354,7 +355,8 @@ C        Diffussion terms
      <		+ g21(i,0,k) * ( Csed(i+1,1,  k) - Csed(i-1,1,  k)
      <		                 + Csed(i+1,0,k) - Csed(i-1,0,k) ) )
      <		- uej(i,0,k) * Csedf(i,0,k,2)
-C        Add deposition
+     <		-deposition(i,k)
+     <		+erosion(i,k)
 C        Add erosion
 
 	   enddo
@@ -877,3 +879,39 @@ C******	* - Y - Z
 	return
 	end
 
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+
+	subroutine getBedFluxes(deposition, erosion)
+C       This subroutine depth averages an array that has been horizontally averaged
+	include "size.inc"
+	include "mpif.h"
+	include "mpi.inc"
+	include "metric.inc"
+	include "cavity.inc"
+	double precision, intent(out) :: deposition(nni,nnk),
+     <          erosion(nni,nnk)
+	double precision bedShear
+	integer i,k
+
+	   do i = 1, nni
+	   do k = 1, nnk
+
+C        Compute deposition
+	   deposition(i,k) = ws*ety(i,0,k)*(Csed(i,1,k)+(0-xp(i,1,k))
+     <       /(xp(i,2,k)-xp(i,1,k))*(Csed(i,2,k)-Csed(i,1,k)))
+C	Compute erosion
+	   bedShear = DSQRT(u(i,1,j,1)**2+u(i,1,j,3)**2)/xp(i,1,j,2)
+	   if(bedShear .ge. tauCrit) then
+C       note: this is based on Jones and Jaffe (2013). The 0.01 is because E is in cm/s
+	     erosion(i,k) = 0.01*dryBulk*Ased*bedShear**nsed
+	   else
+	     erosion(i,k) = 0
+	   endif  
+
+
+	   enddo
+	   enddo
+
+	return
+	end
+	

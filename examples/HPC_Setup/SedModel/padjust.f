@@ -35,9 +35,6 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	integer i, j, k
 	real, parameter :: PI=3.1415926535897932
 
-	call horizontalAverage(u(:,:,:,1), uMean, 2)
-	call depthAverage(uMean, uDepth)
-
 	if ( waves .eq. 1 ) then
 	   do j = 1,nnj
 	       steadyPall(j)= waveMag*cos(2*PI*time/Twave)
