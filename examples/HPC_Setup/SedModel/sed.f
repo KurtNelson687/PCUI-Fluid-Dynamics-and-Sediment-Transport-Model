@@ -886,8 +886,11 @@ C       This subroutine depth averages an array that has been horizontally avera
 	include "size.inc"
 	include "mpif.h"
 	include "mpi.inc"
+	include "ns.inc"
 	include "metric.inc"
-	include "cavity.inc"
+	include "para.inc"
+	include "sed.inc"
+
 	double precision, intent(out) :: deposition(nni,nnk),
      <          erosion(nni,nnk)
 	double precision bedShear
@@ -897,17 +900,16 @@ C       This subroutine depth averages an array that has been horizontally avera
 	   do k = 1, nnk
 
 C        Compute deposition
-	   deposition(i,k) = ws*ety(i,0,k)*(Csed(i,1,k)+(0-xp(i,1,k))
-     <       /(xp(i,2,k)-xp(i,1,k))*(Csed(i,2,k)-Csed(i,1,k)))
+	   deposition(i,k) = ws*ety(i,0,k)*(Csed(i,1,k)+(0-xp(i,1,k,2))
+     <       /(xp(i,2,k,2)-xp(i,1,k,2))*(Csed(i,2,k)-Csed(i,1,k)))
 C	Compute erosion
-	   bedShear = DSQRT(u(i,1,j,1)**2+u(i,1,j,3)**2)/xp(i,1,j,2)
+	   bedShear = rhoWater*vis*DSQRT(u(i,1,k,1)**2+u(i,1,k,3)**2)/xp(i,1,k,2)
 	   if(bedShear .ge. tauCrit) then
 C       note: this is based on Jones and Jaffe (2013). The 0.01 is because E is in cm/s
 	     erosion(i,k) = 0.01*dryBulk*Ased*bedShear**nsed
 	   else
 	     erosion(i,k) = 0
 	   endif  
-
 
 	   enddo
 	   enddo

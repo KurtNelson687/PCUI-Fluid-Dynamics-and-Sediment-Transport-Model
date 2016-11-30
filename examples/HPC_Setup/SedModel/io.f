@@ -100,15 +100,9 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	    case ('dpdxSteady')
 	      read(buffer, *, iostat=ios) dpdxSteady
 	      write(*,*) 'dpdxSteady = ', dpdxSteady
-	    case ('dpdxLaminar')
-	      read(buffer, *, iostat=ios) dpdxLaminar
-	      write(*,*) 'dpdxLaminar = ', dpdxLaminar
-	    case ('driveFac')
-	      read(buffer, *, iostat=ios) driveFac
-	      write(*,*) 'driveFac = ', driveFac
-	    case ('waveMag')
-	      read(buffer, *, iostat=ios) waveMag
-	      write(*,*) 'waveMag  = ', waveMag
+	    case ('dpdxWave')
+	      read(buffer, *, iostat=ios) dpdxWave
+	      write(*,*) 'dpdxWave  = ', dpdxWave
 	    case ('Twave')
 	      read(buffer, *, iostat=ios) Twave
 	      write(*,*) 'Twave  = ', Twave
@@ -190,13 +184,9 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
      <                              MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(dpdxSteady,  1,MPI_DOUBLE_PRECISION,0,
      <                              MPI_COMM_WORLD,ierr)
-	call MPI_BCAST(dpdxLaminar,  1,MPI_DOUBLE_PRECISION,0,
-     <                              MPI_COMM_WORLD,ierr)
-	call MPI_BCAST(driveFac,  1,MPI_DOUBLE_PRECISION,0,
-     <                              MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(Twave,       1,MPI_DOUBLE_PRECISION,0,
      <                              MPI_COMM_WORLD,ierr)
-	call MPI_BCAST(waveMag,    1,MPI_DOUBLE_PRECISION,0,
+	call MPI_BCAST(dpdxWave,    1,MPI_DOUBLE_PRECISION,0,
      <                              MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(omg_cyl,     1,MPI_DOUBLE_PRECISION,0,
      <                              MPI_COMM_WORLD,ierr)
@@ -386,7 +376,6 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 C	if ( ised .eq. 1 ) read(200+myid) Csed
 
 	close(200+myid)
-	ak = 1D-6
 	return
 	end
 

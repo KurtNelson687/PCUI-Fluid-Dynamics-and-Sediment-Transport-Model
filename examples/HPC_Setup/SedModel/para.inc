@@ -11,14 +11,13 @@
 
 	double precision time, dtime, vis, ak, g
 	double precision rhoWater
-	double precision dpdxSteady, dpdxWave, waveMag, Twave,
-     <          driveFac, dpdxLaminar
+	double precision dpdxSteady, dpdxWave, Twave
 	double precision omg_cyl, omg_lid, omg2
 	double precision factor, tol(5), ter(5), slowiter(5)
 	common/par/
      <		time, dtime, vis, ak, g,
-     <          rhoWater, driveFac, dpdxLaminar,
-     <		dpdxSteady,dpdxWave, waveMag, Twave,
+     <          rhoWater,
+     <		dpdxSteady,dpdxWave, Twave,
      <		omg_cyl, omg_lid, omg2,                     
      <		factor, tol, ter, slowiter
 
