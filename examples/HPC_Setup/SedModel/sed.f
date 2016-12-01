@@ -907,7 +907,7 @@ C	Compute erosion
      <         *DSQRT(u(i,1,k,1)**2+u(i,1,k,3)**2)/xp(i,1,k,2)
 	   if(bedShear .ge. tauCrit) then
 C       note: this is based on Jones and Jaffe (2013). The 0.01 is because E is in cm/s
-	     erosion(i,k) = 0.01*dryBulk*Ased*bedShear**nsed
+	     erosion(i,k) = 0.01*ety(i,0,k)*dryBulk*Ased*bedShear**nsed
 	   else
 	     erosion(i,k) = 0
 	   endif  
