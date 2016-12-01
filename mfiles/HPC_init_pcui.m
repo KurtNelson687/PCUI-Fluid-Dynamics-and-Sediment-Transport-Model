@@ -169,8 +169,26 @@ for i=1:m
 	end
     end
 end
+
+
+elseif initType == 4
+for i=1:m
+    for j=1:n
+        for k=1:p
+            uvw_pcui(i,j,k,1) = 0;
+	end
+    end
 end
 
+end
+
+
+
+
+if initType == 4
+uvw_pcui(:,:,:,2) =uvw_pcui(:,:,:,1);
+uvw_pcui(:,:,:,3) =uvw_pcui(:,:,:,1);
+else
 for j =2:n-1
 
 if uMean*init_percent*params.dt/(0.5*(y(1,j+1,1)-y(1,j-1,1)))>.9
@@ -186,6 +204,6 @@ uvw_pcui(:,j,:,1) = (b-a).*rand(m,1,p)+a+ uvw_pcui(:,j,:,1);
 uvw_pcui(:,j,:,2) = (b-a).*rand(m,1,p)+a;
 uvw_pcui(:,j,:,3) = (b-a).*rand(m,1,p)+a;
 end
-
+end
 
 write_binary_file_pcui(working_folder, fname_UVW_to_PCUI, params, uvw_pcui);

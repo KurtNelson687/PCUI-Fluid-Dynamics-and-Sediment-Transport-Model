@@ -903,7 +903,8 @@ C        Compute deposition
 	   deposition(i,k) = ws*ety(i,0,k)*(Csed(i,1,k)+(0-xp(i,1,k,2))
      <       /(xp(i,2,k,2)-xp(i,1,k,2))*(Csed(i,2,k)-Csed(i,1,k)))
 C	Compute erosion
-	   bedShear = rhoWater*vis*DSQRT(u(i,1,k,1)**2+u(i,1,k,3)**2)/xp(i,1,k,2)
+	   bedShear = rhoWater*vis
+     <         *DSQRT(u(i,1,k,1)**2+u(i,1,k,3)**2)/xp(i,1,k,2)
 	   if(bedShear .ge. tauCrit) then
 C       note: this is based on Jones and Jaffe (2013). The 0.01 is because E is in cm/s
 	     erosion(i,k) = 0.01*dryBulk*Ased*bedShear**nsed
