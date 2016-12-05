@@ -37,6 +37,9 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	    case ('runCase')
 	      read(buffer, *, iostat=ios) runCase
 	      write(*,*) 'runCase = ', runCase
+	    case ('newWave')
+	      read(buffer, *, iostat=ios) newWave
+	      write(*,*) 'newWave  = ', newWave
 	    case ('newrun')
 	      read(buffer, *, iostat=ios) newrun
 	      write(*,*) 'newrun  = ', newrun
@@ -52,6 +55,9 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	    case ('ised')
 	      read(buffer, *, iostat=ios) ised
 	      write(*,*) 'ised  = ', ised
+	    case ('irho')
+	      read(buffer, *, iostat=ios) irho
+	      write(*,*) 'ised  = ', irho
 	    case ('iTKE')
 	      read(buffer, *, iostat=ios) iTKE
 	      write(*,*) 'iTKE  = ', iTKE
@@ -158,6 +164,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	endif
 
 	call MPI_BCAST(runCase,     1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
+	call MPI_BCAST(newWave,      1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(newrun,      1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(periodic,    1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(pAdjust,     1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
@@ -223,6 +230,8 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	call MPI_BCAST(nsed,         1,MPI_DOUBLE_PRECISION,0,
      <                              MPI_COMM_WORLD,ierr)
         call MPI_BCAST(ised,        1,MPI_DOUBLE_PRECISION,0,
+     <                              MPI_COMM_WORLD,ierr)
+        call MPI_BCAST(irho,        1,MPI_DOUBLE_PRECISION,0,
      <                              MPI_COMM_WORLD,ierr)
         call MPI_BCAST(iTKE,        1,MPI_DOUBLE_PRECISION,0,
      <                              MPI_COMM_WORLD,ierr)
@@ -372,8 +381,10 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	   read(200+myid) sab
 	   read(200+myid) jac
 	endif
-
-C	if ( ised .eq. 1 ) read(200+myid) Csed
+	
+	if(newWave .ne. 1) then
+	   if ( ised .eq. 1 ) read(200+myid) Csed
+	endif
 
 	close(200+myid)
 	return
@@ -476,7 +487,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	character*4 :: ID
 	double precision, dimension(1:nnj) ::
      <     uTurb, vTurb, wTurb,uvRey, uwRey, vwRey, vstMean, rruMean,
-     <     kineticMean, dissipationMean, sedMean
+     <     kineticMean, dissipationMean, sedMean, vCsed,RiMean 
 	double precision kineticDepth, drive, sedTotal1, sedTotal2 
 	double precision, dimension(-1:nni+2,-1:nnj+2,-1:nnk+2) :: 
      <     kinetic
@@ -497,6 +508,11 @@ C	call horizontalAverage(vst, vstMean, 1)
 	call horizontalAverage(Csed, sedMean, 2)
 	call sedMass1(Csed,sedTotal1,2)
 	call SedMass2(Csed,sedTotal2,2)
+	call get_sedTurbFlux(sedMean,vCsed)
+	endif
+	
+	if (irho .eq. 1) then
+	call get_Richardson(u,rho,RiMean)
 	endif
 
 	call compute_dissipation(dissipationMean)
@@ -624,9 +640,21 @@ C	     write(50+myid) vstMean
 C	     close(unit = 50+myid)
 
 	     if(ised .eq. 1) then
+	     open(50+myid, file='outputp_vCsed.'//ID, form='unformatted',
+     >          status='old',position='append')
+	     write(50+myid) vCsed
+	     close(unit = 50+myid)
+
 	     open(50+myid, file='outputp_cSed.'//ID, form='unformatted',
      >          status='old',position='append')
 	     write(50+myid) sedMean
+	     close(unit = 50+myid)
+	     endif
+
+	     if(irho .eq. 1) then
+	     open(50+myid, file='outputpRiMean.'//ID, form='unformatted',
+     >          status='old',position='append')
+	     write(50+myid)RiMean
 	     close(unit = 50+myid)
 	     endif
 
@@ -682,9 +710,21 @@ C	     write(50+myid) vstMean
 C	     close(unit = 50+myid)
 	     
 	     if(ised .eq. 1) then
+	     open(50+myid, file='outputp_vCsed.'//ID, form='unformatted',
+     >          status='unknown')
+	     write(50+myid) vCsed
+	     close(unit = 50+myid)
+
 	     open(50+myid, file='outputp_cSed.'//ID, form='unformatted',
      >          status='unknown')
 	     write(50+myid) sedMean
+	     close(unit = 50+myid)
+	     endif
+
+	     if(irho .eq. 1) then
+	     open(50+myid, file='outputp_RiMean.'//ID, form='unformatted',
+     >          status='unknown')
+	     write(50+myid) RiMean
 	     close(unit = 50+myid)
 	     endif
 

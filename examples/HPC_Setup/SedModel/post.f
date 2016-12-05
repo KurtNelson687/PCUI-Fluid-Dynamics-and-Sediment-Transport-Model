@@ -359,11 +359,12 @@ C       This subroutine Saves Cn and puts it into the Production matrix for comp
 	include "size.inc"
 	include "mpif.h"
 	include "mpi.inc"
-	include "ns.inc"
 	include "metric.inc"
 	include "padjust.inc"
 	include "para.inc"
 	include "eddy.inc"
+	include "ns.inc"
+
 
 	integer i,j,k,m
 	double precision, dimension(1:nnj) ::
@@ -648,3 +649,88 @@ C       This subroutine volume averagesover the entire domain
      <       0,MPI_COMM_WORLD,ierr)
 	return
 	end
+
+
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+	subroutine get_sedTurbFlux(sedMean,vCsed)
+C       This subroutine routine computes velociy purturbations
+
+	include "size.inc"
+	include "mpif.h"
+	include "mpi.inc"
+	include "padjust.inc"
+	include "sed.inc"
+
+	double precision, intent(in) :: sedMean(1:nnj)
+	double precision, intent(out) :: vCsed(1:nnj)
+	double precision sedFlux(1:nni, 1:nnj, 1:nnk)
+	double precision cPrime
+	integer i, j, k
+	
+	do i = 1, nni
+	   do j = 1, nnj
+	      do k = 1, nnk
+	       cPrime = Csed(i,j,k)-sedMean(j)
+	       sedFlux(i,j,k) = 
+     <           cPrime*velPrimes(i,j,k,2)
+	      enddo
+	   enddo
+	enddo
+
+	call MPI_Barrier(MPI_COMM_WORLD, ierr)
+	call horizontalAverage(sedFlux,vCsed,0) 
+	
+	vCsed = -1*vCsed
+	return
+	end
+
+
+
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+	subroutine get_Richardson(vel,den,RiMean)
+C       This subroutine computes the local gradient Richardson Number
+C       note: this is defined at cell edges
+
+	include "size.inc"
+	include "mpif.h"
+	include "mpi.inc"
+	include "metric.inc"
+	include "para.inc"
+	
+	double precision, intent(in) :: vel(-1:nni+2,-1:nnj+2,-1:nnk+2,1:3)
+	double precision, intent(in) :: den(-1:nni+2,-1:nnj+2,-1:nnk+2)
+	double precision, intent(out) :: RiMean(1:nnj)
+	double precision Ri(1:nni, 1:nnj, 1:nnk)
+	integer i, j, k
+	
+	Ri = 0
+	do i = 1, nni
+	do j = 1, nnj-1
+	do k = 1, nnk
+	  Ri(i,j,k) = -g/(0.5*(den(i,j+1,k)+den(i,j,k)))
+     <     *(den(i,j+1,k)-den(i,j,k))/(xp(i,j+1,k,2)-xp(i,j,k,2))
+
+
+	  Ri(i,j,k) = Ri(i,j,k)
+     <     /(((vel(i,j+1,k,1)-vel(i,j,k,1))
+     <           /(xp(i,j+1,k,2)-xp(i,j,k,2)))**2
+     <     + ((vel(i,j+1,k,3)-vel(i,j,k,3))
+     <           /(xp(i,j+1,k,2)-xp(i,j,k,2)))**2)
+
+	enddo
+	enddo
+	enddo
+
+	call MPI_Barrier(MPI_COMM_WORLD, ierr)
+	call horizontalAverage(Ri,RiMean,0)
+	return
+	end
+
+
+
+
+
+
+
+
+

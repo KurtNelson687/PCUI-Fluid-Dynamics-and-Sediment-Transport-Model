@@ -139,13 +139,23 @@ C......	Coriolis and bouyance force terms
 	do i = 1, nni
 	   temp = 1.D0 / jac(i,j,k)
 	   hb(i,j,k,1) = hb(i,j,k,1) - omg2 * u(i,j,k,3) * temp
-C     <              + steadyPall(j)*temp/rhoWater !Started with1.5D-6 and halved it each consecutive run 
 	   hb(i,j,k,3) = hb(i,j,k,3) + omg2 * u(i,j,k,1) * temp
 C	   hb(i,j,k,2) = hb(i,j,k,2)  - g * (  rho(i,j,k)
 C     <                                      - rhoWater)/rhoWater * temp
 	enddo
 	enddo
 	enddo
+
+	if (irho .eq. 1) then
+	do k = 1, nnk
+	do j = 1, nnj
+	do i = 1, nni
+	   hb(i,j,k,2) = hb(i,j,k,2)  - g * (  rho(i,j,k)
+     <                                 - rhoWater)/rhoWater * temp
+	enddo
+	enddo
+	enddo
+	endif
 
 C......	Add to the source terms
 
