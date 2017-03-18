@@ -652,7 +652,7 @@ C	     close(unit = 50+myid)
 	     endif
 
 	     if(irho .eq. 1) then
-	     open(50+myid, file='outputpRiMean.'//ID, form='unformatted',
+	     open(50+myid, file='outputp_RiMean.'//ID, form='unformatted',
      >          status='old',position='append')
 	     write(50+myid)RiMean
 	     close(unit = 50+myid)

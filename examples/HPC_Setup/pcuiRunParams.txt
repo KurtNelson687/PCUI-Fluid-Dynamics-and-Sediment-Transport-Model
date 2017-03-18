@@ -4,6 +4,7 @@ newrun    = 1
 periodic  = 1
 iscalar   = 0
 ieddy     = 0
+irho      = 1
 ised      = 1
 iTKE      = 0
 pAdjust   = 0
