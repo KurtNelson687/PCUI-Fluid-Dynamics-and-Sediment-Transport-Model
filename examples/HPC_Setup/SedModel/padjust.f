@@ -21,7 +21,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	end
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-	subroutine adjustPressure
+	subroutine adjustPressure(PI)
 
 	include "size.inc"
 	include "para.inc"
@@ -30,10 +30,10 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	include "mpi.inc"
 	include "metric.inc"
 
+	double precision, intent(in) :: PI
 	double precision, dimension(1:nnj) :: uMean
 	double precision uDepth, vertStressMean
 	integer i, j, k
-	real, parameter :: PI=3.1415926535897932
 
 	if ( waves .eq. 1 ) then
 	   do j = 1,nnj

@@ -9,6 +9,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	include "metric.inc"
 	include "para.inc"
 	include "eddy.inc"
+	include "sed.inc"
 
 	double precision, dimension(0:nni+1,0:nnj+1,0:nnk+1,9) :: 
      <		ss, tt, zz
@@ -93,9 +94,9 @@ C	rxi (1) ret (2) rzt (3)
         do k = 0, nnk+1
         do j = 0, nnj+1
         do i = 0, nni+1
-	   rr(i,j,k,1) = phi(i+1,j,k) - phi(i-1,j,k)
-	   rr(i,j,k,2) = phi(i,j+1,k) - phi(i,j-1,k)
-	   rr(i,j,k,3) = phi(i,j,k+1) - phi(i,j,k-1)
+	   rr(i,j,k,1) = Csed(i+1,j,k) - Csed(i-1,j,k)
+	   rr(i,j,k,2) = Csed(i,j+1,k) - Csed(i,j-1,k)
+	   rr(i,j,k,3) = Csed(i,j,k+1) - Csed(i,j,k-1)
 	enddo
 	enddo
 	enddo 
@@ -273,9 +274,9 @@ C	ru (7) rv (8) rw (9)
 	   tt(i,j,k,4) = u(i,j,k,1) * u(i,j,k,2)
 	   tt(i,j,k,5) = u(i,j,k,2) * u(i,j,k,3)
 	   tt(i,j,k,6) = u(i,j,k,3) * u(i,j,k,1)
-	   tt(i,j,k,7) = phi(i,j,k) * u(i,j,k,1)
-	   tt(i,j,k,8) = phi(i,j,k) * u(i,j,k,2)
-	   tt(i,j,k,9) = phi(i,j,k) * u(i,j,k,3)
+	   tt(i,j,k,7) = Csed(i,j,k) * u(i,j,k,1)
+	   tt(i,j,k,8) = Csed(i,j,k) * u(i,j,k,2)
+	   tt(i,j,k,9) = Csed(i,j,k) * u(i,j,k,3)
 	enddo
 	enddo
 	enddo 
@@ -306,7 +307,7 @@ C	u (1) v (2) w (3) r (4)
 	   rr(i,j,k,1) = u(i,j,k,1)
 	   rr(i,j,k,2) = u(i,j,k,2)
 	   rr(i,j,k,3) = u(i,j,k,3)
-	   rr(i,j,k,4) = phi(i,j,k)
+	   rr(i,j,k,4) = Csed(i,j,k)
 	enddo
 	enddo
 	enddo 
@@ -351,7 +352,7 @@ C	u (1) v (2) w (3) r (4)
 	   rr(i,j,k,1) = u(i,j,k,1)
 	   rr(i,j,k,2) = u(i,j,k,2)
 	   rr(i,j,k,3) = u(i,j,k,3)
-	   rr(i,j,k,4) = phi(i,j,k)
+	   rr(i,j,k,4) = Csed(i,j,k)
 	enddo
 	enddo
 	enddo 
@@ -700,9 +701,9 @@ C	ru (7) rv (8) rw (9)
 	   tt(i,j,k,4) = u(i,j,k,1) * u(i,j,k,2)
 	   tt(i,j,k,5) = u(i,j,k,2) * u(i,j,k,3)
 	   tt(i,j,k,6) = u(i,j,k,3) * u(i,j,k,1)
-	   tt(i,j,k,7) = phi(i,j,k) * u(i,j,k,1)
-	   tt(i,j,k,8) = phi(i,j,k) * u(i,j,k,2)
-	   tt(i,j,k,9) = phi(i,j,k) * u(i,j,k,3)
+	   tt(i,j,k,7) = Csed(i,j,k) * u(i,j,k,1)
+	   tt(i,j,k,8) = Csed(i,j,k) * u(i,j,k,2)
+	   tt(i,j,k,9) = Csed(i,j,k) * u(i,j,k,3)
 	enddo
 	enddo
 	enddo 
@@ -733,7 +734,7 @@ C	u (1) v (2) w (3) r (4)
 	   rr(i,j,k,1) = u(i,j,k,1)
 	   rr(i,j,k,2) = u(i,j,k,2)
 	   rr(i,j,k,3) = u(i,j,k,3)
-	   rr(i,j,k,4) = phi(i,j,k)
+	   rr(i,j,k,4) = Csed(i,j,k)
 	enddo
 	enddo
 	enddo 

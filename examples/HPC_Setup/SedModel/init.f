@@ -147,6 +147,8 @@ C...... lid velocities u_lid and w_lid
            
 	   if(newWave .eq. 1) then
 	      time = 0
+	      kount = 1
+	      ak = 1.D-6
 	      if(ised .eq. 1) then
                 do k = -1, nnk+2
                 do j = -1, nnj+2

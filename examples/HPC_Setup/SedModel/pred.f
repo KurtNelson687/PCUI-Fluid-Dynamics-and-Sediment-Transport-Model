@@ -140,8 +140,6 @@ C......	Coriolis and bouyance force terms
 	   temp = 1.D0 / jac(i,j,k)
 	   hb(i,j,k,1) = hb(i,j,k,1) - omg2 * u(i,j,k,3) * temp
 	   hb(i,j,k,3) = hb(i,j,k,3) + omg2 * u(i,j,k,1) * temp
-C	   hb(i,j,k,2) = hb(i,j,k,2)  - g * (  rho(i,j,k)
-C     <                                      - rhoWater)/rhoWater * temp
 	enddo
 	enddo
 	enddo

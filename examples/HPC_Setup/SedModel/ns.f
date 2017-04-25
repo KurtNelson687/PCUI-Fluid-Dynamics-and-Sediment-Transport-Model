@@ -9,6 +9,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	include "sed.inc"
 
 	double precision ta, tt, t0, t1, t2, t3, t4, t5, t6, t7, t8
+	double precision :: PI=3.1415926535897932
 	call MPI_INIT( ierr ) !initializes the MPI execution environment
 
 	call MPI_Barrier(MPI_COMM_WORLD, ierr) !stops program until all processes have reached this routine. MPI_COMM_WORLD is the type of communication used 
@@ -36,28 +37,27 @@ C	call init_pSteady !initialize steady pressure gradient
 	call computeMeanAndPrimes
 
 	do istep = 1, nstep !time stepping of simulation
-	   if ( MYID .EQ. 0 .AND. MOD(istep,100) .EQ. 0) then
+	   if ( MYID .EQ. 0 .AND. MOD(istep,200) .EQ. 0) then
 	      write(*,*) ' istep = ', istep, ' kount  = ', kount
 	   end if
 
 	   if ( pAdjust .eq. 0 ) then
 	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
-	   call adjustPressure
+	   call adjustPressure(PI)
 	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	   end if
 
 
 	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	   tt =  MPI_Wtime()
-	   call output_profiles
+	   call output_profiles(PI)
 	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	   t6 = t6 + MPI_Wtime() - tt
 
-	   if(mod(istep,nsave) .eq. 0 .or. istep .eq. 1 
-     <              .or. istep .eq. 2) then
+	   if(mod(istep-1,nsave) .eq. 0 .or. istep .eq. 1) then
 	      call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	      tt =  MPI_Wtime()
-	      call output !writes density, and velocity field
+	      call output(PI) !writes density, and velocity field
 	      call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	      t6 = t6 + MPI_Wtime() - tt
 	   end if
@@ -144,9 +144,9 @@ C          Solve for new sediment concentration
 
 	call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	tt = MPI_Wtime()
-	call output
+	call output(PI)
 	call MPI_Barrier(MPI_COMM_WORLD, ierr)
-	call output_profiles
+	call output_profiles(PI)
 	call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	t6 = t6 + MPI_Wtime() - tt
 

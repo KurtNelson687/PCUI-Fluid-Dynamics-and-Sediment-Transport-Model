@@ -265,7 +265,7 @@ C	This subroutine is simply writing the x,y, and z coordinates from each process
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
-	subroutine output
+	subroutine output(PI)
 
 	include "size.inc"
         include "mpif.h"
@@ -275,8 +275,10 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	include "metric.inc"
 	include "eddy.inc"
 	include "sed.inc"
-	
+
+	double precision, intent(in) :: PI
 	character*4 :: ID
+	double precision :: phase
 
 	if (100+myid .gt. 999) then
 	write(ID, fmt='(I4)') 100+myid
@@ -284,7 +286,32 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	write(ID, fmt='(I3)') 100+myid
 	endif
 
-	if (myid .eq. 0) print *, 'Recording to output files ...'
+	if (myid .eq. 0) then
+	   print *, 'Recording to output files ...'
+	
+	   if(waves .eq. 1) then
+	     phase = cos(2*PI*time/Twave)
+	   if (istep .gt.1) then !appends to existing file - use this if you want continue run to create new files
+	     open(50+myid, file='output_wavephase.'//ID,
+     >   form='unformatted', status='old',position='append')
+	     write(50+myid) phase
+	     close(unit = 50+myid)
+	     open(50+myid, file='output_time.'//ID, form='unformatted',
+     >          status='old',position='append')
+	     write(50+myid) time
+	     close(unit = 50+myid)
+	   else
+	     open(50+myid, file='output_wavephase.'//ID,
+     >            form='unformatted', status='unknown')
+	     write(50+myid) phase
+	     close(unit = 50+myid)
+	     open(50+myid, file='output_time.'//ID,
+     >            form='unformatted', status='unknown')
+	     write(50+myid) time
+	     close(unit = 50+myid)
+	   endif
+	   endif
+	endif
 
 !	if (kount.gt.1) then !appends to existing file - use this if you want continue run to append of existing output
 	if (istep .gt.1) then !appends to existing file - use this if you want continue run to create new files
@@ -474,7 +501,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
-	subroutine output_profiles
+	subroutine output_profiles(PI)
 	include "size.inc"
 	include "ns.inc"
         include "mpif.h"
@@ -483,17 +510,19 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	include "para.inc"
 	include "eddy.inc"
 	include "sed.inc"
-	
+
+	double precision, intent(in) :: PI
 	character*4 :: ID
 	double precision, dimension(1:nnj) ::
      <     uTurb, vTurb, wTurb,uvRey, uwRey, vwRey, vstMean, rruMean,
      <     kineticMean, dissipationMean, sedMean, vCsed,RiMean 
-	double precision kineticDepth, drive, sedTotal1, sedTotal2 
+	double precision kineticDepth, drive, sedTotal1, sedTotal2,
+     <     phase 
 	double precision, dimension(-1:nni+2,-1:nnj+2,-1:nnk+2) :: 
      <     kinetic
 
-C	call horizontalAverage(rr(:,:,:,1), rruMean, 1)
-C	call horizontalAverage(vst, vstMean, 1)
+	call horizontalAverage(rr(:,:,:,1), rruMean, 1)
+	call horizontalAverage(vst, vstMean, 1)
 
 	if(iTKE .ne.1) then
 	call computeMeanAndPrimes
@@ -513,6 +542,11 @@ C	call horizontalAverage(vst, vstMean, 1)
 	
 	if (irho .eq. 1) then
 	call get_Richardson(u,rho,RiMean)
+	endif
+
+
+	if (waves .eq. 1) then
+	     phase = cos(2*PI*time/Twave)
 	endif
 
 	call compute_dissipation(dissipationMean)
@@ -554,6 +588,13 @@ C	call horizontalAverage(vst, vstMean, 1)
 	     close(unit = 50+myid)
 	  endif
 
+	   if(waves .eq. 1) then
+	     open(50+myid, file='outputpVal_wavephase.'//ID,
+     >   form='unformatted', status='old',position='append')
+	     write(50+myid) phase
+	     close(unit = 50+myid)
+	  endif
+
 	   else
 
 	     open(50+myid, file='outputp_time.'//ID, form='unformatted',
@@ -580,6 +621,13 @@ C	call horizontalAverage(vst, vstMean, 1)
 	     open(50+myid, file='outputpVal_sedTotal2.'//ID,
      >            form='unformatted', status='unknown')
 	     write(50+myid) sedTotal2
+	     close(unit = 50+myid)
+	  endif
+
+	   if(waves .eq. 1) then
+	     open(50+myid, file='outputpVal_wavephase.'//ID,
+     >            form='unformatted', status='unknown')
+	     write(50+myid) phase
 	     close(unit = 50+myid)
 	  endif
 
@@ -629,15 +677,15 @@ C	     close(unit = 50+myid)
 	     write(50+myid) vwRey
 	     close(unit = 50+myid)
 
-C	     open(50+myid, file='outputp_rruMean.'//ID, form='unformatted',
-C     >          status='old',position='append')
-C	     write(50+myid) rruMean
-C	     close(unit = 50+myid)
+	     open(50+myid, file='outputp_rruMean.'//ID, form='unformatted',
+     >          status='old',position='append')
+	     write(50+myid) rruMean
+	     close(unit = 50+myid)
 
-C	     open(50+myid, file='outputp_vstMean.'//ID, form='unformatted',
-C     >          status='old',position='append')
-C	     write(50+myid) vstMean
-C	     close(unit = 50+myid)
+	     open(50+myid, file='outputp_vstMean.'//ID, form='unformatted',
+     >          status='old',position='append')
+	     write(50+myid) vstMean
+	     close(unit = 50+myid)
 
 	     if(ised .eq. 1) then
 	     open(50+myid, file='outputp_vCsed.'//ID, form='unformatted',
@@ -699,15 +747,15 @@ C	     close(unit = 50+myid)
 	     write(50+myid) vwRey
 	     close(unit = 50+myid)
 
-C	     open(50+myid, file='outputp_rruMean.'//ID, form='unformatted',
-C     >          status='unknown')
-C	     write(50+myid) rruMean
-C	     close(unit = 50+myid)
+	     open(50+myid, file='outputp_rruMean.'//ID, form='unformatted',
+     >          status='unknown')
+	     write(50+myid) rruMean
+	     close(unit = 50+myid)
 
-C	     open(50+myid, file='outputp_vstMean.'//ID, form='unformatted',
-C     >          status='unknown')
-C	     write(50+myid) vstMean
-C	     close(unit = 50+myid)
+	     open(50+myid, file='outputp_vstMean.'//ID, form='unformatted',
+     >          status='unknown')
+	     write(50+myid) vstMean
+	     close(unit = 50+myid)
 	     
 	     if(ised .eq. 1) then
 	     open(50+myid, file='outputp_vCsed.'//ID, form='unformatted',
@@ -772,20 +820,20 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	call MPI_BCAST(cflmax,1,MPI_DOUBLE_PRECISION,0,comm3d,ierr)
 
 
-	if ( MYID .eq. 0 ) then
-
-	   if (istep .gt.1) then !appends to existing file - use this if you want continue run to create new files
-	     open(50+myid, file='outputpval_cfl.100', form='unformatted',
-     >          status='old',position='append')
-	     write(50+myid) cflmax
-	     close(unit = 50+myid)
-	   else
-	     open(50+myid, file='outputpval_cfl.100', form='unformatted',
-     >          status='unknown')
-	     write(50+myid) cflmax
-	     close(unit = 50+myid)
-	   endif
-	endif
+C	if ( MYID .eq. 0 ) then
+C
+C	   if (istep .gt.1) then !appends to existing file - use this if you want continue run to create new files
+C	     open(50+myid, file='outputpval_cfl.100', form='unformatted',
+C     >          status='old',position='append')
+C	     write(50+myid) cflmax
+C	     close(unit = 50+myid)
+C	   else
+C	     open(50+myid, file='outputpval_cfl.100', form='unformatted',
+C     >          status='unknown')
+C	     write(50+myid) cflmax
+C	     close(unit = 50+myid)
+C	   endif
+C	endif
 
 
 	if ( cflmax .gt. 0.9 .and. istep .gt. 5) then
@@ -793,7 +841,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
      <	      write(*,*) ' CFL = ', cflmax, ' > 0.9, Stop! '
 	   stop
 	else
-	   if ( MYID .eq. 0 ) then
+	   if ( MYID .eq. 0 .and. mod(istep,100)) then
 	      print *, ''
 	      print *, '************************************************' 
      	      write(*,1) cflmax, dtime, time
