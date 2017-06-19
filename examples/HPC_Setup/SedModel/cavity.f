@@ -15,7 +15,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	maxRatio = 8.2
 	numWallUnits = 1.2
 	stretchFactor = 5.0D-2
-	dx = wallUnit*numWallUnits*maxRatio
+	dx = wallUnit*numWallUnits*maxRatio*2
 	dz = wallUnit*numWallUnits*maxRatio
 	dy = dx
 
@@ -28,7 +28,7 @@ C	streching flags
 	if(stretchy .eq. 1) then
 	   by =1
 	call ycoordStretch(wallUnit, maxRatio,numWallUnits,
-     <      stretchFactor, dx, dy)
+     <      stretchFactor, dz, dy)
 	else
 	   by = nj*dy
 	endif

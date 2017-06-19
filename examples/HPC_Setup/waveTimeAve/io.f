@@ -413,6 +413,12 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	   if ( ised .eq. 1 ) read(200+myid) Csed
 	endif
 
+	if(pAdjust .eq. 1) then
+	   read(200+myid) SnRun
+	   read(200+myid) uRun
+	endif
+
+
 	close(200+myid)
 	return
 	end
@@ -466,6 +472,12 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	endif
 	
 	if (ised .eq. 1 ) write(200+myid) Csed
+
+	if(pAdjust .eq. 1) then
+	   write(200+myid) SnRun
+	   write(200+myid) uRun
+	endif
+
 	
 	close(200+myid)
 
@@ -489,12 +501,6 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	if (myid .eq. 0) print *, 'writing log law to files ...'
 	
-	if (hor_id .eq. 0) then
-	   open(50+myid, file='output_uTheo.'//ID, form='unformatted',
-     >          status='unknown')	 
-	   write(50+myid) uTheo 
-	   close(unit = 50+myid)
-	endif
 
 	return
 	end
@@ -571,6 +577,11 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	     write(50+myid) kineticDepth
 	     close(unit = 50+myid)
 
+	     open(50+myid, file='outputpVal_Sn.'//ID,
+     >   form='unformatted', status='old',position='append')
+	     write(50+myid) Sn
+	     close(unit = 50+myid)
+
 	     open(50+myid, file='outputpVal_drive.'//ID,
      >   form='unformatted', status='old',position='append')
 	     write(50+myid) drive
@@ -610,6 +621,11 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	     open(50+myid, file='outputpVal_drive.'//ID, 
      >            form='unformatted', status='unknown')
 	     write(50+myid) drive
+	     close(unit = 50+myid)
+
+	     open(50+myid, file='outputpVal_Sn.'//ID, 
+     >            form='unformatted', status='unknown')
+	     write(50+myid) Sn
 	     close(unit = 50+myid)
 
 	   if(ised .eq. 1) then

@@ -1,11 +1,11 @@
 	integer runCase, newrun, periodic, iscalar, ieddy, mg_level
 	integer ised, iTKE, newWave, irho
-	integer waves, pAdjust
+	integer waves, pAdjust, nsavePro
 	integer nstep, nsave, istep, kount, nunit, grid_only
 	integer maxstep, iterchk(5), maxiter(5)
 	common/ctl/
      <		runCase, newrun, periodic, iscalar, ieddy, mg_level,
-     <		istep, nstep, nsave, kount, nunit,
+     <		istep, nstep, nsave, kount, nunit, nsavePro,
      <		maxstep, iterchk, maxiter, grid_only,
      <		waves, ised, pAdjust, iTKE, newWave, irho
 

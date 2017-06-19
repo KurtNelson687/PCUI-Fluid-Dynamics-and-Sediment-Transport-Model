@@ -48,13 +48,15 @@ C	call init_pSteady !initialize steady pressure gradient
 	   end if
 
 
+	   if(mod(kount-1,nsavePro) .eq. 0 .or. kount .eq. 1) then
 	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	   tt =  MPI_Wtime()
 	   call output_profiles(PI)
 	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	   t6 = t6 + MPI_Wtime() - tt
+	   end if
 
-	   if(mod(istep-1,nsave) .eq. 0 .or. istep .eq. 1) then
+	   if(mod(kount-1,nsave) .eq. 0 .or. kount .eq. 1) then
 	      call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	      tt =  MPI_Wtime()
 	      call output(PI) !writes density, and velocity field
@@ -142,13 +144,13 @@ C          Solve for new sediment concentration
 	call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	ta = MPI_Wtime() - ta
 
-	call MPI_Barrier(MPI_COMM_WORLD, ierr)
-	tt = MPI_Wtime()
-	call output(PI)
-	call MPI_Barrier(MPI_COMM_WORLD, ierr)
-	call output_profiles(PI)
-	call MPI_Barrier(MPI_COMM_WORLD, ierr)
-	t6 = t6 + MPI_Wtime() - tt
+C	call MPI_Barrier(MPI_COMM_WORLD, ierr)
+C	tt = MPI_Wtime()
+C	call output(PI)
+C	call MPI_Barrier(MPI_COMM_WORLD, ierr)
+C	call output_profiles(PI)
+C	call MPI_Barrier(MPI_COMM_WORLD, ierr)
+C	t6 = t6 + MPI_Wtime() - tt
 
 	if ( MYID .eq. 0 ) then
      	   WRITE(*,*) ' Total CPU time = ', ta, ta/nstep		

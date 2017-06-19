@@ -70,6 +70,9 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	    case ('nstep')
 	      read(buffer, *, iostat=ios) nstep
 	      write(*,*) 'nstep = ', nstep
+	    case ('nsavePro')
+	      read(buffer, *, iostat=ios) nsavePro
+	      write(*,*) 'nsavePro  = ', nsavePro
 	    case ('nsave')
 	      read(buffer, *, iostat=ios) nsave
 	      write(*,*) 'nsave  = ', nsave
@@ -174,6 +177,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	call MPI_BCAST(mg_level,    1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(nstep,       1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(nsave,       1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
+	call MPI_BCAST(nsavePro,    1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 
 	call MPI_BCAST(maxstep,     1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(iterchk(1),  5,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
@@ -841,7 +845,7 @@ C	endif
      <	      write(*,*) ' CFL = ', cflmax, ' > 0.9, Stop! '
 	   stop
 	else
-	   if ( MYID .eq. 0 .and. mod(istep,100)) then
+	   if ( MYID .eq. 0 .and. mod(istep,200) .eq. 0) then
 	      print *, ''
 	      print *, '************************************************' 
      	      write(*,1) cflmax, dtime, time
@@ -851,28 +855,28 @@ C	endif
 	endif
     1	format(' CFL = ', e15.9, '  dtime = ', e9.3, '  time = ', e9.3)
 
-	if ( MYID .eq. 0) then
-	   call idate(today)	! today(1)=day, (2)=month, (3)=year
-	   call itime(now)	! now(1)=hour, (2)=minute, (3)=second
-	   write ( *, 1000 )  today(2), today(1), today(3), now
-	end if
- 1000	format ( 'Date ', i2.2, '/', i2.2, '/', i4.4, '; time ',
-     &	               i2.2, ':', i2.2, ':', i2.2 )
+C	if ( MYID .eq. 0) then
+C	   call idate(today)	! today(1)=day, (2)=month, (3)=year
+C	   call itime(now)	! now(1)=hour, (2)=minute, (3)=second
+C	   write ( *, 1000 )  today(2), today(1), today(3), now
+C	end if
+C 1000	format ( 'Date ', i2.2, '/', i2.2, '/', i4.4, '; time ',
+C     &	               i2.2, ':', i2.2, ':', i2.2 )
+C
+C	   if (MYID .eq. 0) then
+C	      if(istep.eq.1) then
+C		 open(123, file='qoutput',status='replace')
+C	      else
+C		 open(123, file='qoutput',position='append')
+C	      endif
 
-	   if (MYID .eq. 0) then
-	      if(istep.eq.1) then
-		 open(123, file='qoutput',status='replace')
-	      else
-		 open(123, file='qoutput',position='append')
-	      endif
-
-	      write(123,105) istep, nstep, time, cflmax	   
-	      call idate(today)	! today(1)=day, (2)=month, (3)=year
-	      call itime(now)	! now(1)=hour, (2)=minute, (3)=second
- 105          format('Time step = ',i7,'/',i7', time = ',e10.3, 
-     &                ', cfl = ',e10.3)
-	      close(unit=123)
-	   endif
+C	      write(123,105) istep, nstep, time, cflmax	   
+C	      call idate(today)	! today(1)=day, (2)=month, (3)=year
+C	      call itime(now)	! now(1)=hour, (2)=minute, (3)=second
+C 105          format('Time step = ',i7,'/',i7', time = ',e10.3, 
+C     &                ', cfl = ',e10.3)
+C	      close(unit=123)
+C	   endif
 
 	return
 	end
