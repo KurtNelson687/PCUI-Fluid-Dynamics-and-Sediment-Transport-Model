@@ -687,7 +687,7 @@ C       This subroutine routine computes velociy purturbations
 
 
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-	subroutine get_Richardson(vel,den,RiMean)
+	subroutine get_BruntN(den,BruntNMean,rhoMean,rhoSqrMean)
 C       This subroutine computes the local gradient Richardson Number
 C       note: this is defined at cell edges
 
@@ -697,32 +697,35 @@ C       note: this is defined at cell edges
 	include "metric.inc"
 	include "para.inc"
 	
-	double precision, intent(in) :: vel(-1:nni+2,-1:nnj+2,-1:nnk+2,1:3)
 	double precision, intent(in) :: den(-1:nni+2,-1:nnj+2,-1:nnk+2)
-	double precision, intent(out) :: RiMean(1:nnj)
-	double precision Ri(1:nni, 1:nnj, 1:nnk)
+	double precision, intent(out) :: BruntNMean(1:nnj)
+	double precision, intent(out) :: rhoMean(1:nnj)
+	double precision, intent(out) :: rhoSqrMean(1:nnj)
+        double precision rhoSqr(1:nni,1:nnj,1:nnk)
 	integer i, j, k
-	
-	Ri = 0
+
+
 	do i = 1, nni
-	do j = 1, nnj-1
-	do k = 1, nnk
-	  Ri(i,j,k) = -g/(0.5*(den(i,j+1,k)+den(i,j,k)))
-     <     *(den(i,j+1,k)-den(i,j,k))/(xp(i,j+1,k,2)-xp(i,j,k,2))
-
-
-	  Ri(i,j,k) = Ri(i,j,k)
-     <     /(((vel(i,j+1,k,1)-vel(i,j,k,1))
-     <           /(xp(i,j+1,k,2)-xp(i,j,k,2)))**2
-     <     + ((vel(i,j+1,k,3)-vel(i,j,k,3))
-     <           /(xp(i,j+1,k,2)-xp(i,j,k,2)))**2)
-
+	   do j = 1, nnj
+	      do k = 1, nnk
+	       rhoSqr(i,j,k) = den(i,j,k)**2
+	      enddo
+	   enddo
 	enddo
-	enddo
-	enddo
+	
+	call horizontalAverage(den,rhoMean,2)
+	call horizontalAverage(rhoSqr,rhoSqrMean,0)
+        do j = 1, nnj
+                if(j .eq. nnj) then
+	  BruntNMean(j) = -g/(0.5*(rhoMean(j)+rhoMean(j-1)))
+     <     *(rhoMean(j)-rhoMean(j-1))/(xp(i,j,k,2)-xp(i,j-1,k,2))
+                else
+	  BruntNMean(j) = -g/(0.5*(rhoMean(j)+rhoMean(j+1)))
+     <     *(rhoMean(j+1)-rhoMean(j))/(xp(i,j+1,k,2)-xp(i,j,k,2))
+                endif
+        enddo
 
 	call MPI_Barrier(MPI_COMM_WORLD, ierr)
-	call horizontalAverage(Ri,RiMean,0)
 	return
 	end
 

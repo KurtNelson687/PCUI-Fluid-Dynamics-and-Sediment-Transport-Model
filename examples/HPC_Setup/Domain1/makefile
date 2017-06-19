@@ -1,4 +1,4 @@
-COMP = ftn
+COMP = mpifort
 FLAG = -c -w -O3
 
 OBCA = ns.o mp.o io.o \

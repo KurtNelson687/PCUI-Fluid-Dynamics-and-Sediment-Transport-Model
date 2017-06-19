@@ -519,7 +519,8 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	character*4 :: ID
 	double precision, dimension(1:nnj) ::
      <     uTurb, vTurb, wTurb,uvRey, uwRey, vwRey, vstMean, rruMean,
-     <     kineticMean, dissipationMean, sedMean, vCsed,RiMean 
+     <     kineticMean, dissipationMean, sedMean, vCsed,RiMean, 
+     <     BruntN, rhoMean, rhoSqrMean 
 	double precision kineticDepth, drive, sedTotal1, sedTotal2,
      <     phase 
 	double precision, dimension(-1:nni+2,-1:nnj+2,-1:nnk+2) :: 
@@ -544,9 +545,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	call get_sedTurbFlux(sedMean,vCsed)
 	endif
 	
-	if (irho .eq. 1) then
-	call get_Richardson(u,rho,RiMean)
-	endif
+	call get_BruntN(rho,BruntN,rhoMean,rhoSqrMean)
 
 
 	if (waves .eq. 1) then
@@ -703,12 +702,20 @@ C	     close(unit = 50+myid)
 	     close(unit = 50+myid)
 	     endif
 
-	     if(irho .eq. 1) then
-	     open(50+myid, file='outputp_RiMean.'//ID, form='unformatted',
+	     open(50+myid, file='outputp_BruntN.'//ID, form='unformatted',
      >          status='old',position='append')
-	     write(50+myid)RiMean
+	     write(50+myid) BruntN
 	     close(unit = 50+myid)
-	     endif
+	     
+	     open(50+myid, file='outputp_rhoMean.'//ID, form='unformatted',
+     >          status='old',position='append')
+	     write(50+myid) rhoMean
+	     close(unit = 50+myid)
+	     
+	     open(50+myid, file='outputp_rhoSqrMean.'//ID, form='unformatted',
+     >          status='old',position='append')
+	     write(50+myid) rhoSqrMean
+	     close(unit = 50+myid)
 
 	   else
 	     open(50+myid, file='outputp_dissmean.'//ID, 
@@ -773,13 +780,20 @@ C	     close(unit = 50+myid)
 	     close(unit = 50+myid)
 	     endif
 
-	     if(irho .eq. 1) then
-	     open(50+myid, file='outputp_RiMean.'//ID, form='unformatted',
+	     open(50+myid, file='outputp_BruntN.'//ID, form='unformatted',
      >          status='unknown')
-	     write(50+myid) RiMean
+	     write(50+myid) BruntN
 	     close(unit = 50+myid)
-	     endif
 
+	     open(50+myid, file='outputp_rhoMean.'//ID, form='unformatted',
+     >          status='unknown')
+	     write(50+myid) rhoMean
+	     close(unit = 50+myid)
+
+	     open(50+myid, file='outputp_rhoSqrMean.'//ID, form='unformatted',
+     >          status='unknown')
+	     write(50+myid) rhoSqrMean
+	     close(unit = 50+myid)
 	   endif
 	endif
 

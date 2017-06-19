@@ -139,7 +139,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	endif
 
-	call MPI_BCAST(runCase,        1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
+	call MPI_BCAST(runCase,     1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(newrun,      1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(periodic,    1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 	call MPI_BCAST(waves,       1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
@@ -257,7 +257,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	   close(unit = 800+myid)
 
 	   if (ised .eq. 1) then
-	       open(900+myid, file='output_Csed.'//ID, form='unformatted',
+	   open(900+myid, file='output_Csed.'//ID, form='unformatted',
      >             status='old',position='append')
 	       write(900+myid) Csed
 	       close(unit = 900+myid)
@@ -280,7 +280,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	   close(unit = 800+myid)
 
 	   if (ised .eq. 1) then
-	        open(900+myid, file='output_Csed.'//ID, form='unformatted',
+	   open(900+myid, file='output_Csed.'//ID, form='unformatted',
      >               status='unknown')	 
 	        write(900+myid) Csed
 	        close(unit = 900+myid)
