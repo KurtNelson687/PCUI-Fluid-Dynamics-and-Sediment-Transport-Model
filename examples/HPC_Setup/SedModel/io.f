@@ -520,7 +520,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	double precision, dimension(1:nnj) ::
      <     uTurb, vTurb, wTurb,uvRey, uwRey, vwRey, vstMean, rruMean,
      <     kineticMean, dissipationMean, sedMean, vCsed,RiMean, 
-     <     BruntN, rhoMean, rhoSqrMean 
+     <     BruntNSqr, rhoMean, rhoSqrMean 
 	double precision kineticDepth, drive, sedTotal1, sedTotal2,
      <     phase 
 	double precision, dimension(-1:nni+2,-1:nnj+2,-1:nnk+2) :: 
@@ -545,7 +545,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	call get_sedTurbFlux(sedMean,vCsed)
 	endif
 	
-	call get_BruntN(rho,BruntN,rhoMean,rhoSqrMean)
+	call get_BruntN(rho,BruntNSqr,rhoMean,rhoSqrMean)
 
 
 	if (waves .eq. 1) then
@@ -704,7 +704,7 @@ C	     close(unit = 50+myid)
 
 	     open(50+myid, file='outputp_BruntN.'//ID, form='unformatted',
      >          status='old',position='append')
-	     write(50+myid) BruntN
+	     write(50+myid) BruntNSqr
 	     close(unit = 50+myid)
 	     
 	     open(50+myid, file='outputp_rhoMean.'//ID, form='unformatted',
@@ -782,7 +782,7 @@ C	     close(unit = 50+myid)
 
 	     open(50+myid, file='outputp_BruntN.'//ID, form='unformatted',
      >          status='unknown')
-	     write(50+myid) BruntN
+	     write(50+myid) BruntNSqr
 	     close(unit = 50+myid)
 
 	     open(50+myid, file='outputp_rhoMean.'//ID, form='unformatted',
