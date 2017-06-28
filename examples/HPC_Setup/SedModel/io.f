@@ -568,6 +568,11 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
      >          status='old',position='append')
 	     write(50+myid) time
 	     close(unit = 50+myid)
+
+	     open(50+myid, file='outputpVal_kount.'//ID,
+     >   form='unformatted', status='old',position='append')
+	     write(50+myid) DBLE(kount)
+	     close(unit = 50+myid)
 	     
 	open(50+myid, file='outputpVal_kineticdepth.'//ID, 
      >    form='unformatted',status='old',position='append')
@@ -603,6 +608,11 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	     open(50+myid, file='outputp_time.'//ID, form='unformatted',
      >          status='unknown')
 	     write(50+myid) time
+	     close(unit = 50+myid)
+
+	     open(50+myid, file='outputpVal_kount.'//ID, 
+     >            form='unformatted', status='unknown')
+	     write(50+myid) DBLE(kount)
 	     close(unit = 50+myid)
 
 	    open(50+myid, file='outputpVal_kineticdepth.'//ID,
@@ -680,6 +690,7 @@ C	     close(unit = 50+myid)
 	     write(50+myid) vwRey
 	     close(unit = 50+myid)
 
+	     if(ieddy .eq. 1) then
 	     open(50+myid, file='outputp_rruMean.'//ID, form='unformatted',
      >          status='old',position='append')
 	     write(50+myid) rruMean
@@ -689,6 +700,7 @@ C	     close(unit = 50+myid)
      >          status='old',position='append')
 	     write(50+myid) vstMean
 	     close(unit = 50+myid)
+	     endif
 
 	     if(ised .eq. 1) then
 	     open(50+myid, file='outputp_vCsed.'//ID, form='unformatted',
@@ -758,6 +770,7 @@ C	     close(unit = 50+myid)
 	     write(50+myid) vwRey
 	     close(unit = 50+myid)
 
+	     if(ieddy .eq. 1) then
 	     open(50+myid, file='outputp_rruMean.'//ID, form='unformatted',
      >          status='unknown')
 	     write(50+myid) rruMean
@@ -767,7 +780,8 @@ C	     close(unit = 50+myid)
      >          status='unknown')
 	     write(50+myid) vstMean
 	     close(unit = 50+myid)
-	     
+	     endif
+
 	     if(ised .eq. 1) then
 	     open(50+myid, file='outputp_vCsed.'//ID, form='unformatted',
      >          status='unknown')

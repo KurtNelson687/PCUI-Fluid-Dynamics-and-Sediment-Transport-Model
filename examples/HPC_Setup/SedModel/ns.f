@@ -48,7 +48,7 @@ C	call init_pSteady !initialize steady pressure gradient
 	   end if
 
 
-	   if(mod(kount-1,nsavePro) .eq. 0 .or. kount .eq. 1) then
+	   if(mod(kount-1,nsavePro) .eq. 0) then
 	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	   tt =  MPI_Wtime()
 	   call output_profiles(PI)
@@ -56,7 +56,7 @@ C	call init_pSteady !initialize steady pressure gradient
 	   t6 = t6 + MPI_Wtime() - tt
 	   end if
 
-	   if(mod(kount-1,nsave) .eq. 0 .or. kount .eq. 1) then
+	   if(mod(kount-1,nsave) .eq. 0) then
 	      call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	      tt =  MPI_Wtime()
 	      call output(PI) !writes density, and velocity field
