@@ -142,6 +142,9 @@ C          Solve for new sediment concentration
 	enddo
 
 	call MPI_Barrier(MPI_COMM_WORLD, ierr)
+	call output_continue_run
+	call MPI_Barrier(MPI_COMM_WORLD, ierr)
+
 	ta = MPI_Wtime() - ta
 
 C	call MPI_Barrier(MPI_COMM_WORLD, ierr)
