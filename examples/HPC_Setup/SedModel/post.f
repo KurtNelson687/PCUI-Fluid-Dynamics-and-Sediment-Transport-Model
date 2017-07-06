@@ -687,7 +687,7 @@ C       This subroutine routine computes velociy purturbations
 
 
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-	subroutine get_BruntN(den,BruntNMean,rhoMean,rhoSqrMean)
+	subroutine get_BruntN(den,BruntNMean,rhoMean,rhoSqrMean,rhoPrimeMean)
 C       This subroutine computes the local gradient Richardson Number
 C       note: this is defined at cell edges
 
@@ -701,20 +701,29 @@ C       note: this is defined at cell edges
 	double precision, intent(out) :: BruntNMean(1:nnj)
 	double precision, intent(out) :: rhoMean(1:nnj)
 	double precision, intent(out) :: rhoSqrMean(1:nnj)
+	double precision, intent(out) :: rhoPrimeMean(1:nnj)
         double precision rhoSqr(1:nni,1:nnj,1:nnk)
+        double precision rhoSqrPrime(1:nni,1:nnj,1:nnk)
 	integer i, j, k
 
 
+	call horizontalAverage(den,rhoMean,2)
 	do i = 1, nni
 	   do j = 1, nnj
 	      do k = 1, nnk
 	       rhoSqr(i,j,k) = den(i,j,k)**2
+	       rhoSqrPrime(i,j,k) = (den(i,j,k)-rhoMean(j))**2
 	      enddo
 	   enddo
 	enddo
-	
-	call horizontalAverage(den,rhoMean,2)
 	call horizontalAverage(rhoSqr,rhoSqrMean,0)
+	call horizontalAverage(rhoSqrPrime,rhoPrimeMean,0)
+
+
+	do j = 1, nnj
+	   rhoPrimeMean(j) = SQRT(rhoPrimeMean(j))
+	enddo
+
         do j = 1, nnj
                 if(j .eq. nnj) then
 	  BruntNMean(j) = -g/(0.5*(rhoMean(j)+rhoMean(j-1)))
