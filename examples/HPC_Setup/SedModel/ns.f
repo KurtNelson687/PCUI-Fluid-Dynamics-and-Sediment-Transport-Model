@@ -56,6 +56,14 @@ C	call init_pSteady !initialize steady pressure gradient
 	   t6 = t6 + MPI_Wtime() - tt
 	   end if
 
+	   if(mod(kount,nsavePro) .eq. 0) then
+	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
+	   tt =  MPI_Wtime()
+	   call output_profilesTwo(PI)
+	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
+	   t6 = t6 + MPI_Wtime() - tt
+	   end if
+
 	   if(mod(kount-1,nsave) .eq. 0) then
 	      call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	      tt =  MPI_Wtime()
@@ -147,13 +155,6 @@ C          Solve for new sediment concentration
 
 	ta = MPI_Wtime() - ta
 
-C	call MPI_Barrier(MPI_COMM_WORLD, ierr)
-C	tt = MPI_Wtime()
-C	call output(PI)
-C	call MPI_Barrier(MPI_COMM_WORLD, ierr)
-C	call output_profiles(PI)
-C	call MPI_Barrier(MPI_COMM_WORLD, ierr)
-C	t6 = t6 + MPI_Wtime() - tt
 
 	if ( MYID .eq. 0 ) then
      	   WRITE(*,*) ' Total CPU time = ', ta, ta/nstep		

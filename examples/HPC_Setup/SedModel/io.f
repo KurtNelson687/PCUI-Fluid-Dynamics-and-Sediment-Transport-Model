@@ -826,7 +826,213 @@ C	     close(unit = 50+myid)
 	end
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+	subroutine output_profilesTwo(PI)
+	include "size.inc"
+	include "ns.inc"
+        include "mpif.h"
+        include "mpi.inc"
+	include "padjust.inc"
+	include "para.inc"
+	include "eddy.inc"
+	include "sed.inc"
 
+	double precision, intent(in) :: PI
+	character*4 :: ID
+	double precision, dimension(1:nnj) ::
+     <     uTurb, vTurb, wTurb,uvRey, uwRey, vwRey,
+     <     sedMean, vCsed,BruntNsqr, rhoMean, rhoSqrMean, rhoPrimeMean 
+	double precision drive, phase 
+
+	if(iTKE .ne.1) then
+	call computeMeanAndPrimes
+	endif
+	call get_turbIntensity(uTurb, vTurb, wTurb)
+	call get_reynoldsStress(uvRey, uwRey, vwRey)
+	
+	if (ised .eq. 1) then
+	call horizontalAverage(Csed, sedMean, 2)
+	call get_sedTurbFlux(sedMean,vCsed)
+	endif
+	
+	call get_BruntN(rho,BruntNSqr,rhoMean,rhoSqrMean,rhoPrimeMean)
+
+
+	if (waves .eq. 1) then
+	     phase = cos(2*PI*time/Twave)
+	endif
+
+	drive = steadyPall(1) 
+	if (100+vert_id .gt. 999) then
+	write(ID, fmt='(I4)') 100+vert_id
+	else
+	write(ID, fmt='(I3)') 100+vert_id
+	endif
+
+
+	if (myid .eq. 0) then
+	   if (istep .gt.1) then !appends to existing file - use this if you want continue run to create new files
+	     open(50+myid, file='outputp_time2.'//ID, form='unformatted',
+     >          status='old',position='append')
+	     write(50+myid) time
+	     close(unit = 50+myid)
+
+	     open(50+myid, file='outputpVal_kount2.'//ID,
+     >   form='unformatted', status='old',position='append')
+	     write(50+myid) DBLE(kount)
+	     close(unit = 50+myid)
+	     
+	     open(50+myid, file='outputpVal_drive2.'//ID,
+     >   form='unformatted', status='old',position='append')
+	     write(50+myid) drive
+	     close(unit = 50+myid)
+
+	   if(waves .eq. 1) then
+	     open(50+myid, file='outputpVal_wavephase2.'//ID,
+     >   form='unformatted', status='old',position='append')
+	     write(50+myid) phase
+	     close(unit = 50+myid)
+	  endif
+
+	   else
+
+	     open(50+myid, file='outputp_time2.'//ID, form='unformatted',
+     >          status='unknown')
+	     write(50+myid) time
+	     close(unit = 50+myid)
+
+	     open(50+myid, file='outputpVal_kount2.'//ID, 
+     >            form='unformatted', status='unknown')
+	     write(50+myid) DBLE(kount)
+	     close(unit = 50+myid)
+	     
+	     open(50+myid, file='outputpVal_drive2.'//ID, 
+     >            form='unformatted', status='unknown')
+	     write(50+myid) drive
+	     close(unit = 50+myid)
+
+	   if(waves .eq. 1) then
+	     open(50+myid, file='outputpVal_wavephase2.'//ID,
+     >            form='unformatted', status='unknown')
+	     write(50+myid) phase
+	     close(unit = 50+myid)
+	  endif
+	   endif
+	endif
+
+	
+	if (hor_id .eq. 0) then
+	   if (istep .gt.1) then !appends to existing file - use this if you want continue run to create new files
+	     open(50+myid, file='outputp_uTurb2.'//ID, form='unformatted',
+     >          status='old',position='append')
+	     write(50+myid) uTurb
+	     close(unit = 50+myid)
+
+	     open(50+myid, file='outputp_vTurb2.'//ID, form='unformatted',
+     >          status='old',position='append')
+	     write(50+myid) vTurb
+	     close(unit = 50+myid)
+
+	     open(50+myid, file='outputp_wTurb2.'//ID, form='unformatted',
+     >          status='old',position='append')
+	     write(50+myid) wTurb
+	     close(unit = 50+myid)
+
+	     open(50+myid, file='outputp_uvRey2.'//ID, form='unformatted',
+     >          status='old',position='append')
+	     write(50+myid) uvRey
+	     close(unit = 50+myid)
+
+	     open(50+myid, file='outputp_uwRey2.'//ID, form='unformatted',
+     >          status='old',position='append')
+	     write(50+myid) uwRey
+	     close(unit = 50+myid)
+
+	     open(50+myid, file='outputp_vwRey2.'//ID, form='unformatted',
+     >          status='old',position='append')
+	     write(50+myid) vwRey
+	     close(unit = 50+myid)
+
+	     if(ised .eq. 1) then
+	     open(50+myid, file='outputp_vCsed2.'//ID, form='unformatted',
+     >          status='old',position='append')
+	     write(50+myid) vCsed
+	     close(unit = 50+myid)
+
+	     open(50+myid, file='outputp_cSed2.'//ID, form='unformatted',
+     >          status='old',position='append')
+	     write(50+myid) sedMean
+	     close(unit = 50+myid)
+	     endif
+
+	     open(50+myid, file='outputp_rhoMean2.'//ID, form='unformatted',
+     >          status='old',position='append')
+	     write(50+myid) rhoMean
+	     close(unit = 50+myid)
+	    
+	 open(50+myid, file='outputp_rhoPrimeMean2.'//ID, form='unformatted',
+     >          status='old',position='append')
+	     write(50+myid) rhoPrimeMean
+	     close(unit = 50+myid)
+ 
+	   else
+	     open(50+myid, file='outputp_uTurb2.'//ID, form='unformatted',
+     >          status='unknown')
+	     write(50+myid) uTurb
+	     close(unit = 50+myid)
+
+	     open(50+myid, file='outputp_vTurb2.'//ID, form='unformatted',
+     >          status='unknown')
+	     write(50+myid) vTurb
+	     close(unit = 50+myid)
+
+	     open(50+myid, file='outputp_wTurb2.'//ID, form='unformatted',
+     >          status='unknown')
+	     write(50+myid) wTurb
+	     close(unit = 50+myid)
+
+	     open(50+myid, file='outputp_uvRey2.'//ID, form='unformatted',
+     >          status='unknown')
+	     write(50+myid) uvRey
+	     close(unit = 50+myid)
+
+	     open(50+myid, file='outputp_uwRey2.'//ID, form='unformatted',
+     >          status='unknown')
+	     write(50+myid) uwRey
+	     close(unit = 50+myid)
+
+	     open(50+myid, file='outputp_vwRey2.'//ID, form='unformatted',
+     >          status='unknown')
+	     write(50+myid) vwRey
+	     close(unit = 50+myid)
+
+	     if(ised .eq. 1) then
+	     open(50+myid, file='outputp_vCsed2.'//ID, form='unformatted',
+     >          status='unknown')
+	     write(50+myid) vCsed
+	     close(unit = 50+myid)
+
+	     open(50+myid, file='outputp_cSed2.'//ID, form='unformatted',
+     >          status='unknown')
+	     write(50+myid) sedMean
+	     close(unit = 50+myid)
+	     endif
+
+	     open(50+myid, file='outputp_rhoMean2.'//ID, form='unformatted',
+     >          status='unknown')
+	     write(50+myid) rhoMean
+	     close(unit = 50+myid)
+
+	 open(50+myid, file='outputp_rhoPrimeMean2.'//ID, form='unformatted',
+     >          status='unknown')
+	     write(50+myid) rhoPrimeMean
+	     close(unit = 50+myid)
+	   endif
+	endif
+
+	return
+	end
+
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	subroutine cfl_check
 
 	include "size.inc"
