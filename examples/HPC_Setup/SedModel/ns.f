@@ -56,7 +56,7 @@ C	call init_pSteady !initialize steady pressure gradient
 	   t6 = t6 + MPI_Wtime() - tt
 	   end if
 
-	   if(mod(kount,nsavePro) .eq. 0) then
+	   if(mod(kount-2,nsavePro) .eq. 0) then
 	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
 	   tt =  MPI_Wtime()
 	   call output_profilesTwo(PI)
