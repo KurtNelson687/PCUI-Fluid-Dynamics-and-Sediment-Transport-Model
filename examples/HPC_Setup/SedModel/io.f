@@ -921,7 +921,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	
 	if (hor_id .eq. 0) then
-	   if (istep .gt.1) then !appends to existing file - use this if you want continue run to create new files
+	   if (istep .gt.2) then !appends to existing file - use this if you want continue run to create new files
 	     open(50+myid, file='outputp_uTurb2.'//ID, form='unformatted',
      >          status='old',position='append')
 	     write(50+myid) uTurb
