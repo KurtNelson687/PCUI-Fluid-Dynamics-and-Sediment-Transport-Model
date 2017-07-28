@@ -842,10 +842,16 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
      <     uTurb, vTurb, wTurb,uvRey, uwRey, vwRey,
      <     sedMean, vCsed,BruntNsqr, rhoMean, rhoSqrMean, rhoPrimeMean 
 	double precision drive, phase 
+	double precision, dimension(0:nnj+1) :: uMean, vMean, wMean
 
 	if(iTKE .ne.1) then
-	call computeMeanAndPrimes
+	call getMeanVelPro(u(:,:,:,1), uMean)
+	call getMeanVelPro(u(:,:,:,2), vMean)
+	call getMeanVelPro(u(:,:,:,3), wMean)
+	call MPI_Barrier(MPI_COMM_WORLD, ierr)
+	call get_pertVel(u, uMean,vMean,wMean, velPrimes)
 	endif
+
 	call get_turbIntensity(uTurb, vTurb, wTurb)
 	call get_reynoldsStress(uvRey, uwRey, vwRey)
 	
@@ -922,6 +928,21 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	
 	if (hor_id .eq. 0) then
 	   if (istep .gt.2) then !appends to existing file - use this if you want continue run to create new files
+	     open(50+myid, file='outputp_umean2.'//ID, form='unformatted',
+     >          status='old',position='append')
+	     write(50+myid) uMean(1:nnj)
+	     close(unit = 50+myid)
+
+	     open(50+myid, file='outputp_vmean2.'//ID, form='unformatted',
+     >          status='old',position='append')
+	     write(50+myid) vMean(1:nnj)
+	     close(unit = 50+myid)
+
+	     open(50+myid, file='outputp_wmean2.'//ID, form='unformatted',
+     >          status='old',position='append')
+	     write(50+myid) wMean(1:nnj)
+	     close(unit = 50+myid)
+
 	     open(50+myid, file='outputp_uTurb2.'//ID, form='unformatted',
      >          status='old',position='append')
 	     write(50+myid) uTurb
@@ -975,6 +996,21 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	     close(unit = 50+myid)
  
 	   else
+	     open(50+myid, file='outputp_umean2.'//ID, form='unformatted',
+     >          status='unknown')
+	     write(50+myid) uMean(1:nnj)
+	     close(unit = 50+myid)
+
+	     open(50+myid, file='outputp_vmean2.'//ID, form='unformatted',
+     >          status='unknown')
+	     write(50+myid) vMean(1:nnj)
+	     close(unit = 50+myid)
+
+	     open(50+myid, file='outputp_wmean2.'//ID, form='unformatted',
+     >          status='unknown')
+	     write(50+myid) wMean(1:nnj)
+	     close(unit = 50+myid)
+
 	     open(50+myid, file='outputp_uTurb2.'//ID, form='unformatted',
      >          status='unknown')
 	     write(50+myid) uTurb
