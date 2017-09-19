@@ -14,7 +14,7 @@ working_folder = pwd;
 %working_folder = '/p/work1/knelson3/Waves1_1';
 
 sedConcentration = 0; %sediment concentration in mg/
-
+normalPerts = false;
 % These are the output files with the filenames stripped out of extensions
 % (extensions are chosen automatically based on number of processors).
 fname_xyz = 'xyz';
@@ -71,6 +71,9 @@ params
 y(1,end-2,1)
 x(end-2,1,1)
 z(1,1,end-2)
+
+dx = x(2,1,1)-x(1,1,1)
+dz = z(1,1,2)-z(1,1,1)
 y_vert = y(1,:,1);
 % -------------------------------------------------------------------------
 % Initialize PCUI
@@ -117,8 +120,10 @@ write_binary_file_pcui(working_folder, fname_rho_full_to_PCUI, params, rho_full_
 write_binary_file_pcui(working_folder, fname_rho_init_to_PCUI, params, rho_init_pcui);
 write_binary_file_pcui(working_folder, fname_Csed_init_to_PCUI, params, Csed_init_pcui);
 
+'at 1'
 clear rho_full_pcui rho_init_pcui Csed_init_pcui x z
 
+'at 2'
 %..........................................................................
 %Initialize PCUI velocity
 %..........................................................................
@@ -226,12 +231,46 @@ end
 end
 
 
-
+sigma = uMean/sqrt(3)
 
 if initType == 4
 uvw_pcui(:,j,:,1) = uvw_pcui(:,j,:,1);
 uvw_pcui(:,j,:,2) = uvw_pcui(:,j,:,1);
 uvw_pcui(:,j,:,3) = uvw_pcui(:,j,:,1);
+else
+
+if normalPerts
+
+for j =2:n-1
+j
+a = -(0.5*(y(1,j+1,1)-y(1,j-1,1)))*.9/params.dt
+b = (0.5*(y(1,j+1,1)-y(1,j-1,1)))*.9/params.dt;
+
+for i = 1:m
+    for k = 1:p
+     perts(i,1,k)=trandn(a/sigma,b/sigma)*sigma;
+    end
+end
+perts(1,1,1)
+uvw_pcui(:,j,:,1) = perts+ uvw_pcui(:,j,:,1);
+
+for i = 1:m
+    for k = 1:p
+     perts(i,1,k)=trandn(a/sigma,b/sigma)*sigma;
+    end
+end
+uvw_pcui(:,j,:,2) = perts;
+
+for i = 1:m
+    for k = 1:p
+     perts(i,1,k)=trandn(a/sigma,b/sigma)*sigma;
+    end
+end
+uvw_pcui(:,j,:,3) = perts;
+end
+
+
+
 else
 
 for j =2:n-1
@@ -250,5 +289,7 @@ uvw_pcui(:,j,:,2) = (b-a).*rand(m,1,p)+a;
 uvw_pcui(:,j,:,3) = (b-a).*rand(m,1,p)+a;
 end
 end
+end
 
+uvw_pcui(1,:,1,1)
 write_binary_file_pcui(working_folder, fname_UVW_to_PCUI, params, uvw_pcui);

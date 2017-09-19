@@ -1,0 +1,30 @@
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2016 The MathWorks, Inc.
+                   R2016a (9.0.0.341360) 64-bit (glnxa64)
+                             February 11, 2016
+
+ 
+To get started, type one of these: helpwin, helpdesk, or demo.
+For product information, visit www.mathworks.com.
+ 
+>> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> 
+isall =
+
+     0
+
+>> >> 
+working_folder =
+
+/work/knelson3/waveWithCurrents/dataWC350_25cup
+
+>> >> >> >> >> >> >> >> >> >> >> >> >> >> >> 
+istep =
+
+     
+co
+count =
+
+     2
+
+>> >> >> >> 

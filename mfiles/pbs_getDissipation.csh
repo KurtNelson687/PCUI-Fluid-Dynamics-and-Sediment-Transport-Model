@@ -1,10 +1,10 @@
 #!/bin/csh
-#PBS -l walltime=00:20:00
+#PBS -l walltime=04:00:00
 #PBS -l select=1:ncpus=32:mpiprocs=1
 #PBS -l application=matlab
-#PBS -N step_C1_12
-##PBS -q background
-#PBS -q standard
+#PBS -N getDiss350_8
+#PBS -q background
+##PBS -q standard
 ##PBS -q debug
 #PBS -k eo
 #PBS -l MATLAB=1
@@ -21,10 +21,10 @@ set JOBID=`echo $PBS_JOBID | cut -f1 -d.`
 echo job $JOBID starting at `date` on `hostname`
 echo starting in `pwd`
 
-set outfile=stepExtract.out
+set outfile=getDiss2.out
 set indir=`pwd`
 
-set infile=~/repository/pcui-3d/mfiles/data_extractor.m
+set infile=~/repository/pcui-3d/mfiles/getDissipation.m
 
 
 module load matlab
