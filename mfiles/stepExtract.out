@@ -16,13 +16,14 @@ isall =
 >> >> 
 working_folder =
 
-/work/knelson3/waveWithCurrents/dataWC350_25cup
+/work/knelson3/waveWithCurrents/wavesOnly2
 
 >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> 
 istep =
 
-     
-co
+     8
+
+
 count =
 
      2
