@@ -1,15 +1,15 @@
 #!/bin/csh
 #  Request maximum wallclock time for job
-#PBS -l walltime=00:2:00
+#PBS -l walltime=24:00:00
 #  Total cores requested = <number of nodes> X <MPI procs/node>
 #PBS -l select=1:ncpus=32:mpiprocs=1
 # Specify how MPI processes are distributed on nodes
 #PBS -l application=matlab
 #  Request job name
-#PBS -N Moin2
+#PBS -N OliverVideo
 #  Request PBS job queue for job
-#PBS -q background
-##PBS -q standard
+##PBS -q background
+#PBS -q standard
 ##PBS -q debug
 #  Specify keep stdout/stderr files from job
 #PBS -k eo
@@ -26,7 +26,7 @@
 ## End of preamble, beginning of shell script ##
 set JOBID=`echo $PBS_JOBID | cut -f1 -d.`
 echo job $JOBID starting at `date` on `hostname`
-cd /u/knelson3/repository/pcui-3d/mfiles
+cd /p/home/knelson3/repository/pcui-3d/mfiles
 echo starting in `pwd`
 
 set outfile=output.txt

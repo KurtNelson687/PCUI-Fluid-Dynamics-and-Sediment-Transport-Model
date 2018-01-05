@@ -425,8 +425,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	endif
 
 	close(200+myid)
-C	numPhase = 0
-C	time = 0
+	if(myid .eq. 0) write(*,*) 'time = ', time
 	return
 	end
 
@@ -589,9 +588,6 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	if (waves .eq. 1) then
 	     phase = cos(2*PI*time/Twave)
-	if(myid .eq. 0) then 
-	write(*,*) 'phase = ', phase
-	endif
 	endif
 
 	call compute_dissipation(dissipationMean)
@@ -891,7 +887,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	call getMeanVelPro(u(:,:,:,2), vMean)
 	call getMeanVelPro(u(:,:,:,3), wMean)
 	call MPI_Barrier(MPI_COMM_WORLD, ierr)
-	call get_pertVel(u, uMeanAve, velPrimes)
+	call get_pertVel(u, uMean, velPrimes)
 	endif
 
 	call get_turbIntensity(uTurb, vTurb, wTurb)

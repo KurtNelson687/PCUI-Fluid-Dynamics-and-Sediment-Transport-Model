@@ -62,7 +62,7 @@ C       This subroutine horizontally Averages an array. It is written for cartes
 
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 
-	subroutine get_pertVel(u, uMeanAve, velPrimes)
+	subroutine get_pertVel(u, uAve, velPrimes)
 C       This subroutine routine computes velociy purturbations
 
 	include "size.inc"
@@ -71,27 +71,22 @@ C       This subroutine routine computes velociy purturbations
 	include "para.inc"
 
 	double precision, intent(in) :: u(-1:nni+2,-1:nnj+2,-1:nnk+2,3),
-     <        uMeanAve(0:nnj+1,phasePerT)
+     <      uAve(0:nnj+1)
 	double precision, intent(out) :: 
      <      velPrimes(0:nni+1, 0:nnj+1, 0:nnk+1,3)
 	
 	integer i, j, k
-	
-	if(numPhase .eq. phasePerT) then
-	     numPhase = 1
-	else
-	     numPhase = numPhase + 1 
-	endif
-	
+
 	do i = 0, nni+1
-	   do j = 0, nnj+1
-	      do k = 0, nnk+1
-	      velPrimes(i,j,k,1) = u(i,j,k,1)-uMeanAve(j,numPhase)
+	  do j = 0, nnj+1
+	    do k = 0, nnk+1
+	      velPrimes(i,j,k,1) = u(i,j,k,1)-uAve(j)
 	      velPrimes(i,j,k,2) = u(i,j,k,2)
 	      velPrimes(i,j,k,3) = u(i,j,k,3)
-	      enddo
-	   enddo
-	enddo	
+	    enddo
+	  enddo
+	enddo
+
 	return
 	end
 
@@ -294,13 +289,24 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 	call getMeanVelPro(u(:,:,:,2), vMean)
 	call getMeanVelPro(u(:,:,:,3), wMean)
 	call MPI_Barrier(MPI_COMM_WORLD, ierr)
-	call get_pertVel(u, uMeanAve, velPrimes)
 	call depthAverage(uMean(1:nnj), uDepth)
 
-	if (100+vert_id .gt. 999) then
-	write(ID, fmt='(I4)') 100+vert_id
+	if(iTKE .eq. 1) then
+	  call get_pertVel(u, uMean,velPrimes)
 	else
-	write(ID, fmt='(I3)') 100+vert_id
+	  if(numPhase .eq. phasePerT) then
+	    numPhase = 1
+	  else
+	    numPhase = numPhase + 1 
+	  endif
+
+	  call get_pertVel(u, uMeanAve(:,numPhase), velPrimes)
+	endif
+
+	if (100+vert_id .gt. 999) then
+	  write(ID, fmt='(I4)') 100+vert_id
+	else
+	  write(ID, fmt='(I3)') 100+vert_id
 	endif
 	
 

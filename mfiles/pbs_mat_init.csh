@@ -8,8 +8,8 @@
 #  Request job name
 #PBS -N init_pcui
 #  Request PBS job queue for job
-#PBS -q background
-##PBS -q standard
+##PBS -q background
+#PBS -q standard
 ##PBS -q debug
 #  Specify keep stdout/stderr files from job
 #PBS -k eo

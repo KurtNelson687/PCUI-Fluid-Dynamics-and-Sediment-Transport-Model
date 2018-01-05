@@ -8,35 +8,114 @@
 To get started, type one of these: helpwin, helpdesk, or demo.
 For product information, visit www.mathworks.com.
  
->> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> 
-params = 
+>> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> {Error using fileread (line 26)
+Could not open file
+/p/home/knelson3/repository/pcui-3d/mfiles/pcuiRunParams.txt. No such file or
+directory.
+} 
+>> {Undefined function or variable 'ftext'.
+} 
+>> {Undefined function or variable 'ftext'.
+} 
+>> {Undefined function or variable 'ftext'.
+} 
+>> {Undefined function or variable 'ftext'.
+} 
+>> {Undefined function or variable 'ftext'.
+} 
+>> {Undefined function or variable 'ftext'.
+} 
+>> {Undefined function or variable 'ftext'.
+} 
+>> {Undefined function or variable 'ftext'.
+} 
+>> >> {Undefined function or variable 'ftext'.
+} 
+>> {Undefined function or variable 'ftext'.
+} 
+>> {Undefined function or variable 'init_percent'.
+} 
+>> >> >> >> >> >> >> >> {Error using fileread (line 26)
+Could not open file /p/home/knelson3/repository/pcui-3d/mfiles/size.inc. No
+such file or directory.
+} 
+>> {Undefined function or variable 'ftext'.
+} 
+>> {Undefined function or variable 'ftext'.
+} 
+>> {Undefined function or variable 'ftext'.
+} 
+>> {Undefined function or variable 'ftext'.
+} 
+>> {Undefined function or variable 'ftext'.
+} 
+>> {Undefined function or variable 'ftext'.
+} 
+>> >> {Undefined function or variable 'params'.
+} 
+>> >> >> >> >> >> >> >> {Undefined function or variable 'params'.
+} 
+>> {Undefined function or variable 'y'.
+} 
+>> {Undefined function or variable 'x'.
+} 
+>> {Undefined function or variable 'z'.
+} 
+>> >> {Undefined function or variable 'x'.
+} 
+>> {Undefined function or variable 'z'.
+} 
+>> {Undefined function or variable 'y'.
+} 
+>> >> >> >> >> {Undefined function or variable 'x'.
+} 
+>> >> >> >> >> >> >> >> >> {Undefined function or variable 'x'.
+} 
+>> {Undefined function or variable 'm'.
+} 
+>> {Undefined function or variable 'rho_init_pcui'.
+} 
+>> >> >> >> {Undefined function or variable 'params'.
+} 
+>> {Undefined function or variable 'params'.
+} 
+>> {Undefined function or variable 'params'.
+} 
+>> >> 
+ans =
 
-                     dt: 4.1667
-    molecular_viscosity: 1.0000e-06
-         eddy_viscosity: 0
-                 nsteps: 384000
-                  nsave: 4000
-                rho_sed: 2650
-               rho_knot: 1000
-             dpdxSteady: 0
-               wallUnit: 1.0000e-04
-           numWallUnits: 0.3000
-               maxRatio: 32.8000
-                     ni: 768
-                     nj: 144
-                     nk: 320
-                     px: 24
-                     py: 3
-                     pz: 10
+at 1
 
->> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> 
-lasty =
+>> >> >> 
+ans =
 
-    0.0995
+at 2
 
+>> >> >> >> {Undefined function or variable 'y'.
+} 
+>> >> 
+karman =
+
+    0.4100
+
+>> {Undefined variable "params" or function "params.dpdxSteady".
+} 
+>> {Undefined variable "params" or function "params.molecular_viscosity".
+} 
+>> {Undefined function or variable 'u_star'.
+} 
+>> >> >> {Undefined function or variable 'uMean'.
+} 
+>> >> >> {Undefined function or variable 'y'.
+} 
+>> >> {Undefined function or variable 'initType'.
+} 
+>> >> >> {Undefined function or variable 'uMean'.
+} 
+>> >> {Undefined function or variable 'initType'.
+} 
+>> >> {Undefined function or variable 'uvw_pcui'.
+} 
+>> {Undefined function or variable 'params'.
+} 
 >> 
-u_star =
-
-     0
-
->> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> 

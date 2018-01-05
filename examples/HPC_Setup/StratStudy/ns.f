@@ -35,7 +35,7 @@ C	call init_pSteady !initialize steady pressure gradient
 	call initial !This initializes velocities, density field, and turbulence properties
 	call readMeanProfiles !Reads in mean velocity profiles
 	call output_Utheo !Outputs the theoretical log profile
-	call computeMeanAndPrimes
+	if(iTKE .eq. 1) call computeMeanAndPrimes !Compute mean and perturbation values if tracking volume integrated TKE
 
 	do istep = 1, nstep !time stepping of simulation
 	   if ( MYID .EQ. 0 .AND. MOD(istep,200) .EQ. 0) then
@@ -57,13 +57,12 @@ C	call init_pSteady !initialize steady pressure gradient
 	   t6 = t6 + MPI_Wtime() - tt
 	   end if
 
-	   if(mod(kount-2,nsavePro) .eq. 0) then
-	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
-	   tt =  MPI_Wtime()
-	   call output_profilesTwo(PI)
-	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
-	   t6 = t6 + MPI_Wtime() - tt
-	   end if
+C	   if(mod(kount-2,nsavePro) .eq. 0) then
+C	   call MPI_Barrier(MPI_COMM_WORLD, 
+C	   tt =  MPI_Wtime()
+C	   call output_profilesTwo(PI)
+C	   call MPI_Barrier(MPI_COMM_WORLD, ierr)
+C	   t6 = t6 + MPI_Wtime() - tt 
 
 	   if(mod(kount-1,nsave) .eq. 0) then
 	      call MPI_Barrier(MPI_COMM_WORLD, ierr)
