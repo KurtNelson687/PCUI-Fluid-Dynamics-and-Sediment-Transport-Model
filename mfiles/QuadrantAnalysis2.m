@@ -1,10 +1,8 @@
 clear all ; close all;
 
-addpath('./histcn')
-poolobj = parpool('local',15)
-
-spmd(15)
 dirnames = 1:15;
+addpath('./histcn')
+poolobj = parpool('local',length(dirnames))
 runNum = 2;
 isall = 0;
 load('~/dataForQuad/y.mat')
@@ -18,39 +16,40 @@ allThresholds = 0:0.5:10;
 pdfHeights = [1:10,15,20,25,30,35,40,45,50,60,70];
 rhoWater = 1000;
 
-H = y(120)+(y(120)-y(119))/2;
+H = y(end)+(y(end)-y(end-1))/2;
 
 if runNum == 1
-simulationType = 'strat200_';
-load('~/dataForQuad/strat200.mat')
-load('~/dataForQuad/strat200cupVelRms.mat')
+    simulationType = 'strat200_';
+    load('~/dataForQuad/strat200.mat')
+    load('~/dataForQuad/strat200cupVelRms.mat')
 elseif runNum == 2
-simulationType = 'strat200_';
-load('~/dataForQuad/strat200cup.mat')
-load('~/dataForQuad/strat200cupVelRms.mat')
+    simulationType = 'strat200_';
+    load('~/dataForQuad/strat200cup.mat')
+    load('~/dataForQuad/strat200cupVelRms.mat')
 elseif runNum == 3
-simulationType = 'strat350_';
-load('~/dataForQuad/strat350.mat')
-load('~/dataForQuad/strat350cupVelRms.mat')
+    simulationType = 'strat350_';
+    load('~/dataForQuad/strat350.mat')
+    load('~/dataForQuad/strat350cupVelRms.mat')
 elseif runNum == 4
-simulationType = 'strat350_';
-load('~/dataForQuad/strat350cup.mat')
-load('~/dataForQuad/strat350cupVelRms.mat')
+    simulationType = 'strat350_';
+    load('~/dataForQuad/strat350cup.mat')
+    load('~/dataForQuad/strat350cupVelRms.mat')
 elseif runNum == 5
-simulationType = 'strat500_';
-load('~/dataForQuad/strat500.mat')
-load('~/dataForQuad/strat500cupVelRms.mat')
+    simulationType = 'strat500_';
+    load('~/dataForQuad/strat500.mat')
+    load('~/dataForQuad/strat500cupVelRms.mat')
 elseif runNum == 6
-simulationType = 'strat500_';
-load('~/dataForQuad/strat500cup.mat')
-load('~/dataForQuad/strat500cupVelRms.mat')
+    simulationType = 'strat500_';
+    load('~/dataForQuad/strat500cup.mat')
+    load('~/dataForQuad/strat500cupVelRms.mat')
 end
 
-if mod(runNum,2) == 0
-   working_folder = [data_folder simulationType num2str(dirnames(labindex)) 'cup'];
-else
-   working_folder = [data_folder simulationType num2str(dirnames(labindex))];
-end
+spmd(length(dirnames))
+    if mod(runNum,2) == 0
+        working_folder = [data_folder simulationType num2str(dirnames(labindex)) 'cup'];
+    else
+        working_folder = [data_folder simulationType num2str(dirnames(labindex))];
+    end
     
     
     % -------------------------------------------------------------------------
@@ -63,7 +62,7 @@ end
     params.rhoSed = variable_value_pcui('rhoSed',ftext);
     ustar = sqrt(params.dpdxSteady*H/rhoWater);
     allHeights = [1:60,70:20:max(y/(params.molecular_viscosity/ustar))];
-
+    
     
     % read the file containing the grid size and processor definitions
     ftext = fileread(fullfile(working_folder, 'size.inc'));
@@ -90,8 +89,8 @@ end
         rho = rhoWater+(1-rhoWater/params.rhoSed)*rho;
         
         heightCount = 1;
-	heightCount2 = 1;
-
+        heightCount2 = 1;
+        
         for height = allHeights
             Hindex = find(y/(params.molecular_viscosity/ustar) >= height,1,'first');
             
@@ -113,12 +112,12 @@ end
             
             [quadData(stepCount,heightCount).Nsed,quadData(stepCount,heightCount).sed] = ...
                 quadAnalysis(rhotemp,vtemp,rhovtemp,vCsedPhaseAve(Hindex),allThresholds);
-
-
-
+            
+            
+            
             valCheck = find(pdfHeights == height);
             if ~isempty(valCheck)
-	        binVals = [utemp,vtemp];
+                binVals = [utemp,vtemp];
                 edgesAll(heightCount2).uEdge = linspace(-5*urms(Hindex),5*urms(Hindex),300);
                 edgesAll(heightCount2).vEdge = linspace(-5*vrms(Hindex),5*vrms(Hindex),300);
                 edgesAll(heightCount2).rhoEdge = linspace(-5*rhorms(Hindex),5*rhorms(Hindex),300);
@@ -128,7 +127,7 @@ end
                     histcn(binVals,edgesAll(heightCount2).rhoEdge,edgesAll(heightCount2).vEdge);
                 heightCount2 = heightCount2 + 1;
             end
-
+            
             heightCount = heightCount + 1;
         end
         stepCount = stepCount+1;
@@ -138,8 +137,7 @@ end
             phase = phase+1;
         end
     end
-    save([ working_folder '/quadData'],'quadData','allThresholds','allHeights')
-    save([ working_folder '/histData'],'uvHisData','edgesAll','pdfHeights')
+    saveQuad(working_folder,quadData,allThresholds,allHeights,uvHisData,edgesAll,pdfHeights)
 end
 
 delete(poolobj)
