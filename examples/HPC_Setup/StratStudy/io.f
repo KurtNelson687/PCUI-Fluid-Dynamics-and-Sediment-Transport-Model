@@ -409,7 +409,6 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	read(200+myid) p
 	read(200+myid) rho
 	read(200+myid) steadyPall
-	read(200+myid) numPhase
 
 	if ( iscalar .eq. 1 ) read(200+myid) phi
 
@@ -426,6 +425,8 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	close(200+myid)
 	if(myid .eq. 0) write(*,*) 'time = ', time
+C	time = 0;
+	numPhase = 0
 	return
 	end
 
