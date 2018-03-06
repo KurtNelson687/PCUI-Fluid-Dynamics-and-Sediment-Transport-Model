@@ -3,7 +3,7 @@ clear all ; close all;
 dirnames = 1:15;
 addpath('./histcn')
 poolobj = parpool('local',length(dirnames))
-runNum = 2;
+runNum = 1;
 isall = 0;
 load('~/dataForQuad/y.mat')
 data_folder = '/p/work1/knelson3/waveWithCurrents/';
