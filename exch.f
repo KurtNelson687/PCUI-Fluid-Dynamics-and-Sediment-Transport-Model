@@ -774,3 +774,198 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	return
 	end
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+
+	subroutine Csed_exchange
+
+	include "size.inc"
+	include "mpif.h"
+	include "mpi.inc"
+	include "ns.inc"
+	include "metric.inc"
+	include "sed.inc"
+
+	double precision, dimension(-1:nnj+2,1:2) :: 
+     <		rWmsg, sWmsg, rEmsg, sEmsg
+	double precision, dimension(-1:nni+2,1:2) :: 
+     <		rSmsg, sSmsg, rNmsg, sNmsg
+	double precision, dimension(-1:nni+2,1:2) :: 
+     <		rBmsg, sBmsg, rFmsg, sFmsg
+
+	integer status(MPI_STATUS_SIZE,4), req(4), nreq, len
+	
+	integer i, j, k
+
+C......	i-direction
+
+	len = ( nnj + 4 ) * 2
+
+	do k = -1, nnk+2
+
+	nreq = 0
+
+	if ( n_west .ne. MPI_PROC_NULL ) then
+	   nreq = nreq + 1
+	   call MPI_IRECV( rWmsg(-1,1), len, 
+     <	                   MPI_DOUBLE_PRECISION,  
+     <	                   n_west, 0, comm3d, req(nreq), ierr )
+	   do j = -1, nnj+2
+	      sWmsg(j,1) = Csed(1,j,k)
+	      sWmsg(j,2) = Csed(2,j,k)
+	   enddo
+	   nreq = nreq + 1
+	   call MPI_ISEND( sWmsg(-1,1), len, 
+     <	                   MPI_DOUBLE_PRECISION,  
+     <	                   n_west, 1, comm3d, req(nreq), ierr )
+	endif
+	   
+	if ( n_east .ne. MPI_PROC_NULL ) then
+	   nreq = nreq + 1
+	   call MPI_IRECV( rEmsg(-1,1), len, 
+     <	                   MPI_DOUBLE_PRECISION,  
+     <	                   n_east, 1, comm3d, req(nreq), ierr )
+	   do j = -1, nnj+2
+	      sEmsg(j,1) = Csed(nni-1,j,k)
+	      sEmsg(j,2) = Csed(nni,  j,k)
+	   enddo
+	   nreq = nreq + 1
+	   call MPI_ISEND( sEmsg(-1,1), len, 
+     <	                   MPI_DOUBLE_PRECISION,  
+     <	                   n_east, 0, comm3d, req(nreq), ierr )
+	endif
+
+	call MPI_WAITALL( nreq, req, status, ierr )
+
+	if ( n_west .ne. MPI_PROC_NULL ) then
+	   do j = -1, nnj+2
+	      Csed(-1,j,k) = rWmsg(j,1)
+	      Csed( 0,j,k) = rWmsg(j,2)
+	   enddo
+	endif
+
+	if ( n_east .ne. MPI_PROC_NULL ) then
+	   do j = -1, nnj+2
+	      Csed(nni+1,j,k) = rEmsg(j,1)
+	      Csed(nni+2,j,k) = rEmsg(j,2)
+	   enddo
+	endif
+
+	enddo
+
+C......	j-direction
+
+	len = ( nni + 4 ) * 2
+
+	do k = -1, nnk+2
+
+	nreq = 0
+
+	if ( n_suth .ne. MPI_PROC_NULL ) then
+	   nreq = nreq + 1
+	   call MPI_IRECV( rSmsg(-1,1), len, 
+     <	                   MPI_DOUBLE_PRECISION,  
+     <	                   n_suth, 0, comm3d, req(nreq), ierr )
+	   do i = -1, nni+2
+	      sSmsg(i,1) = Csed(i,1,k)
+	      sSmsg(i,2) = Csed(i,2,k)
+	   enddo
+	   nreq = nreq + 1
+	   call MPI_ISEND( sSmsg(-1,1), len, 
+     <	                   MPI_DOUBLE_PRECISION,  
+     <	                   n_suth, 1, comm3d, req(nreq), ierr )
+	endif
+	   
+	if ( n_nrth .ne. MPI_PROC_NULL ) then
+	   nreq = nreq + 1
+	   call MPI_IRECV( rNmsg(-1,1), len, 
+     <	                   MPI_DOUBLE_PRECISION,  
+     <	                   n_nrth, 1, comm3d, req(nreq), ierr )
+	   do i = -1, nni+2
+	      sNmsg(i,1) = Csed(i,nnj-1,k)
+	      sNmsg(i,2) = Csed(i,nnj,  k)
+	   enddo
+	   nreq = nreq + 1
+	   call MPI_ISEND( sNmsg(-1,1), len, 
+     <	                   MPI_DOUBLE_PRECISION,  
+     <	                   n_nrth, 0, comm3d, req(nreq), ierr )
+	endif
+
+	call MPI_WAITALL( nreq, req, status, ierr )
+
+	if ( n_suth .ne. MPI_PROC_NULL ) then
+	   do i = -1, nni+2
+	      Csed(i,-1,k) = rSmsg(i,1)
+	      Csed(i, 0,k) = rSmsg(i,2)
+	   enddo
+	endif
+
+	if ( n_nrth .ne. MPI_PROC_NULL ) then
+	   do i = -1, nni+2
+	      Csed(i,nnj+1,k) = rNmsg(i,1)
+	      Csed(i,nnj+2,k) = rNmsg(i,2)
+	   enddo
+	endif
+
+	enddo
+
+C......	k-direction
+
+	len = ( nni + 4 ) * 2
+
+	do j = -1, nnj+2
+
+	nreq = 0
+
+	if ( n_back .ne. MPI_PROC_NULL ) then
+	   nreq = nreq + 1
+	   call MPI_IRECV( rBmsg(-1,1), len, 
+     <	                   MPI_DOUBLE_PRECISION,  
+     <	                   n_back, 0, comm3d, req(nreq), ierr )
+	   do i = -1, nni+2
+	      sBmsg(i,1) = Csed(i,j,1)
+	      sBmsg(i,2) = Csed(i,j,2)
+	   enddo
+	   nreq = nreq + 1
+	   call MPI_ISEND( sBmsg(-1,1), len, 
+     <	                   MPI_DOUBLE_PRECISION,  
+     <	                   n_back, 1, comm3d, req(nreq), ierr )
+	endif
+	   
+	if ( n_frnt .ne. MPI_PROC_NULL ) then
+	   nreq = nreq + 1
+	   call MPI_IRECV( rFmsg(-1,1), len, 
+     <	                   MPI_DOUBLE_PRECISION,  
+     <	                   n_frnt, 1, comm3d, req(nreq), ierr )
+	   do i = -1, nni+2
+	      sFmsg(i,1) = Csed(i,j,nnk-1)
+	      sFmsg(i,2) = Csed(i,j,nnk  )
+	   enddo
+	   nreq = nreq + 1
+	   call MPI_ISEND( sFmsg(-1,1), len, 
+     <	                   MPI_DOUBLE_PRECISION,  
+     <	                   n_frnt, 0, comm3d, req(nreq), ierr )
+	endif
+
+	call MPI_WAITALL( nreq, req, status, ierr )
+
+	if ( n_back .ne. MPI_PROC_NULL ) then
+	   do i = -1, nni+2
+	      Csed(i,j,-1) = rBmsg(i,1)
+	      Csed(i,j, 0) = rBmsg(i,2)
+	   enddo
+	endif
+
+	if ( n_frnt .ne. MPI_PROC_NULL ) then
+	   do i = -1, nni+2
+	      Csed(i,j,nnk+1) = rFmsg(i,1)
+	      Csed(i,j,nnk+2) = rFmsg(i,2)
+	   enddo
+	endif
+
+	enddo
+
+	return
+	end
+
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+

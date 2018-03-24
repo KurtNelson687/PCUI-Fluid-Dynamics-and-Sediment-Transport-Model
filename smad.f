@@ -129,10 +129,10 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	erabs = max(dabs(ermin), dabs(ermax))
 	res_old = resid
 
-     	IF (  MOD(ISTEP,NSAVE) .EQ. 0 .and. MYID .EQ. 0 ) 
-     <	WRITE(*,1) LEVEL, RESID, BBSUM, ERMIN, ERMAX
-    1	FORMAT(' L', I1,           ' START WITH    ', 2E9.3,
-     <	       ' E ', 2E9.3 )
+c     	IF (  MOD(ISTEP,NSAVE) .EQ. 0 .and. MYID .EQ. 0 ) 
+c     <	WRITE(*,1) LEVEL, RESID, BBSUM, ERMIN, ERMAX
+c    1	FORMAT(' L', I1,           ' START WITH    ', 2E9.3,
+c     <	       ' E ', 2E9.3 )
 CC     <	WRITE(*,1) LEVEL, RESID, BBSUM, ERMIN, ERMAX, RESBC, SUMBC
 CC    1	FORMAT(' L', I1,           ' START WITH    ', 2E9.3, 
 CC     <	       ' E', 2E9.3, ' BC', 2E9.3)
@@ -162,7 +162,7 @@ CC     <	       ' E', 2E9.3, ' BC', 2E9.3)
  	erabs = max(dabs(ermin), dabs(ermax))
  	res_new = resid
 
-CC	if ( res_new .lt. tol(level) .and. erabs .lt. ter(level) ) then
+	if ( res_new .lt. tol(level) .and. erabs .lt. ter(level) ) then
 CC	IF ( MOD(ISTEP,NSAVE) .EQ. 0 .and. MYID .EQ. 0 ) 
 CC  <	WRITE(*,2) LEVEL, N, RESID, RESID/BBSUM, ERMIN, ERMAX, 
 CC  <	                     RESBC, RESBC/SUMBC
@@ -171,10 +171,10 @@ CC  <	       ' E', 2E9.3, ' BC', 2E9.3)
 CC	return
 CC	endif
      	
- 	if ( res_new / res_old .gt. slowiter(level) ) then
- 	IF ( MOD(ISTEP,NSAVE) .EQ. 0 .and. MYID .EQ. 0 ) 
-     <	WRITE(*,3) LEVEL, N, RESID, RESID/BBSUM, ERMIN, ERMAX
-    3	FORMAT(' L', I1, ' #', I2, ' TOO SLOW! ', 2E9.3, ' E ', 2E9.3)
+c 	if ( res_new / res_old .gt. slowiter(level) ) then
+c 	IF ( MOD(ISTEP,NSAVE) .EQ. 0 .and. MYID .EQ. 0 ) 
+c     <	WRITE(*,3) LEVEL, N, RESID, RESID/BBSUM, ERMIN, ERMAX
+c    3	FORMAT(' L', I1, ' #', I2, ' TOO SLOW! ', 2E9.3, ' E ', 2E9.3)
 CC     <	WRITE(*,3) LEVEL, N, RESID, RESID/BBSUM, ERMIN, ERMAX, 
 CC     <	                     RESBC, RESBC/SUMBC
 CC    3	FORMAT(' L', I1, ' #', I2, ' TOO SLOW! ', 2E9.3, 
@@ -186,9 +186,9 @@ CC     <	       ' E', 2E9.3, ' BC', 2E9.3)
      
 	enddo
 	
-     	IF ( MOD(ISTEP,NSAVE) .EQ. 0 .and. MYID .EQ. 0 ) 
-     <	WRITE(*,4) LEVEL, N-1, RESID, RESID/BBSUM, ERMIN, ERMAX 
-    4	FORMAT(' L', I1, ' #', I2, ' MAX STEP! ', 2E9.3, ' E ', 2E9.3)
+c     	IF ( MOD(ISTEP,NSAVE) .EQ. 0 .and. MYID .EQ. 0 ) 
+c     <	WRITE(*,4) LEVEL, N-1, RESID, RESID/BBSUM, ERMIN, ERMAX 
+c    4	FORMAT(' L', I1, ' #', I2, ' MAX STEP! ', 2E9.3, ' E ', 2E9.3)
 CC     <	WRITE(*,4) LEVEL, N-1, RESID, RESID/BBSUM, ERMIN, ERMAX, 
 CC     <	                     RESBC, RESBC/SUMBC
 CC    4	FORMAT(' L', I1, ' #', I2, ' MAX STEP! ', 2E9.3, 
@@ -370,8 +370,15 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	      fji(j,i) =     r(i,  j,k)
 	   enddo
 	endif
-	
+!!!!!!!!!!!!!!!!!!!!!!1!!!!!!!Added by Kurt
+	if ( periodic .eq. 1 ) then
+	call trip( aji, bji, cji, fji, jj, 1, ii, n_west, n_east )
+	else
 	call trid( aji, bji, cji, fji, jj, 1, ii, n_west, n_east )
+	endif
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!	call trid( aji, bji, cji, fji, jj, 1, ii, n_west, n_east ) !Commented by Kurt
 
 	do j =  1, jj
 	   do i = 0, ii+1

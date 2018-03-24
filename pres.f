@@ -198,6 +198,7 @@ CBCBCBC	BCBCBCBCBCBCBCBCBCBC
 	   b(i,j,k) = temp * ( ( uxi(i,j,k) - uxi(i-1,j,k) )
      <	                     + ( uej(i,j,k) - uej(i,j-1,k) )
      <	                     + ( uzk(i,j,k) - uzk(i,j,k-1) ) )
+	!note: YiJu adds a settling term here?
 	enddo
 	enddo
 	enddo
@@ -211,7 +212,7 @@ CBCBCBC	BCBCBCBCBCBCBCBCBCBC
 	do n = 1, maxstep
 
 	if ( mod(istep,nsave) .eq. 0 .and. MYID .eq. 0 ) then
-	   write(*,*) ' V-cycle # ', n
+	   write(*,*) ' V-cycle # ', n, resid/bbsum 
 	endif
 
 	if ( mg_level .ge. 2 ) then
@@ -333,8 +334,8 @@ C	2
 	if ( resid .lt. tol(L) .and. resbc .lt. tol(L) .and.
      <	     max(dabs(ermin), dabs(ermax)) .lt. ter(L) .and. 
      <	     resid/bbsum .lt. factor ) then
-	   if ( MYID .EQ. 0 ) 
-     <	      write(*,*) ' Total V-cycle # ', n, resid
+C	   if ( MYID .EQ. 0 ) 
+C     <	      write(*,*) ' Total V-cycle # ', n, resid/bbsum
 	   return
 	endif
 

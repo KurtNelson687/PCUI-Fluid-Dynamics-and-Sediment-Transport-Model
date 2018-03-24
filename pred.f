@@ -9,6 +9,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	include "metric.inc"
 	include "para.inc"
 	include "eddy.inc"
+	include "padjust.inc"
 
 	double precision, dimension(0:nni+1,0:nnj+1,0:nnk+1,3) :: su
 
@@ -18,6 +19,8 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	double precision, dimension(nni,3,0:nnj+1) :: fy
 	double precision, dimension(nni,  0:nnk+1) :: az, bz, cz
 	double precision, dimension(nni,3,0:nnk+1) :: fz
+	double precision, dimension(nni,  0:nnj+1) :: fyV
+
 
 	integer i, j, k, m, L
 	double precision coef, temp, dpdxi, dpdet, dpdzt
@@ -39,7 +42,7 @@ C......	Take an Euler step on the first step
 	   enddo 
         endif
 
-C......	First put in the part of Adams Bashforth from step n-2
+C......	First put in the part of Adams Bashforth from step n-2 (step 1 in notes)
 
 	do m = 1, 3
 	do k = 0, nnk+1
@@ -49,13 +52,25 @@ C......	First put in the part of Adams Bashforth from step n-2
 	enddo
 	enddo
 	enddo 
-	enddo 
+	enddo
 
-C......	Convective terms (explicit)
+C......	Convective terms (explicit) (step 2 in notes)
 
         call convection
 
-C......	LES self-similarity term
+C...... Put convection term Cn in Pro
+
+	do m = 1, 3
+	do k = 1, nnk
+	do j = 1, nnj
+	do i = 1, nni
+           ConNew(i,j,k,m) =  hb(i,j,k,m)
+	enddo
+	enddo
+	enddo 
+	enddo
+
+C......	LES self-similarity term (step 3 in notes)
 
 	do m = 1, 3
 	do k = 0, nnk+1
@@ -67,15 +82,15 @@ C......	LES self-similarity term
 	enddo 
 	enddo 
 
-C......	Cross viscous terms at step n-1 from Crank-Nicolson  
+C......	Cross viscous terms at step n-1 from Crank-Nicolson (step 4 in notes - I think this should be from Adams Bashforth, not Crank-Nicolson) 
 
 	do m = 1, 3
 	do k = 1, nnk
 	do j = 1, nnj
 	do i = 1, nni
 
-	   hb(i,j,k,m) = hb(i,j,k,m) 
-     <        + ( vis + 0.5D0*(vst(i,j,k)+vst(i+1,j,k)) ) *
+	   DisNew(i,j,k,m) =
+     <         ( vis + 0.5D0*(vst(i,j,k)+vst(i+1,j,k)) ) *
      <		( g12(i,  j,k) * ( u(i,  j+1,k,m) - u(i,  j-1,k,m) 
      <		                 + u(i+1,j+1,k,m) - u(i+1,j-1,k,m) )
      <		+ g13(i,  j,k) * ( u(i,  j,k+1,m) - u(i,  j,k-1,m)
@@ -86,8 +101,8 @@ C......	Cross viscous terms at step n-1 from Crank-Nicolson
      <		+ g13(i-1,j,k) * ( u(i,  j,k+1,m) - u(i,  j,k-1,m)
      <		                 + u(i-1,j,k+1,m) - u(i-1,j,k-1,m) ) )
 
-	   hb(i,j,k,m) = hb(i,j,k,m) 
-     <        + ( vis + 0.5D0*(vst(i,j,k)+vst(i,j+1,k)) ) *
+	   DisNew(i,j,k,m) = DisNew(i,j,k,m)+
+     <         ( vis + 0.5D0*(vst(i,j,k)+vst(i,j+1,k)) ) *
      <		( g23(i,j,  k) * ( u(i,j,  k+1,m) - u(i,j,  k-1,m)
      <		                 + u(i,j+1,k+1,m) - u(i,j+1,k-1,m) )
      <		+ g21(i,j,  k) * ( u(i+1,j,  k,m) - u(i-1,j,  k,m)
@@ -98,8 +113,8 @@ C......	Cross viscous terms at step n-1 from Crank-Nicolson
      <		+ g21(i,j-1,k) * ( u(i+1,j,  k,m) - u(i-1,j,  k,m)
      <		                 + u(i+1,j-1,k,m) - u(i-1,j-1,k,m) ) )
 
-	   hb(i,j,k,m) = hb(i,j,k,m)  
-     <        + ( vis + 0.5D0*(vst(i,j,k)+vst(i,j,k+1)) ) *
+	   DisNew(i,j,k,m) = DisNew(i,j,k,m)+
+     <         ( vis + 0.5D0*(vst(i,j,k)+vst(i,j,k+1)) ) *
      <		( g31(i,j,k  ) * ( u(i+1,j,k,  m) - u(i-1,j,k,  m)
      <		                 + u(i+1,j,k+1,m) - u(i-1,j,k+1,m) )
      <		+ g32(i,j,k  ) * ( u(i,j+1,k,  m) - u(i,j-1,k,  m)
@@ -110,10 +125,12 @@ C......	Cross viscous terms at step n-1 from Crank-Nicolson
      <		+ g32(i,j,k-1) * ( u(i,j+1,k,  m) - u(i,j-1,k,  m)
      <		                 + u(i,j+1,k-1,m) - u(i,j-1,k-1,m) ) )
 
+	   hb(i,j,k,m) = hb(i,j,k,m)+DisNew(i,j,k,m) 
 	enddo
 	enddo
 	enddo
 	enddo
+
 
 C......	Coriolis and bouyance force terms
 
@@ -121,13 +138,23 @@ C......	Coriolis and bouyance force terms
 	do j = 1, nnj
 	do i = 1, nni
 	   temp = 1.D0 / jac(i,j,k)
-	   hb(i,j,k,1) = hb(i,j,k,1) - omg2 * u(i,j,k,3) * temp 
+	   hb(i,j,k,1) = hb(i,j,k,1) - omg2 * u(i,j,k,3) * temp
 	   hb(i,j,k,3) = hb(i,j,k,3) + omg2 * u(i,j,k,1) * temp
-	   hb(i,j,k,2) = hb(i,j,k,2) - g * (  phi(i,j,k)
-     <                                      - phi_init(i,j,k) ) * temp
 	enddo
 	enddo
 	enddo
+
+	if (irho .eq. 1) then
+	do k = 1, nnk
+	do j = 1, nnj
+	do i = 1, nni
+	   temp = 1.D0 / jac(i,j,k)
+	   hb(i,j,k,2) = hb(i,j,k,2)  - g * (  rho(i,j,k)
+     <                                 - rhoWater)/rhoWater * temp
+	enddo
+	enddo
+	enddo
+	endif
 
 C......	Add to the source terms
 
@@ -147,8 +174,8 @@ C......	Diagonal viscous terms at step n-1 from Crank-Nicolson
 	do k = 1, nnk
 	do j = 1, nnj
 	do i = 1, nni
-	   su(i,j,k,m) = su(i,j,k,m)  
-     <        + ( vis + 0.5D0*(vst(i,j,k) + vst(i+1,j,k)) ) * 
+	su(i,j,k,m) = su(i,j,k,m)+ 
+     <         ( vis + 0.5D0*(vst(i,j,k) + vst(i+1,j,k)) ) * 
      <		g11(i,  j,  k  ) * ( u(i+1,j,  k,  m) - u(i,j,k,m) )  
      <        + ( vis + 0.5D0*(vst(i,j,k) + vst(i-1,j,k)) ) * 
      <		g11(i-1,j,  k  ) * ( u(i-1,j,  k,  m) - u(i,j,k,m) ) 
@@ -160,10 +187,26 @@ C......	Diagonal viscous terms at step n-1 from Crank-Nicolson
      <		g33(i,  j,  k  ) * ( u(i,  j,  k+1,m) - u(i,j,k,m) )  
      <        + ( vis + 0.5D0*(vst(i,j,k) + vst(i,j,k-1)) ) * 
      <		g33(i,  j,  k-1) * ( u(i,  j,  k-1,m) - u(i,j,k,m) )  
+
 	enddo
 	enddo
 	enddo 
 	enddo 
+
+
+C....... Add driving pressure gradient explicitly
+
+	if ( pAdjust .eq. 0 ) then
+	do k = 1, nnk
+	do j = 1, nnj
+	do i = 1, nni
+	   temp = 1.D0 / jac(i,j,k)
+	   su(i,j,k,1) = su(i,j,k,1)  
+     <              + steadyPall(j)*temp/rhoWater
+	enddo
+	enddo
+	enddo
+	endif
 
 C......	Multiply dt
 
@@ -181,7 +224,7 @@ C......	........................................
 
 	coef = 0.5D0 * dtime
 
-C...... solve for I-direction
+C...... solve for I-direction (This is setting up the approximate factorization in the x direction. See Olivers notes in lecture 11 section four, or Zangs 1994 paper.
 
 	do k = 1, nnk
 
@@ -198,7 +241,7 @@ C...... solve for I-direction
 	do m = 1, 3
 	do j = 1, nnj
 	do i = 1, nni
-	   fx(j,m,i) = su(i,j,k,m)
+	   fx(j,m,i) = su(i,j,k,m) !This is the right hand side for the above ax, bx, cx values for each velocity component
 	enddo
 	enddo
 	enddo
@@ -207,7 +250,7 @@ C...... solve for I-direction
 
 	   do j = 1, nnj
 	      ax(j,0) = 0.D0
-	      bx(j,0) = 1.D0
+	      bx(j,0) = -1.D0
 	      cx(j,0) = 1.D0
 	   enddo
 
@@ -279,7 +322,12 @@ CBCBCBC	BCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBC
 
 	endif
 	
+	if ( periodic .eq. 1 ) then
+	call trip( ax, bx, cx, fx, nnj, 3, nni, n_west, n_east )
+	else 
 	call trid( ax, bx, cx, fx, nnj, 3, nni, n_west, n_east )
+	endif
+!	call trid( ax, bx, cx, fx, nnj, 3, nni, n_west, n_east ) !Commented by Kurt
 
 	do m = 1, 3
 	do j = 1, nnj
@@ -291,7 +339,7 @@ CBCBCBC	BCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBC
 
 	enddo
 
-C...... solve for J-direction
+C...... solve for J-direction (only values for components 1 and 3 are saved)
 
 	do k = 1, nnk
 
@@ -356,7 +404,7 @@ CBCBCBC	BCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBC
 
 	   do i = 1, nni
 	      ay(i,nnj+1) = 1.D0
-	      by(i,nnj+1) = 1.D0
+	      by(i,nnj+1) = -1.D0
 	      cy(i,nnj+1) = 0.D0
 	   enddo
 
@@ -396,8 +444,104 @@ CBCBCBC	BCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBC
 	do m = 1, 3
 	do j = 1, nnj
 	do i = 1, nni
+	  if (m .ne. 2) then
 	   su(i,j,k,m) = fy(i,m,j)
+	  endif
 	enddo
+	enddo
+	enddo
+
+	enddo
+
+
+C...... solve for J-direction (only obtain the vertical component)
+	do k = 1, nnk
+
+	do j = 1, nnj
+	do i = 1, nni
+	   ay(i,j) = -( vis + 0.5D0*(vst(i,j,k) + vst(i,j-1,k)) ) * 
+     <	             coef * jac(i,j,k) * g22(i,j-1,k)
+	   cy(i,j) = -( vis + 0.5D0*(vst(i,j,k) + vst(i,j+1,k)) ) * 
+     <	             coef * jac(i,j,k) * g22(i,j,  k)
+	   by(i,j) = 1.D0 - ay(i,j) - cy(i,j)
+           
+	enddo
+	enddo
+	
+
+	do j = 1, nnj
+	do i = 1, nni
+	   fyV(i,j) = su(i,j,k,2)
+	   
+	enddo
+	enddo
+	
+
+	if ( n_suth .eq. MPI_PROC_NULL ) then
+       	      do i = 1, nni
+	         ay(i,0) = 0.D0
+	         by(i,0) = 1.D0
+	         cy(i,0) = 1.D0
+	      enddo
+CBCBCBC	BCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBC
+
+	   do i = 1, nni
+
+	      dpdet = p(i  ,1,k) - p(i  ,0,k)
+	      dpdxi = p(i+1,0,k) - p(i-1,0,k) 
+     <              + p(i+1,1,k) - p(i-1,1,k)
+	      dpdzt = p(i,0,k+1) - p(i,0,k-1)
+     <		    + p(i,1,k+1) - p(i,1,k-1)
+
+
+	      fyV(i,0) =  2.D0 * dtime * jac(i,1,k)  * 
+     <          ( 0.125D0 * (xiy(i-1,1,k)+xiy(i,1,k)) * dpdxi
+     <          +                         ety(i,0,k)  * dpdet
+     <          + 0.125D0 * (zty(i,1,k-1)+zty(i,1,k)) * dpdzt  )
+
+	   enddo
+
+CBCBCBC	BCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBC
+
+	endif
+	
+	if ( n_nrth .eq. MPI_PROC_NULL ) then
+
+	   do i = 1, nni
+	      ay(i,nnj+1) = 1.D0
+	      by(i,nnj+1) = 1.D0
+	      cy(i,nnj+1) = 0.D0
+	   enddo
+
+CBCBCBC	BCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBC
+
+	   do i = 1, nni
+
+	      dpdet = p(i  ,nnj+1,k) - p(i  ,nnj,k)
+	      dpdxi = p(i+1,nnj  ,k) - p(i-1,nnj  ,k) 
+     <              + p(i+1,nnj+1,k) - p(i-1,nnj+1,k)
+	      dpdzt = p(i,nnj  ,k+1) - p(i,nnj  ,k-1)
+     <		    + p(i,nnj+1,k+1) - p(i,nnj+1,k-1)
+
+	      fyV(i,nnj+1) = 2.D0 * dtime * jac(i,nnj,k)  * 
+     <          (  0.125D0 * (xiy(i-1,nnj,k)+xiy(i,nnj,k)) * dpdxi
+     <           +                           ety(i,nnj,k)  * dpdet
+     <           + 0.125D0 * (zty(i,nnj,k-1)+zty(i,nnj,k)) * dpdzt  )
+	   enddo
+
+CBCBCBC	BCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBC
+
+	endif
+	
+	
+
+
+	call trid( ay, by, cy, fyV, nni, 1, nnj, n_suth, n_nrth )
+C        call trid1( ay, by, cy, fy, nni, 2, 2,nnj, n_suth, n_nrth ) !trid1 has a bug related to the MPI - fix if you want to use (Kurt Nelson 7/13/2016)	
+c.....so, here we only obtain the result for the second (jth) component
+	do j = 1, nnj
+	do i = 1, nni
+	   su(i,j,k,2) = fyV(i,j) 
 	enddo
 	enddo
 
@@ -542,7 +686,7 @@ CBCBCBC	BCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBC
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	subroutine ustar_bc
-
+C All this subroutine does is extropolate from interal values to fill ghost cells.
 	include "size.inc"
 	include "mpif.h"
 	include "mpi.inc"

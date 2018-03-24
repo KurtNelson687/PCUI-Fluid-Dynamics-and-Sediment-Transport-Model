@@ -438,8 +438,15 @@ C...... solve for I-direction
 	      fx(j,nni+1) =  hbs(nni+1,j,k)
 	   enddo
 	endif
-	
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!Added by Kurt
+	if ( periodic .eq. 1 ) then
+	call trip( ax, bx, cx, fx, nnj, 1, nni, n_west, n_east )
+	else
 	call trid( ax, bx, cx, fx, nnj, 1, nni, n_west, n_east )
+	endif
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!	call trid( ax, bx, cx, fx, nnj, 1, nni, n_west, n_east ) !Commented by Kurt
 
 	do j = 1, nnj
 	do i = 1, nni
@@ -577,6 +584,9 @@ C...... Change information at boundaries
 
 	call phi_bc
 	call phi_exchange
+
+C...... Calculate energy
+      call energy
 
 	return
 	end

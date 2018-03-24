@@ -9,12 +9,15 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	include "ns.inc"
 	include "metric.inc"
 	include "eddy.inc"
+	include "sed.inc"
 
-	integer :: i, j, k, m, L
+	integer :: i, j, k
+	logical :: iostat
+	character*4 :: ID
 
 C...... lid velocities u_lid and w_lid
 
-	if ( case .eq. 1 .and. n_nrth .eq. MPI_PROC_NULL ) then
+	if ( runCase .eq. 1 .and. n_nrth .eq. MPI_PROC_NULL ) then
 	   do k = -1, nnk+2
 	   do i = -1, nni+2
 	      u_lid(i,k) = - omg_lid 
@@ -25,10 +28,10 @@ C...... lid velocities u_lid and w_lid
 	   enddo
 	endif
 
-	if ( case .eq. 0 .and. n_nrth .eq. MPI_PROC_NULL  ) then
+	if ( runCase .eq. 0 .and. n_nrth .eq. MPI_PROC_NULL  ) then !This sets lid velocities to zero if case equals 0
 	   do k = -1, nnk+2
 	   do i = -1, nni+2
-	      u_lid(i,k) = 1.D0
+	      u_lid(i,k) = 0.D0
 	      w_lid(i,k) = 0.D0
 	   enddo
 	   enddo
@@ -61,114 +64,101 @@ C...... lid velocities u_lid and w_lid
 	   endif
 	endif
 
-	do m = 1, 3
-	do k = 0, nnk+1
-	do j = 0, nnj+1
-	do i = 0, nni+1
-	   hb(i,j,k,m) = 0.D0
-	enddo
-	enddo
-	enddo
-	enddo
+	hb = 0.D0
+	
+	hbs = 0.D0
+	sus = 0.D0
 
-	do k = 0, nnk+1
-	do j = 0, nnj+1
-	do i = 0, nni+1
-	   hbs(i,j,k) = 0.D0
-	   sus(i,j,k) = 0.D0
-	enddo
-	enddo
-	enddo
+	hbCsed = 0.D0
+	suCsed = 0.D0
+	
+	vst = 0.D0
+	akst = 0.D0
+	sab = 0.D0
+	   
+	rr = 0.D0
 
-	do k = 0, nnk+1
-	do j = 0, nnj+1
-	do i = 0, nni+1
-	   vst(i,j,k) = 0.D0
-	  akst(i,j,k) = 0.D0
-	   sab(i,j,k) = 0.D0
-	enddo
-	enddo
-	enddo
-
-	do m = 1, 6
-	do k = 0, nnk+1
-	do j = 0, nnj+1
-	do i = 0, nni+1
-	   rr(i,j,k,m) = 0.D0
-	enddo
-	enddo
-	enddo 
-	enddo 
-
+	write(ID, fmt='(I3)') 100+myid !initializes the density field from matlab
 	if ( iscalar .eq. 1 ) then
-	   do k = -1, nnk+2
-	   do j = -1, nnj+2
-	   do i = -1, nni+2
-	      phi_init(i,j,k) = 0.5D0 * ( phi1 + phi2 ) 
-     <	                      + 0.5D0 * ( phi1 - phi2 ) 
-     <		* dtanh( aphi * ( xp(i,j,k,2) - yphi ) )
-	   enddo
-	   enddo
-	   enddo
+	   inquire(file='rho_init_from_matlab.'//ID, exist=iostat)
+	   if (iostat.eqv..true..and.grid_only.ne.1) then	      
+	      open(700+myid, file = 'rho_init_from_matlab.'//ID,
+     <                    form='unformatted',status='unknown')	 
+	      read(700+myid) rho_init
+	      close(700+myid)
+	   end if
+	end if
 
-	else
-
-	   do k = -1, nnk+2
-	   do j = -1, nnj+2
-	   do i = -1, nni+2
-	      phi_init(i,j,k) = 0.D0
-	      phi     (i,j,k) = 0.D0
-	   enddo
-	   enddo
-	   enddo
-
-	endif
 
 	if (  newrun .eq. 1  ) then
 
-	kount = 1
-	time = 0.D0
+	   kount = 1
+	   time = 0.D0
+	   inquire(file='uvw_init_from_matlab.'//ID, exist=iostat) 
+	   if (iostat.eqv..true..and.grid_only.ne.1) then
+	      open(700+myid, file = 'uvw_init_from_matlab.'//ID,
+     <                       form='unformatted',status='unknown')
+	      read(700+myid) u
+	      close(700+myid)
+	   end if
+	   call u_bc
+	   Call u_exchange
 
-	do m = 1, 3
-	do k = -1, nnk+2
-	do j = -1, nnj+2
-	do i = -1, nni+2
-	   u(i,j,k,m) = 0.D0
-	enddo
-	enddo
-	enddo
-	enddo
+	   uxi = 0.D0
+	   uej = 0.D0
+	   uzk = 0.D0
 	
-	call u_bc
+	   inquire(file='rho_full_from_matlab.'//ID, exist=iostat) 
+	   if (iostat.eqv..true..and.grid_only.ne.1) then
+	      open(700+myid, file = 'rho_full_from_matlab.'//ID,
+     <                       form='unformatted',status='unknown')
+	      read(700+myid) rho
+	      close(700+myid)
+	   end if
 
-	do k = 0, nnk+1
-	do j = 0, nnj+1
-	do i = 0, nni+1
-	   uxi(i,j,k) = 0.D0
-	   uej(i,j,k) = 0.D0
-	   uzk(i,j,k) = 0.D0
-	enddo
-	enddo
-	enddo
+	   if ( iscalar .eq. 1 ) then
+	      inquire(file='phi_full_from_matlab.'//ID, exist=iostat) 
+	      if (iostat.eqv..true..and.grid_only.ne.1) then
+		 open(700+myid, file = 'phi_full_from_matlab.'//ID,
+     <                          form='unformatted',status='unknown')
+		 read(700+myid) phi
+		 close(700+myid)
+	      end if
+             call phi_bc
+	   end if
 
-	if ( iscalar .eq. 1 ) then
+	   if ( ised .eq. 1 ) then
+	      inquire(file='Csed_init_from_matlab.'//ID, exist=iostat) 
+	      if (iostat.eqv..true..and.grid_only.ne.1) then
+		 open(700+myid, file = 'Csed_init_from_matlab.'//ID,
+     <                          form='unformatted',status='unknown')
+		 read(700+myid) Csed
+		 close(700+myid)
+	      end if
+             call Csed_bc
+	   end if
 
-	   do k = -1, nnk+2
-	   do j = -1, nnj+2
-	   do i = -1, nni+2
-	      phi(i,j,k) = phi_init(i,j,k)
-	   enddo
-	   enddo
-	   enddo
 
-CCC	   call phi_bc
-
-	endif
+C...... lid velocities u_lid and w_lid
 
 	else
 
-	   call input
-
+	   call input_continue_run
+           
+	   if(newWave .eq. 1) then
+	      time = 0
+	      kount = 1
+	      ak = 1.D-6
+	      if(ised .eq. 1) then
+                do k = -1, nnk+2
+                do j = -1, nnj+2
+                do i = -1, nni+2
+                   Csed(i,j,k) = 0.0D0
+	        enddo
+	        enddo
+	        enddo 
+	      endif
+	   endif
 	endif
 
 	return

@@ -1,4 +1,4 @@
-cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	subroutine grid
 
@@ -9,16 +9,32 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	include "cavity.inc"
 	INCLUDE "ns.inc"
 
-	integer i, j, k
+	integer i, j, k 
 
-	bx = 1.D0
-	by = 1.D0
-	bz = 0.5D0
+	wallUnit = 1.0D-4
+	maxRatio = 8.2
+	numWallUnits = 1.2
+	stretchFactor = 5.0D-2
+	dx = wallUnit*numWallUnits*maxRatio*2
+	dz = wallUnit*numWallUnits*maxRatio
+	dy = dx
 
-	stretchx = 1
+C	streching flags	
+	stretchx = 0
 	stretchy = 1
 	stretchz = 0
 
+	bx = ni*dx
+	if(stretchy .eq. 1) then
+	   by =1
+	call ycoordStretch(wallUnit, maxRatio,numWallUnits,
+     <      stretchFactor, dz, dy)
+	else
+	   by = nj*dy
+	endif
+	bz = nk*dz
+
+C	These are parameters for streching
 	dm = 0.D0    
 	am = 3.2D0 
 	bm = 0.48D0
@@ -45,7 +61,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	enddo
 
 	call metric(1, nni, nnj, nnk,
-     <          g11, g12, g13, g21, g22, g23, g31, g32, g33, gcc)
+     <          g11, g12, g13, g21, g22, g23, g31, g32, g33, gcc)!nni is the number of points on each processor in the i direction i.e ni/px. It is and input
 
 	call qf2c(nni, nnj, nnk, nni1, nnj1, nnk1, jac, jaf,
      <          g11, g12, g13, g21, g22, g23, g31, g32, g33, gcc,
@@ -67,7 +83,38 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	end
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+	subroutine ycoordStretch(wallUnit, maxRatio,numWallUnits,
+     <      stretchFactor, dx, dy)
 
+	include "size.inc"
+	include "mpif.h"
+	include "mpi.inc"
+	include "metric.inc"
+	include "cavity.inc"
+
+	integer i, j, k 
+
+	dyMin = wallUnit*numWallUnits
+	stopStretch =floor(log(dx/dyMin)/log(1+stretchFactor)+1)
+	do j = 1,nj
+	   if (j .eq. 1) then
+	      dyAll(j) = dyMin
+	   elseif (j .gt. stopStretch) then
+	      dyAll(j) = dx
+	   else
+	      dyAll(j) = dyMin*(1+stretchFactor)**(j-1)
+	   endif
+	enddo
+
+	yAll(1) =dyMin/2
+	do j = 1,nj-1
+	   yAll(j+1) = yAll(j)+0.5*(dyAll(j)+dyAll(j+1))
+	enddo
+
+	return
+	end
+
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	subroutine metric(level, ii, jj, kk, 
      <          q11, q12, q13, q21, q22, q23, q31, q32, q33, qcc)
 
@@ -93,18 +140,20 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	integer i, j, k
 	double precision faci, facj, fack
 
+C	ii here is the number of points on processors in the x direction and npx is equal to the first coordinate for the processor mapping
 	ii0 = npx * ii
 	jj0 = npy * jj
 	kk0 = npz * kk
 
-	faci = 1.D0 / dble(ii*px)
-	facj = 1.D0 / dble(jj*py)
+C	These give dx, dy, and dz unstreched
+	faci = 1.D0 / dble(ii*px) !dble converts ii*px to double percision. Px is the number of processors in the x direction
+	facj = 1.D0 / dble(jj*py) !These are 1/(number of points in the given direction)
 	fack = 1.D0 / dble(kk*pz)
 
-	do k = -1, kk+2
+	do k = -1, kk+2 !ii, jj, and kk
 	do j = -1, jj+2
 	do i = -1, ii+2
-	   q11(i,j,k) = 0.D0
+	   q11(i,j,k) = 0.D0 !I'm not sure this is true - These are components of the mesh skewness tensor (Gmn - see 2.55 in Yangs defense
 	   q12(i,j,k) = 0.D0
 	   q13(i,j,k) = 0.D0
 	   q21(i,j,k) = 0.D0
@@ -121,7 +170,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	do k = -1, kk+2
 	do j = -1, jj+2
 	do i = -1, ii+2
-	   xi(i,j,k) = ( dble(ii0 + i) - 0.5D0 ) * faci
+	   xi(i,j,k) = ( dble(ii0 + i) - 0.5D0 ) * faci !This is setting up the unstretched grid spacing. These are the cell center locations at this point
 	   et(i,j,k) = ( dble(jj0 + j) - 0.5D0 ) * facj
 	   zt(i,j,k) = ( dble(kk0 + k) - 0.5D0 ) * fack
 	   x(i,j,k) = 0.D0
@@ -131,9 +180,9 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	enddo
 	enddo
 
-	call coord(ii, jj, kk, x, y, z, xi, et, zt)
+	call coord(ii, jj, kk, x, y, z, xi, et, zt) !subroutine that stretches the domain if activated
 
-	if ( level .eq. 1 .and. newrun .eq. 1 ) then
+	if ( level .eq. 1 .and. newrun .eq. 1 ) then !level is hard coded to 1 when metric is called. newrun is set in io.f
 	   write(200+myid) x, y, z
 	endif
 
@@ -141,7 +190,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	   do k = -1, kk+2
 	   do j = -1, jj+2
 	   do i = -1, ii+2
-	      xp(i,j,k,1) = x(i,j,k)
+	      xp(i,j,k,1) = x(i,j,k)!xp is a 4-dimensional array storing cell centered coordinates
 	      xp(i,j,k,2) = y(i,j,k)
 	      xp(i,j,k,3) = z(i,j,k)
 	   enddo
@@ -154,10 +203,11 @@ C...... I-face
 	do k =  0, kk+1
 	do j =  0, jj+1
 	do i = -1, ii+1
+C.... these are computing the derivatives of the cartesian components with respect to the general curvilinear components on the i faces
 	   xxi = ( x(i+1,j,k) - x(i,j,k) )
 	   yxi = ( y(i+1,j,k) - y(i,j,k) )
 	   zxi = ( z(i+1,j,k) - z(i,j,k) )
-	   xet = 0.25D0 * ( x(i,  j+1,k) - x(i,  j-1,k) 
+	   xet = 0.25D0 * ( x(i,  j+1,k) - x(i,  j-1,k) !This is just the x coordinate of the face
      <                    + x(i+1,j+1,k) - x(i+1,j-1,k) )
 	   yet = 0.25D0 * ( y(i,  j+1,k) - y(i,  j-1,k)
      <                    + y(i+1,j+1,k) - y(i+1,j-1,k) )
@@ -169,13 +219,13 @@ C...... I-face
      <                    + y(i+1,j,k+1) - y(i+1,j,k-1) )
 	   zzt = 0.25D0 * ( z(i,  j,k+1) - z(i,  j,k-1)
      <                    + z(i+1,j,k+1) - z(i+1,j,k-1) )
-	   jab = xxi * yet * zzt
+	   jab = xxi * yet * zzt !This is the Jacobian on the i faces
      <         + xet * yzt * zxi
      <         + xzt * yxi * zet
      <         - xzt * yet * zxi
      <         - xet * yxi * zzt
      <         - xxi * yzt * zet
-	   jab = 1.D0 / jab
+	   jab = 1.D0 / jab !This is the inverse Jacobian or cell volume
 	   xsx = ( yet * zzt - yzt * zet )
 	   esx = ( yzt * zxi - yxi * zzt )
 	   zsx = ( yxi * zet - yet * zxi )
@@ -185,7 +235,7 @@ C...... I-face
 	   xsz = ( xet * yzt - xzt * yet )
 	   esz = ( xzt * yxi - xxi * yzt )
 	   zsz = ( xxi * yet - xet * yxi )
-	   q11(i,j,k) = jab * ( xsx * xsx + xsy * xsy + xsz * xsz )
+	   q11(i,j,k) = jab * ( xsx * xsx + xsy * xsy + xsz * xsz )!These are the mesh skewness tensor values on the i faces
 	   q12(i,j,k) = jab * ( xsx * esx + xsy * esy + xsz * esz )
 	   q13(i,j,k) = jab * ( xsx * zsx + xsy * zsy + xsz * zsz )
 	   if ( level .eq. 1 ) then
@@ -244,6 +294,7 @@ C...... J-face
 	enddo
 	enddo
 	enddo
+	
 
 C...... K-face
 	
@@ -315,14 +366,14 @@ C...... Center
      <            - xet * yxi * zzt
      <            - xxi * yzt * zet
 	      jab = 1.D0 / jab
-	      jac(i,j,k) = jab
+	      jac(i,j,k) = jab!This is the jacobian at the cell center
 	   enddo
 	   enddo
 	   enddo
 	   do k = -1, kk+2
 	   do j = -1, jj+2
 	   do i = -1, ii+2
-	      phi_init(i,j,k) = 0.D0
+	      rho_init(i,j,k) = 0.D0
 	   enddo
 	   enddo
 	   enddo
@@ -496,7 +547,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	include "cavity.inc"
 	include "mpi.inc"
 
-	integer ii, jj, kk
+	integer ii, jj, kk !number of points on each processor in the i, j, k direction
 
 	double precision, dimension(-1:ii+2,-1:jj+2,-1:kk+2) :: x, xi
 
@@ -523,7 +574,7 @@ CBCBCBCBCBC
 	IF ( N_WEST .EQ. MPI_PROC_NULL ) THEN
 	DO K = -1, KK+2
 	DO J = -1, JJ+2
-	   X( 0,J,K) = - X(1,J,K)
+	   X( 0,J,K) = - X(1,J,K) !I believe these are just setting ghost cells
 	   X(-1,J,K) = - X(2,J,K)
 	ENDDO
 	ENDDO
@@ -543,7 +594,7 @@ CBCBCBCBCBC
 	do k = -1, kk+2
 	do j = -1, jj+2
 	do i = -1, ii+2
-	   x(i,j,k) = xi(i,j,k)
+	   x(i,j,k) = xi(i,j,k)!This sets the unstreched coordinate to the final x value
 	enddo
 	enddo
 	enddo
@@ -566,21 +617,31 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	double precision, dimension(-1:ii+2,-1:jj+2,-1:kk+2) :: x, xi
 
-	integer i, j, k
+	integer i, j, k, ii0, jj0, kk0
 	
+	jj0 = npy * jj
+
 	if ( stretchy .eq. 1 ) then
+
+C	do k = -1, kk+2
+C	do j = -1, jj+2
+C	do i = -1, ii+2
+C	   x(i,j,k) = dm * xi(i,j,k) 
+C     <              + dlog( dcosh( am * ( xi(i,j,k) - bm ) )
+C     <                    / dcosh( am *               bm   ) ) 
+C     <              / am
+C     <              - dlog( dcosh( am * ( xi(i,j,k) - 1.D0+bm ) )
+C     <                    / dcosh( am * (             1.D0-bm ) ) )
+C     <              / am
+C	   x(i,j,k) = cm * x(i,j,k)
+C	enddo
+C	enddo
+C	enddo
 
 	do k = -1, kk+2
 	do j = -1, jj+2
 	do i = -1, ii+2
-	   x(i,j,k) = dm * xi(i,j,k) 
-     <              + dlog( dcosh( am * ( xi(i,j,k) - bm ) )
-     <                    / dcosh( am *               bm   ) ) 
-     <              / am
-     <              - dlog( dcosh( am * ( xi(i,j,k) - 1.D0+bm ) )
-     <                    / dcosh( am * (             1.D0-bm ) ) )
-     <              / am
-	   x(i,j,k) = cm * x(i,j,k)
+	   x(i,j,k) = yAll(jj0+j) 
 	enddo
 	enddo
 	enddo
@@ -589,16 +650,18 @@ CBCBCBCBCBC
 	IF ( N_SUTH .EQ. MPI_PROC_NULL ) THEN
 	DO K = -1, KK+2
 	DO I = -1, II+2
-	   X(I, 0,K) = - X(I,1,K)
-	   X(I,-1,K) = - X(I,2,K)
+	   X(I, 0,K) = - yAll(1)
+	   X(I,-1,K) = - yAll(2)
 	ENDDO
 	ENDDO
 	ENDIF
 	IF ( N_NRTH .EQ. MPI_PROC_NULL ) THEN
 	DO K = -1, KK+2
 	DO I = -1, II+2
-	   X(I,JJ+1,K) = 2.D0 - X(I,JJ,  K)
-	   X(I,JJ+2,K) = 2.D0 - X(I,JJ-1,K)
+	   x(i,jj+1,k) = yAll(nj)+(yAll(nj)-yAll(nj-1))
+	   x(i,jj+2,k) = yAll(nj)+2*(yAll(nj)-yAll(nj-1))
+C	   X(I,JJ+1,K) = 2.D0 - X(I,JJ,  K)
+C	   X(I,JJ+2,K) = 2.D0 - X(I,JJ-1,K)
 	ENDDO
 	ENDDO
 	ENDIF
@@ -615,7 +678,6 @@ CBCBCBCBCBC
 	enddo
 
 	endif
-
 	return
 	end
 
@@ -692,7 +754,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	include "size.inc"
 	include "cavity.inc"
 
-	integer ii, jj, kk
+	integer ii, jj, kk !These are the number of points on each processors in the i, j, and k direction
 
 	double precision, dimension(-1:ii+2,-1:jj+2,-1:kk+2) :: 
      <          x, y, z
@@ -702,10 +764,11 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	integer i, j, k
 	
-	call mapx(ii, jj, kk, x, xi)
+	call mapx(ii, jj, kk, x, xi) !maps the unstretched x to stretched x if stretch = 1
 	call mapy(ii, jj, kk, y, et)
 	call mapz(ii, jj, kk, z, zt)
 
+C	This is simply scaling the domain by what is indicated by bx, :by, and bz
 	do k = -1, kk+2
 	do j = -1, jj+2
 	do i = -1, ii+2
