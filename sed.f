@@ -1,6 +1,16 @@
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	subroutine Csed_rhs
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      ! Name: Csed_rhs
+      !
+      ! Author: Kurt Nelson
+      !
+      ! Purpose: This subroutine constructs the right hand side of the
+      ! sediment transport equation outlined in Nelson et al (2018,
+      ! JGR-Oceans).
+      !
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 	include "size.inc"
 	include "mpif.h"
@@ -21,6 +31,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	double precision Csedmin, Csedmax, pmin, pmax, debug
 
+C...... Compute erosion and depostion
 	call getBedFluxes(deposition, erosion)
         coef = 1.5d0
 
@@ -47,7 +58,7 @@ C......	First put in the part of Adams Bashforth from step n-2
 	enddo 
 	enddo 
 
-C......	SHARP formula
+C......	SHARP advection is added in all three directions independently
 
 	eps = TINY(1.D0)
 
@@ -60,7 +71,7 @@ C...... Subtract out the settling volume flux from the contravariant volume flux
 	enddo
 	enddo
 
-C...... I direction
+C...... For I direction
 	
 	do k = 0, nnk
 	do j = 0, nnj
@@ -128,7 +139,7 @@ C...... I direction
 	enddo 
 	enddo 
 
-C...... J direction
+C...... For J direction
 	
 	do k = 0, nnk
 	do j = 0, nnj
@@ -196,7 +207,7 @@ C...... J direction
 	enddo 
 	enddo 
 
-C...... K direction
+C...... For K direction
 	
 	do k = 0, nnk
 	do j = 0, nnj
@@ -295,7 +306,7 @@ C......	LES self-similarity term
 	enddo
 
 C......	Cross viscous terms at step n-1 from Crank-Nicolson  
-!!!!!!!!!!!!!!!!!!!!!!!!!!! Note: I need to check on what needs to be done for akst for sediment model !!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!! Note:  akst for sediment model should be checked !!!!!!!!!!!!!!!!!
 	do k = 1, nnk
 	do j = 1, nnj
 	do i = 1, nni
@@ -340,12 +351,13 @@ C......	Cross viscous terms at step n-1 from Crank-Nicolson
 	enddo
 	enddo
 
-CBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCB
+C...... bottom wall BC
 	if ( n_suth .eq. MPI_PROC_NULL ) then
 	   do i = 1, nni
 	   do k = 1, nnk
 
 C        Add back diffusion, and advection from bottom faces for bottom cells
+C        and add erosion and deposition
 
 	   hbCsed(i,1,k) = hbCsed(i,1,k)
 C        Diffussion terms
@@ -357,12 +369,12 @@ C        Diffussion terms
      <		- uej(i,0,k) * Csedf(i,0,k,2)
      <		-deposition(i,k)
      <		+erosion(i,k)
-C        Add erosion
 
 	   enddo
 	   enddo
 	endif
-CBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBC
+
+C...... top  wall BC
 	
 	if ( n_nrth .eq. MPI_PROC_NULL ) then
 	   do i = 1, nni
@@ -380,7 +392,7 @@ C	Advection term
 	   enddo
 	   enddo
 	endif
-CBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCBCB
+
 
 C...... Add back the settling velocity flux to the contravariant volume flux
 	do k = 0, nnk+1
@@ -422,7 +434,7 @@ C......	Diagonal viscous terms at step n-1 from Crank-Nicolson
 	enddo 
 	enddo
 
-CBCBCBCBCBCBCBCBCBCBCB
+C...... add difussion back at bottom wall
 	if ( n_suth .eq. MPI_PROC_NULL ) then
 	   do i = 1, nni
 	   do k = 1, nnk
@@ -432,10 +444,9 @@ CBCBCBCBCBCBCBCBCBCBCB
 	   enddo
 	   enddo
 	endif
-CBCBCBCBCBCBCBCBCBCBCBCB
 
 
-CBCBCBCBCBCBCBCBCBCBCB
+C...... add difussion back at top wall
 	if ( n_nrth .eq. MPI_PROC_NULL ) then
 	   do i = 1, nni
 	   do k = 1, nnk
@@ -445,7 +456,6 @@ CBCBCBCBCBCBCBCBCBCBCB
 	   enddo
 	   enddo
 	endif
-CBCBCBCBCBCBCBCBCBCBCBCB
 
 	do k = 1, nnk
 	do j = 1, nnj
@@ -461,6 +471,16 @@ CBCBCBCBCBCBCBCBCBCBCBCB
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	subroutine Csed_solve
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      ! Name: Csed_solve
+      !
+      ! Author: Kurt Nelson
+      !
+      ! Purpose: This subroutine uses approximate factorization and 
+      ! the Thomas algorithm to solve the sediment concentration at step
+      ! n+1  
+      !
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 	include "size.inc"
 	include "mpif.h"
@@ -683,7 +703,7 @@ C...... update sediment concentration (Csed)
 	enddo
 	enddo
 
-C...... Change information at boundaries
+C...... Exchange information for ghost cells
 	call Csed_bc
 	call Csed_exchange
 
@@ -696,6 +716,16 @@ C      call energy
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	subroutine Csed_bc
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      ! Name: Csed_bc
+      !
+      ! Author: Kurt Nelson
+      !
+      ! Purpose: This subroutine simply fills ghost cells for outer 
+      ! processors. It uses linear interpolation at each wall.
+      !
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 
 	include "size.inc"
 	include "mpif.h"
@@ -880,7 +910,15 @@ C******	* - Y - Z
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	subroutine getBedFluxes(deposition, erosion)
-C       This subroutine depth averages an array that has been horizontally averaged
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      ! Name: getBedFluxes
+      !
+      ! Author: Kurt Nelson
+      !
+      ! Purpose: This subroutine computes erosion and depostion at the
+      ! bottom wall.
+      !
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	include "size.inc"
 	include "mpif.h"
 	include "mpi.inc"
