@@ -1,4 +1,4 @@
-PCUI is a general, curvilinear fluids solver (Cui, 1999), combined with an Eulerian-based sediment transport model (Nelson, 2018). A brief description of the code and an outlined example is shown in “pcui_guide.pdf”, however this document is dated and needs to be updated. Code in this repository is currently (4/22/2018) being cleaned. If you intend on adding to the codebase, please check back for an updated version at the end of May.
+PCUI is a general, curvilinear fluids solver (Cui, 1999), combined with an Eulerian-based sediment transport model (Nelson, 2018). A brief description of the code and an outlined example is shown in “pcui_guide.pdf”, however this document is dated and needs to be updated. Code in this repository is currently (7/29/2018) being cleaned. If you intend on adding to the codebase, please check back for an updated version at the end of August.
 
 You will also find a folder named “mfiles” that contains MATLAB processing scripts. Mfile details will be added to the PCUI guide upon updating it. 
 
